@@ -1,0 +1,44 @@
+ul {
+	margin: 0;
+	padding: 10px;
+}
+
+ul li.mmenu {
+	color: #a0a;
+	background: #fa6;
+	display: inline-block;
+	margin: 0;
+	padding: 6px;
+	border: 5px;
+	border-color: #a0a;
+	border-radius: 6px;
+
+}
+
+ul li.mmenu:hover {
+	color: #fa6;
+	background: #a0a;
+	border: 0px;
+}
+
+p {
+	color: #a0a;
+	background: #fa6;
+	display: inline-block;
+	margin: 0;
+	padding: 6px;
+	border: 5px;
+	border-color: #a0a;
+}
+
+.dark1 {
+	background: #c90;
+}
+
+.dark2 {
+	background: #b80;
+}
+
+.dark3 {
+	background: #a70;
+}
