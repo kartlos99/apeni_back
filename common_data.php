@@ -7,6 +7,7 @@ define('ERROR_CODE','errorCode');
 define('DATA','data');
 define('XARJI','xarji');
 
+// time() funqcia gvibrnebs serveris mimdinare dros, chven vart +4 saati
 $timeOnServer = date("Y-m-d H:i:s", time()+4*3600);
 $dateOnServer = date("Y-m-d", time()+4*3600);
 
