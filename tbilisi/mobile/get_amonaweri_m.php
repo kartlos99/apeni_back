@@ -41,9 +41,8 @@ while($rs = mysqli_fetch_assoc($result)) {
     $arr[] = $rs;
 }
 
-echo json_encode($arr);
-//echo json_encode($dges);
+$response[DATA] = $arr;
+
+echo json_encode($response);
 
 mysqli_close($con);
-
-?>

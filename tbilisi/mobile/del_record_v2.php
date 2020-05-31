@@ -17,56 +17,51 @@ $data = json_decode($json);
 
 $id = $data->recordID;
 $table = $data->table;
-$userid = $data->userid;
+$userID = $data->userID;
 
 
-if($id > 0){
-    if($table == "mitana"){
-        $sql = "SELECT remove_input($id, $userid)";
+if ($id > 0) {
+    if ($table == "mitana") {
+        $sql = "SELECT remove_input($id, $userID)";
     }
-    
-    if($table == "kout"){
-        $sql = "SELECT remove_kasrioutput($id, $userid)";
+
+    if ($table == "kout") {
+        $sql = "SELECT remove_kasrioutput($id, $userID) ";
     }
-    
-    if($table == "mout"){
-        $sql = "SELECT remove_moneyoutput($id, $userid) ";
+
+    if ($table == "mout") {
+        $sql = "SELECT remove_moneyoutput($id, $userID) ";
     }
-    
-    if($table == "order"){
-        $sql = "SELECT remove_order($id, $userid) ";
+
+    if ($table == "order") {
+        $sql = "SELECT remove_order($id, $userID) ";
     }
-    
-    if($table == "users"){
+
+    if ($table == "users") {
         $sql = "UPDATE users SET active = 0 WHERE id = $id ";
     }
-    
-    if($table == "sawyobi_in"){
+
+    if ($table == "sawyobi_in") {
         $sql = "DELETE FROM sawyobi_in WHERE id = $id ";
     }
-    
-    if($table == "sawyobi_out"){
+
+    if ($table == "sawyobi_out") {
         $sql = "DELETE FROM sawyobi_out WHERE id = $id ";
     }
-    
-    if($table == "xarjebi"){
+
+    if ($table == "xarjebi") {
         $sql = "DELETE FROM xarjebi WHERE id = $id ";
     }
 
-    if(mysqli_query($con, $sql)){
-            $response[RESULT] = SUCCESS;
-        } else {
-            $response[RESULT] = ERROR;
-            $response[ERROR] = "Could not able to execute $sql " . mysqli_error($con);
-        }
-}else{
-    $response[RESULT] = ERROR;
-    $response[ERROR] = "ID error: id = $id";
-    $response['post'] = 'json';//$data;//json_decode($_POST); //implode(" ",array_keys($_POST));
+    if (!mysqli_query($con, $sql)) {
+        $response[SUCCESS] = false;
+        $response[ERROR_TEXT] = "Could not able to execute $sql " . mysqli_error($con);
+    }
+} else {
+    $response[SUCCESS] = false;
+    $response[ERROR_TEXT] = "ID error: id = $id";
 }
 
 echo json_encode($response);
 
 mysqli_close($con);
-
-?>

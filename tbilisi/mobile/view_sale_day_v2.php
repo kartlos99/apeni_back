@@ -37,12 +37,12 @@ $sql = "SELECT
             b.ludis_id = l.id
         WHERE 
             DATE(b.tarigi) = '$dro' ";
-        
+
 $grouping = " GROUP BY dasaxeleba";
 
 
-if($distrId == 0){
-    if($periodi == "tve"){
+if ($distrId == 0) {
+    if ($periodi == "tve") {
         $sql = "
         SELECT
         YEAR(b.tarigi) as weli,
@@ -70,27 +70,27 @@ if($distrId == 0){
             dasaxeleba 
         ";
     }
-    
-    if($periodi == "dge"){
+
+    if ($periodi == "dge") {
         $sql .= $grouping;
     }
 
-}else{ 
+} else {
     // konkretuli distributori .....
     $sql .= " AND b.distributor_id = '$distrId' " . $grouping;
-    
+
     $sql_money .= " AND distributor_id = '$distrId' ";
 
     $sql_kasri .= " AND distributor_id = '$distrId' ";
-    
+
     $xarj_sql .= " AND `distributor_id` = $distrId";
 }
-    
+
 $arr = array();
 $result = $con->query($sql);
-    
-$realizebuli = [];    
-while($rs = mysqli_fetch_assoc($result)) {
+
+$realizebuli = [];
+while ($rs = mysqli_fetch_assoc($result)) {
     $realizebuli[] = $rs;
 }
 
@@ -102,13 +102,13 @@ $kasr = [];
 $result_k = $con->query($sql_kasri);
 $kasr[] = mysqli_fetch_assoc($result_k);
 
-forEach($kasr[0] as $k => $v){
+foreach ($kasr[0] as $k => $v) {
     $outPut[$k] = $v;
 }
 
 $xarj_arr = array();
 $xarj_rs = mysqli_query($con, $xarj_sql);
-while($rs = mysqli_fetch_assoc($xarj_rs)) {
+while ($rs = mysqli_fetch_assoc($xarj_rs)) {
     $xarj_arr[] = $rs;
 }
 
@@ -116,7 +116,8 @@ $arr['output'] = $outPut;
 $arr['realizebuli'] = $realizebuli;
 $arr[XARJI] = $xarj_arr;
 
-echo json_encode($arr);
+$response[DATA] = $arr;
+
+echo json_encode($response);
 
 mysqli_close($con);
-?>

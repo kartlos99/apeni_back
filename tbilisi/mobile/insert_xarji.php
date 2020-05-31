@@ -26,15 +26,12 @@ $comment   	= $_POST["comment"];
             
 
     if(mysqli_query($con, $sql)){
-        $responce[RESULT] = SUCCESS;
-        $responce[DATA] = mysqli_insert_id($con);
+        $response[DATA] = mysqli_insert_id($con);
     }else{
-        $responce[RESULT] = ERROR;
-        $responce[ERROR] = "Could not able to execute $sql " . mysqli_error($con);
+        $response[SUCCESS] = false;
+        $response[ERROR_TEXT] = "Could not able to execute $sql " . mysqli_error($con);
     }
 
-echo json_encode($responce);
+echo json_encode($response);
 
 mysqli_close($con);
-
-?>
