@@ -1,6 +1,6 @@
 <?php
 
-// ---------- get shekvetebi ----------  
+// ---------- get shekvetebi ----------
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -134,8 +134,6 @@ while ($rs = mysqli_fetch_assoc($result)) {
         $rs['money'] = 0;
 
     $arr[] = $rs;
-//    $arr['money'] = $moneyDaySum[$rs['obieqtis_id']];
-
 }
 
 echo json_encode($arr);

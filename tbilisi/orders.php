@@ -15,7 +15,7 @@ if ($logged == false){
 	$table = 'users';
 	$sql = "SELECT * FROM $table WHERE username = '".$username."'";
 
-	$results = $link->query($sql);
+	$results = $con->query($sql);
 
 	if(!$results){
 		die('aseti momxmarebeli ar arsebobs!');
@@ -31,24 +31,26 @@ if ($logged == false){
 // header("Access-Control-Allow-Origin: *");
 // header("Content-Type: application/json; charset=UTF-8");
 
-require_once('andr_app_links/connection.php');
+require_once('../imports.php');
+require_once('/xampp/htdocs/app_config/mobile_tb.php');
 
 // time() funqcia gvibrnebs serveris mimdinare dros, chven vart +4 saati
-$dges_server = date("Y-m-d", time()+4*3600);  
+//$dges_server = date("Y-m-d", time()+4*3600);
+$dges_server = "2020-04-14";
 // $dges = $_GET["tarigi"];
 
-function reNewOrders(){
+function reNewOrders($dbcon, $date){
     // *************************************************************************
     // tu pirveli motxovnaa, mashin gadmogvaqvs daumtavrebeli shekvetebi
     
     $sql_chekdate="SELECT MAX(date_format(`tarigi`,'%Y-%m-%d')) AS tarigi FROM `shekvetebi`";
     
-    $rs = mysqli_query($con, $sql_chekdate);
+    $rs = mysqli_query($dbcon, $sql_chekdate);
     $rt = mysqli_fetch_assoc($rs);
     
-    if ($rt['tarigi'] != $dges_server){
-        $sql = "SELECT * FROM `last_orders_group_view` WHERE tarigi1 < '$dges_server' AND in_30+in_50 < wont_30+wont_50";
-        $result_2 = $con->query($sql);
+    if ($rt['tarigi'] != $date){
+        $sql = "SELECT * FROM `last_orders_group_view` WHERE tarigi1 < '$date' AND in_30+in_50 < wont_30+wont_50";
+        $result_2 = $dbcon->query($sql);
         while($row = mysqli_fetch_assoc($result_2)) {
             // tu gvaqvs daumtavrebeli shekvetebi am dristvis, vainsetebt shesabamis chanawers
             $k30 = $row['wont_30']-$row['in_30'];
@@ -63,9 +65,9 @@ function reNewOrders(){
                 `shekvetebi` 
                 (`tarigi`, `obieqtis_id`, `ludis_id`, `kasri30`, `kasri50`, `comment`, `chek`, `distributor_id`) 
                 VALUES 
-                ('$dges_server', $robjid, $rlid, $k30, $k50, '$rcomment', $rchek, $rdistributor) ";
+                ('$date', $robjid, $rlid, $k30, $k50, '$rcomment', $rchek, $rdistributor) ";
     
-            if(!mysqli_query($con, $sql)){
+            if(!mysqli_query($dbcon, $sql)){
                 die("error_writing");
             }
         }
@@ -77,11 +79,11 @@ function reNewOrders(){
 if (isset($_SESSION['last_chek_time'])){
     if (time() - $_SESSION['last_chek_time'] > 5){
         $_SESSION['last_chek_time'] = time();
-        reNewOrders();
+        reNewOrders($con, $dges_server);
     }
 }else{
     $_SESSION['last_chek_time'] = time();
-    reNewOrders();
+    reNewOrders($con, $dges_server);
 }
 
 

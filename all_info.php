@@ -14,7 +14,7 @@ if ($logged == false){
 	$table = 'users';
 	$sql = "SELECT * FROM $table WHERE username = '".$username."'";
 
-	$results = $link->query($sql);
+	$results = $con->query($sql);
 
 	if(!$results){
 		die('aseti momxmarebeli ar arsebobs!');
@@ -72,7 +72,7 @@ if ($logged == false){
 <body>
     <table width="100%">
         <tr>
-            <td><a href="/tbilisi/orders.php">შეკვეთები</a></td>
+            <td><a href="/tbilisi/orders2.php">შეკვეთები</a></td>
             <td><a href="/total_sale.php">თვის შედეგები</a></td>
             <td><p>ამონაწერის ჩამოტვირთვა</p></td>
             <td><p class="righttext"> (თბილისი) მომხმარებელი: <?php echo $logedUser['name']?> <a href="login.php?action=logout">გასვლა</a></p></td>
@@ -88,7 +88,7 @@ if ($logged == false){
 <?php
 //  header("Content-Type: text/plain");
  
-require_once('andr_app_links/connection.php');
+require_once('imports.php');
 
 $sql = "SELECT * FROM obieqtebi where `active`=1 order by dasaxeleba" ;
 //$arr = array();

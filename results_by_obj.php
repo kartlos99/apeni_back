@@ -5,7 +5,7 @@
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-require_once('andr_app_links/connection.php');
+require_once('imports.php');
 
 $d1 = $_GET['date1'];
 $d2 = $_GET['date2'];

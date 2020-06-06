@@ -14,7 +14,7 @@ if ($logged == false){
 	$table = 'users';
 	$sql = "SELECT * FROM $table WHERE username = '".$username."'";
 
-	$results = $link->query($sql);
+	$results = $con->query($sql);
 
 	if(!$results){
 		die('aseti momxmarebeli ar arsebobs!');
@@ -42,7 +42,7 @@ if ($logged == false){
     
     <table width="100%">
         <tr>
-            <td><a href="/tbilisi/orders.php">შეკვეთები</a></td>
+            <td><a href="/tbilisi/orders2.php">შეკვეთები</a></td>
             <td><a href="/all_info.php">ობიექტები</a></td>
             <td><p>რეალიზაცია თვეების მიხედვით</p></td>
             <td><p class="righttext"> (თბილისი) მომხმარებელი: <?php echo $logedUser['name']?> <a href="login.php?action=logout">გასვლა</a></p></td>
@@ -57,7 +57,7 @@ if ($logged == false){
 <?php
 //  header("Content-Type: text/plain");
  
-require_once('andr_app_links/connection.php');
+require_once('imports.php');
 $tanxa_word = "აღებული თანხა";
 $arr_m = array();
 
@@ -172,7 +172,7 @@ function make_data_row($a_row){
         
     echo $output;
     
-    header("Location: ../andr_app_links/all_info.php");
+//    header("Location: ../andr_app_links/all_info.php");
     
 mysqli_close($con);
 ?>

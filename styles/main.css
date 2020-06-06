@@ -6,6 +6,37 @@ body {
     background: #ff9200;
 }
 
+.fa-circle {
+	color: #ff6f00;
+}
+
+.active-order {
+	background: #fa9393;
+}
+
+.cl-bold {
+	font-weight: bold;
+}
+
+.zeroColor {
+	color: rgba(38, 38, 38, 0.22);
+}
+
+#dateDiv {
+	margin: 20px;
+}
+
+.cl-money{
+	text-align: right;
+	font-weight: bold;
+}
+
+#tbOrderList td {
+	border-bottom-style: solid;
+	border-bottom-color: #797979;
+	border-bottom-width: 2px;
+}
+
 h2 {
 	background: #678;
 	padding: 5px;

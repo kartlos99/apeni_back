@@ -1,5 +1,6 @@
 <?php
-include_once('config.php');
+//include_once('imports.php');
+require_once('/xampp/htdocs/apeni.localhost.com/imports.php');
 if(!class_exists('Dbfunc')){
 	/**
 	* bazastan saurtuertobo klasi
