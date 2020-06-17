@@ -74,14 +74,15 @@ function getOrders() {
 
             let os2 = os1
                 .sort(function (a, b) {
+                    return b.isDone - a.isDone;
+                });
+
+            let os3 = os2
+                .sort(function (a, b) {
                     if (a.distributor > b.distributor)
                         return 1;
                     else
                         return -1;
-                });
-            let os3 = os2
-                .sort(function (a, b) {
-                    return a.isDone - b.isDone;
                 });
 
             os3.forEach(function (itm) {
