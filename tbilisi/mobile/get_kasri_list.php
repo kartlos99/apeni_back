@@ -7,17 +7,16 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once('connection.php');
 
-$sql = "SELECT * FROM kasri order by id" ;
-$arr = array();
-$result = $con->query($sql);
-    
-while($rs = mysqli_fetch_assoc($result)) {
+$sql = "SELECT `id`, `dasaxeleba` AS name, `litraji` AS volume, `sortValue` FROM `kasri` ORDER BY sortValue";
+$arr = [];
+$result = mysqli_query($con, $sql);
+
+while ($rs = mysqli_fetch_assoc($result)) {
     $arr[] = $rs;
 }
 
-echo json_encode($arr);
+$response[DATA] = $arr;
 
+echo json_encode($response);
 
 mysqli_close($con);
-
-?>
