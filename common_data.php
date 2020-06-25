@@ -1,15 +1,17 @@
 <?php
 
-define('RESULT','result');
-define('SUCCESS','success');
-define('ERROR_TEXT','errorText');
-define('ERROR_CODE','errorCode');
-define('DATA','data');
-define('XARJI','xarji');
+define('RESULT', 'result');
+define('SUCCESS', 'success');
+define('ERROR_TEXT', 'errorText');
+define('ERROR_CODE', 'errorCode');
+define('DATA', 'data');
+define('XARJI', 'xarji');
+
+const ORDER_STATUS_AUTO_CREATED = 5;
 
 // time() funqcia gvibrnebs serveris mimdinare dros, chven vart +4 saati
-$timeOnServer = date("Y-m-d H:i:s", time()+2*3600);
-$dateOnServer = date("Y-m-d", time()+2*3600);
+$timeOnServer = date("Y-m-d H:i:s", time() + 2 * 3600);
+$dateOnServer = date("Y-m-d", time() + 2 * 3600);
 
 $response = [];
 $response[SUCCESS] = true;

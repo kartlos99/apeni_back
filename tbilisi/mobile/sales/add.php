@@ -20,6 +20,35 @@ if (empty($postData->comment)) {
     $saleComment = "NULL";
 }
 
+$getOrderSql = "
+SELECT ifnull(max(o.ID), 0) AS orderID FROM `orders` o
+LEFT JOIN dictionary_items di ON di.id = o.orderStatusID
+WHERE di.code = 'order_active' AND o.`clientID` = " . $postData->clientID;
+
+$result = mysqli_query($con, $getOrderSql);
+// obieqtze bolo aqtiuri Sekvetis ID
+$orderID = mysqli_fetch_assoc($result)['orderID'];
+
+if ($orderID == 0){
+    // if no order make it
+
+    $sql_insert_order = "
+    INSERT INTO `orders`(`orderDate`, `orderStatusID`, `distributorID`, `clientID`, `comment`, `modifyDate`, `modifyUserID`) 
+    VALUES (
+    '$dateOnServer',
+    " . ORDER_STATUS_AUTO_CREATED . ",
+    $postData->distributorID,
+    $postData->clientID,
+    $saleComment,
+    '$timeOnServer',
+    $postData->modifyUserID
+    )";
+
+    if (mysqli_query($con, $sql_insert_order)) {
+        $orderID = mysqli_insert_id($con);
+    }
+}
+
 
 if (isset($postData->sales) && count($postData->sales) > 0) {
 
@@ -32,7 +61,7 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
         $price = $saleItem->price;
         $canTypeID = $saleItem->canTypeID;
         $count = $saleItem->count;
-        $orderID = $saleItem->orderID;
+//        $orderID = $saleItem->orderID;
 
         if ($i > 0) {
             $multiValue .= ",";
@@ -136,8 +165,8 @@ if (isset($postData->money)) {
 }
 
 
-//$response[DATA] = $sql;
 
 echo json_encode($response);
 
+// $response[DATA] = $sql;
 // die(json_encode($response));
