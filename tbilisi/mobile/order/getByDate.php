@@ -11,7 +11,13 @@ $receivedDate = $_GET["date"];
 
 $orders = [];
 
-$sql = " SELECT * FROM `orders` WHERE date(`orderDate`) = '$receivedDate' ";
+$sql = "
+SELECT o.*, di.code AS orderStatus FROM `orders` o
+LEFT JOIN dictionary_items di ON di.id = o.orderStatusID
+WHERE 
+    ( date(`orderDate`) = '$receivedDate' OR di.code = 'order_active' ) 
+    AND di.code <> 'order_deleted' 
+    AND date(`orderDate`) < '$receivedDate'";
 
 $result = mysqli_query($con, $sql);
 while ($rs = mysqli_fetch_assoc($result)) {
