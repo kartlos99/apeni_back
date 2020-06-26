@@ -11,7 +11,8 @@ $orders = [];
 $orderHelper = new OrderHelper($con);
 
 $sql = "
-SELECT o.*, di.code AS orderStatus FROM `orders` o
+SELECT o.`ID`, date(o.`orderDate`) AS orderDate, o.`orderStatusID`, o.`distributorID`, o.`clientID`, 
+       o.`comment`, o.`modifyDate`, o.`modifyUserID`, di.code AS orderStatus FROM `orders` o
 LEFT JOIN dictionary_items di ON di.id = o.orderStatusID
 WHERE o.ID = " . $receivedOrderID;
 
