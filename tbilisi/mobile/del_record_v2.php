@@ -22,20 +22,20 @@ $userID = $data->userID;
 
 if ($id > 0) {
     if ($table == "mitana") {
-        $sql = "SELECT remove_input($id, $userID)";
+        $sql = "SELECT remove_sale($id, $userID)";
     }
 
     if ($table == "kout") {
-        $sql = "SELECT remove_kasrioutput($id, $userID) ";
+        $sql = "SELECT remove_barrel($id, $userID) ";
     }
 
     if ($table == "mout") {
-        $sql = "SELECT remove_moneyoutput($id, $userID) ";
+        $sql = "SELECT remove_money($id, $userID) ";
     }
 
-    if ($table == "order") {
-        $sql = "SELECT remove_order($id, $userID) ";
-    }
+//    if ($table == "order") {
+//        $sql = "SELECT remove_order($id, $userID) ";
+//    }
 
     if ($table == "users") {
         $sql = "UPDATE users SET active = 0 WHERE id = $id ";
