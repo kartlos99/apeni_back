@@ -22,7 +22,7 @@ SELECT
     (SELECT
         sum(k_in-k_out) 
     FROM 
-        `amonaw_k` a 
+        `amonaweri_barrel` a 
     WHERE 
         a.tarigi <= b.tarigi
         AND
@@ -30,7 +30,7 @@ SELECT
         ) AS `bal`,
     id,
     comment
-    FROM `amonaw_k` b
+    FROM `amonaweri_barrel` b
 WHERE 
     obieqtis_id = $objID AND tarigi < '$dro'
 

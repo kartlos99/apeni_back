@@ -15,6 +15,8 @@ $postData = json_decode($json);
 
 // **********************************************************************************
 
+$response[DATA] = '';
+
 $saleComment = "'$postData->comment'";
 if (empty($postData->comment)) {
     $saleComment = "NULL";
@@ -29,7 +31,7 @@ $result = mysqli_query($con, $getOrderSql);
 // obieqtze bolo aqtiuri Sekvetis ID
 $orderID = mysqli_fetch_assoc($result)['orderID'];
 
-if ($orderID == 0){
+if ($orderID == 0) {
     // if no order make it
 
     $sql_insert_order = "
@@ -87,7 +89,7 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
     VALUES " . $multiValue;
 
     if (mysqli_query($con, $salesInsertSql)) {
-        $response[DATA] = "sale-done ";
+        $response[DATA] = "sale-done";
     } else {
         $response[SUCCESS] = false;
         $response[ERROR_TEXT] = mysqli_error($con);
@@ -127,7 +129,7 @@ if (isset($postData->barrels)) {
     VALUES " . $multiValue;
 
     if (mysqli_query($con, $barrelsInsertSql)) {
-        $response[DATA] .= "barrel-done";
+        $response[DATA] .= " barrel-done";
     } else {
         $response[SUCCESS] = false;
         $response[ERROR_TEXT] = mysqli_error($con);
@@ -156,14 +158,13 @@ if (isset($postData->money)) {
     VALUES " . $multiValue;
 
     if (mysqli_query($con, $moneyInsertSql)) {
-        $response[DATA] .= "money-done";
+        $response[DATA] .= " money-done";
     } else {
         $response[SUCCESS] = false;
         $response[ERROR_TEXT] = mysqli_error($con);
         $response[ERROR_CODE] = mysqli_errno($con);
     }
 }
-
 
 
 echo json_encode($response);

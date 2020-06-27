@@ -14,21 +14,20 @@ $objID = $_GET["objID"];
 
 
 $sql = "
-
-SELECT 
-    DATE_FORMAT(tarigi, '%Y-%m-%d %H:%i') AS dt, 
-    pr, 
-    pay, 
-    (SELECT sum(pr-pay) FROM `amonaw_m` a 
-    WHERE 
-        a.tarigi <= b.tarigi 
+SELECT
+    DATE_FORMAT(tarigi, '%Y-%m-%d %H:%i') AS dt,
+    pr,
+    pay,
+    (SELECT sum(pr-pay) FROM `amonaweri_money` a
+    WHERE
+        a.tarigi <= b.tarigi
         AND
-        obieqtis_id = $objID) AS `bal`,
+        clientID = $objID) AS `bal`,
     id,
     comment
-    FROM `amonaw_m` b
-WHERE 
-    obieqtis_id = $objID AND tarigi < '$dro'
+    FROM `amonaweri_money` b
+WHERE
+    clientID = $objID AND tarigi < '$dro'
 ORDER by b.tarigi DESC
 LIMIT 0, 100
     
