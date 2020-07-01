@@ -9,6 +9,8 @@ require_once('../connection.php');
 $json = file_get_contents('php://input');
 $postData = json_decode($json);
 
+$orderHelper = new OrderHelper($con);
+
 $response[DATA] = "0";
 
 $orderComment = "'$postData->comment'";
@@ -58,6 +60,7 @@ if (mysqli_query($con, $orderUpdateSql)) {
 
     if (mysqli_query($con, $sql_insert_items)) {
         $response[DATA] = "შეკვეთა განახლებულია!";
+        $orderHelper->checkOrderCompletion($postData->ID);
     } else {
         $response[SUCCESS] = false;
         $response[ERROR_TEXT] = mysqli_error($con);

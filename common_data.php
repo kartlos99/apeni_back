@@ -7,6 +7,7 @@ define('ERROR_CODE', 'errorCode');
 define('DATA', 'data');
 define('XARJI', 'xarji');
 
+const ORDER_STATUS_COMPLETED = 2;
 const ORDER_STATUS_AUTO_CREATED = 5;
 const ORDER_STATUS_DELETED = 4;
 

@@ -13,9 +13,12 @@ $json = file_get_contents('php://input');
 // Converts it into a PHP object
 $postData = json_decode($json);
 
+$orderHelper = new OrderHelper($con);
+
 // **********************************************************************************
 
 $response[DATA] = '';
+$shouldChangeStatus = true;
 
 $saleComment = "'$postData->comment'";
 if (empty($postData->comment)) {
@@ -33,6 +36,7 @@ $orderID = mysqli_fetch_assoc($result)['orderID'];
 
 if ($orderID == 0) {
     // if no order make it
+    $shouldChangeStatus = false;
 
     $sql_insert_order = "
     INSERT INTO `orders`(`orderDate`, `orderStatusID`, `distributorID`, `clientID`, `comment`, `modifyDate`, `modifyUserID`) 
@@ -90,6 +94,8 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
 
     if (mysqli_query($con, $salesInsertSql)) {
         $response[DATA] = "sale-done";
+        if ($shouldChangeStatus)
+            $orderHelper->checkOrderCompletion($orderID);
     } else {
         $response[SUCCESS] = false;
         $response[ERROR_TEXT] = mysqli_error($con);

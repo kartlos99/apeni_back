@@ -1,7 +1,8 @@
 <?php
 
 
-class OrderHelper {
+class OrderHelper
+{
 
     public $con;
 
@@ -10,7 +11,8 @@ class OrderHelper {
         $this->con = $db_con;
     }
 
-    function attachItemsToOrder($orders){
+    function attachItemsToOrder($orders)
+    {
         $orderIDs = "";
         foreach ($orders as $order) {
             $orderIDs .= $order['ID'] . ',';
@@ -21,7 +23,7 @@ class OrderHelper {
         $sql = " SELECT * FROM `order_items` WHERE `orderID` IN ($orderIDs) ";
 
         $orderItems = [];
-        $result = mysqli_query( $this->con, $sql);
+        $result = mysqli_query($this->con, $sql);
         while ($rs = mysqli_fetch_assoc($result)) {
             $orderItems[] = $rs;
         }
@@ -61,4 +63,35 @@ class OrderHelper {
         return $orders;
     }
 
+    function checkOrderCompletion($orderID)
+    {
+        $isCompleted = true;
+
+        $sql = "
+        SELECT o.`beerID`, o.`canTypeID`, o.`count`, (o.count - ifnull(s.saleCount, 0)) AS differense FROM `order_items` o
+        LEFT JOIN (
+            SELECT beerID, canTypeID, SUM(count) AS saleCount FROM sales
+            WHERE orderID = $orderID
+            GROUP BY beerID, canTypeID
+        ) s
+        ON o.beerID = s.beerID AND o.canTypeID = s.canTypeID
+        WHERE o.`orderID`= $orderID";
+
+        $orderItems = [];
+        $result = mysqli_query($this->con, $sql);
+        while ($rs = mysqli_fetch_assoc($result)) {
+            $orderItems[] = $rs;
+            if ($rs['differense'] > 0)
+                $isCompleted = false;
+        }
+
+        if ($isCompleted) {
+            $updateOrderSql = "UPDATE `orders` SET `orderStatusID` = " . ORDER_STATUS_COMPLETED . "
+            WHERE ID = " . $orderID;
+
+            mysqli_query($this->con, $updateOrderSql);
+        }
+
+        return $isCompleted ;
+    }
 }

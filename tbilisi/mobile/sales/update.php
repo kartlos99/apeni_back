@@ -13,6 +13,8 @@ $json = file_get_contents('php://input');
 // Converts it into a PHP object
 $postData = json_decode($json);
 
+$orderHelper = new OrderHelper($con);
+
 // **********************************************************************************
 
 $response[DATA] = '';
@@ -49,6 +51,7 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
 
         if (mysqli_query($con, $updateSql)) {
             $response[DATA] = "sale-updated";
+            $orderHelper->checkOrderCompletion($saleItem->orderID);
         } else {
             $response[SUCCESS] = false;
             $response[ERROR_TEXT] = mysqli_error($con);
