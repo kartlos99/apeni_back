@@ -10,7 +10,6 @@ $clientID = $_GET["clientID"];
 $sql = "SELECT * FROM `clients_debt` WHERE `clientID` = $clientID";
 
 $result = mysqli_query($con, $sql);
-//$rs = mysqli_fetch_assoc($result);
 
 if ($result) {
     $response[DATA] = mysqli_fetch_assoc($result);
