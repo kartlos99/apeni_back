@@ -95,3 +95,17 @@ class OrderHelper
         return $isCompleted ;
     }
 }
+
+class VersionControl {
+    public $con;
+
+    function __construct($db_con)
+    {
+        $this->con = $db_con;
+    }
+
+    function updateVersionFor($field) {
+        $sql = "UPDATE `versionflow` SET $field = (SELECT $field + 1 FROM `versionflow` WHERE 1)";
+        mysqli_query($this->con, $sql);
+    }
+}

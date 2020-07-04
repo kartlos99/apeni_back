@@ -13,6 +13,12 @@ const ORDER_STATUS_DELETED = 4;
 
 const ER_CODE_NOT_FOUNT = 1001;
 
+const BEER_VCS = 'beer';
+const CLIENT_VCS = 'client';
+const USER_VCS = 'user';
+const BARREL_VCS = 'barrel';
+const PRICE_VCS = 'price';
+
 // time() funqcia gvibrnebs serveris mimdinare dros, chven vart +4 saati
 $timeOnServer = date("Y-m-d H:i:s", time() + 2 * 3600);
 $dateOnServer = date("Y-m-d", time() + 2 * 3600);
