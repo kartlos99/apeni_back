@@ -12,6 +12,7 @@ const ORDER_STATUS_AUTO_CREATED = 5;
 const ORDER_STATUS_DELETED = 4;
 
 const ER_CODE_NOT_FOUNT = 1001;
+const ER_CODE_VCS = 1010;
 
 const BEER_VCS = 'beer';
 const CLIENT_VCS = 'client';
