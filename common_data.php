@@ -32,3 +32,4 @@ $response[ERROR_TEXT] = '';
 
 
 const ER_CODE_ORDER_SORTING = 1101;
+const ER_CODE_ORDER_UPD_DISTRIBUTOR = 1102;
