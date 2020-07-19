@@ -28,3 +28,7 @@ $response = [];
 $response[SUCCESS] = true;
 $response[ERROR_CODE] = 0;
 $response[ERROR_TEXT] = '';
+
+
+
+const ER_CODE_ORDER_SORTING = 1101;

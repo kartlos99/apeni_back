@@ -23,13 +23,14 @@ if (empty($postData->comment)) {
 
 
 $sql_insert_order = "
-INSERT INTO `orders`(`orderDate`, `orderStatusID`, `distributorID`, `clientID`, `comment`, `modifyDate`, `modifyUserID`) 
+INSERT INTO `orders`(`orderDate`, `orderStatusID`, `distributorID`, `clientID`, `comment`, `sortValue`, `modifyDate`, `modifyUserID`) 
 VALUES (
 '$postData->orderDate',
 $postData->orderStatus,
 $postData->distributorID,
 $postData->clientID,
 $orderComment,
+" . time() . ",
 '$timeOnServer',
 $postData->modifyUserID
 )";
