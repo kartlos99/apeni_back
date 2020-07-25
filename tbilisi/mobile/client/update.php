@@ -52,6 +52,12 @@ if (mysqli_query($con, $sqlUpdateClient)) {
         }
     }
 
+    $response[DATA] = "done";
+
+    $vc = new VersionControl($con);
+    $vc->updateVersionFor(CLIENT_VCS);
+    $vc->updateVersionFor(PRICE_VCS);
+
 } else {
     $response[SUCCESS] = false;
     $response[ERROR_TEXT] = mysqli_error($con);

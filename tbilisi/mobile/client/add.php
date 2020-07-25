@@ -61,6 +61,9 @@ if (mysqli_query($con, $sqlAddClient)) {
 
     if (mysqli_query($con, $sqlInsertPrices)) {
         $response[DATA] = $clientID;
+        $vc = new VersionControl($con);
+        $vc->updateVersionFor(CLIENT_VCS);
+        $vc->updateVersionFor(PRICE_VCS);
     } else {
         $response[SUCCESS] = false;
         $response[ERROR_TEXT] = mysqli_error($con);
