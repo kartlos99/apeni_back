@@ -15,10 +15,15 @@ $orderHelper = new OrderHelper($con);
 $sql = "
 SELECT o.*, di.code AS orderStatus FROM `orders` o
 LEFT JOIN dictionary_items di ON di.id = o.orderStatusID
+LEFT JOIN (
+    SELECT date(saleDate) AS dt, orderID FROM `sales` 
+	GROUP BY orderID
+) s ON s.orderID = o.ID
 WHERE 
-    ( date(`orderDate`) = '$receivedDate' OR di.code = 'order_active' ) 
+    (( date(`orderDate`) = '$receivedDate' OR di.code = 'order_active' ) 
     AND di.code <> 'order_deleted' 
-    AND date(`orderDate`) <= '$receivedDate'";
+    AND date(`orderDate`) <= '$receivedDate') 
+    OR date(s.dt) = '$receivedDate'";
 
 $result = mysqli_query($con, $sql);
 while ($rs = mysqli_fetch_assoc($result)) {
