@@ -5,7 +5,7 @@
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-require_once('connection.php');
+require_once('../connection.php');
 
 //$currTime = date("Y-m-d H:i:s", time()+4*3600);
 
@@ -18,6 +18,8 @@ $data = json_decode($json);
 $id = $data->recordID;
 $table = $data->table;
 $userID = $data->userID;
+
+$vc = new VersionControl($con);
 
 
 if ($id > 0) {
@@ -39,6 +41,7 @@ if ($id > 0) {
 
     if ($table == "users") {
         $sql = "UPDATE users SET active = 0 WHERE id = $id ";
+        $vc->updateVersionFor(USER_VCS);
     }
 
     if ($table == "sawyobi_in") {
