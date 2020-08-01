@@ -7,6 +7,9 @@ define('ERROR_CODE', 'errorCode');
 define('DATA', 'data');
 define('XARJI', 'xarji');
 
+const HOUR_DIFF_ON_SERVER = 2; // home 2 hour, on server 4 hour
+
+
 const ORDER_STATUS_COMPLETED = 2;
 const ORDER_STATUS_AUTO_CREATED = 5;
 const ORDER_STATUS_DELETED = 4;
@@ -21,8 +24,8 @@ const BARREL_VCS = 'barrel';
 const PRICE_VCS = 'price';
 
 // time() funqcia gvibrnebs serveris mimdinare dros, chven vart +4 saati
-$timeOnServer = date("Y-m-d H:i:s", time() + 2 * 3600);
-$dateOnServer = date("Y-m-d", time() + 2 * 3600);
+$timeOnServer = date("Y-m-d H:i:s", time() + HOUR_DIFF_ON_SERVER * 3600);
+$dateOnServer = date("Y-m-d", time() + HOUR_DIFF_ON_SERVER * 3600);
 
 $response = [];
 $response[SUCCESS] = true;

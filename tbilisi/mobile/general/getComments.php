@@ -4,8 +4,8 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
 
-$timeForOrder = date("Y-m-d", time()+4*3600-24*3600);
-$timeForMitana = date("Y-m-d", time()+4*3600-3*24*3600);
+$timeForOrder = date("Y-m-d", time() + HOUR_DIFF_ON_SERVER * 3600 - 24 * 3600);
+$timeForMitana = date("Y-m-d", time() + HOUR_DIFF_ON_SERVER * 3600 - 3 * 24 * 3600);
 
 $sql = "
 SELECT a.comment, op, MAX(modifyDate) AS commentDate, ifnull(ob.dasaxeleba, '') AS dasaxeleba, u.username FROM 
