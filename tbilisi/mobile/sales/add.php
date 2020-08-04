@@ -34,11 +34,15 @@ $result = mysqli_query($con, $getOrderSql);
 // obieqtze bolo aqtiuri Sekvetis ID
 $orderID = mysqli_fetch_assoc($result)['orderID'];
 
-if ($orderID == 0) {
-    // if no order make it
-    $shouldChangeStatus = false;
 
-    $sql_insert_order = "
+
+if (isset($postData->sales) && count($postData->sales) > 0) {
+
+    if ($orderID == 0) {
+        // if no order make it
+        $shouldChangeStatus = false;
+
+        $sql_insert_order = "
     INSERT INTO `orders`(`orderDate`, `orderStatusID`, `distributorID`, `clientID`, `comment`, `modifyDate`, `modifyUserID`) 
     VALUES (
     '$dateOnServer',
@@ -50,13 +54,10 @@ if ($orderID == 0) {
     $postData->modifyUserID
     )";
 
-    if (mysqli_query($con, $sql_insert_order)) {
-        $orderID = mysqli_insert_id($con);
+        if (mysqli_query($con, $sql_insert_order)) {
+            $orderID = mysqli_insert_id($con);
+        }
     }
-}
-
-
-if (isset($postData->sales) && count($postData->sales) > 0) {
 
     $multiValue = "";
     for ($i = 0; $i < count($postData->sales); $i++) {
