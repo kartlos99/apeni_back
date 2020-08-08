@@ -29,10 +29,10 @@ class OrderHelper
         }
 
 
-        $sql = "
-        SELECT `orderID`, `beerID`, `chek`,`canTypeID`, sum(`count`) AS `count` FROM `sales` 
-        WHERE `orderID` IN ($orderIDs)
-        GROUP BY `orderID`, `beerID`, `canTypeID`";
+        $sql =
+            "SELECT `orderID`, `beerID`, `chek`,`canTypeID`, sum(`count`) AS `count` FROM `sales` 
+            WHERE `orderID` IN ($orderIDs)
+            GROUP BY `orderID`, `beerID`, `canTypeID`";
 
         $sales = [];
         $result = mysqli_query($this->con, $sql);
@@ -67,27 +67,26 @@ class OrderHelper
     {
         $isCompleted = true;
 
-        $sql = "
-        SELECT o.`beerID`, o.`canTypeID`, o.`count`, (o.count - ifnull(s.saleCount, 0)) AS differense FROM `order_items` o
-        LEFT JOIN (
-            SELECT beerID, canTypeID, SUM(count) AS saleCount FROM sales
-            WHERE orderID = $orderID
-            GROUP BY beerID, canTypeID
-        ) s
-        ON o.beerID = s.beerID AND o.canTypeID = s.canTypeID
-        WHERE o.`orderID`= $orderID";
+        $sqlGetDifference =
+            "SELECT o.`beerID`, o.`canTypeID`, o.`count`, (o.count - ifnull(s.saleCount, 0)) AS difference FROM `order_items` o
+                LEFT JOIN (
+                    SELECT beerID, canTypeID, SUM(count) AS saleCount FROM sales
+                    WHERE orderID = $orderID
+                    GROUP BY beerID, canTypeID
+                ) s
+                ON o.beerID = s.beerID AND o.canTypeID = s.canTypeID
+                WHERE o.`orderID`= $orderID";
 
-        $orderItems = [];
-        $result = mysqli_query($this->con, $sql);
+        $result = mysqli_query($this->con, $sqlGetDifference);
         while ($rs = mysqli_fetch_assoc($result)) {
-            $orderItems[] = $rs;
-            if ($rs['differense'] > 0)
+            if ($rs['difference'] > 0)
                 $isCompleted = false;
         }
 
         if ($isCompleted) {
-            $updateOrderSql = "UPDATE `orders` SET `orderStatusID` = " . ORDER_STATUS_COMPLETED . "
-            WHERE ID = " . $orderID;
+            $updateOrderSql =
+                "UPDATE `orders` SET `orderStatusID` = " . ORDER_STATUS_COMPLETED .
+                " WHERE ID = " . $orderID;
 
             mysqli_query($this->con, $updateOrderSql);
         }
@@ -105,7 +104,7 @@ class VersionControl {
     }
 
     function updateVersionFor($field) {
-        $sql = "UPDATE `versionflow` SET $field = (SELECT $field + 1 FROM `versionflow` WHERE 1)";
+        $sql = "UPDATE `versionflow` SET $field = $field + 1 ";
         mysqli_query($this->con, $sql);
     }
 }
