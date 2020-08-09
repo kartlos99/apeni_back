@@ -12,9 +12,12 @@ $json = file_get_contents('php://input');
 $postData = json_decode($json);
 
 
-$setOrderValueSql = "
-UPDATE `orders` SET `distributorID` = '$postData->distributorID' 
-WHERE `ID` = '$postData->orderID'";
+$setOrderValueSql =
+    "UPDATE `orders` SET " .
+    "`distributorID` = '$postData->distributorID', " .
+    "`modifyDate` = '$timeOnServer', " .
+    "`modifyUserID` = $postData->modifyUserID " .
+    " WHERE `ID` = '$postData->orderID'";
 
 if (mysqli_query($con, $setOrderValueSql)) {
     $response[DATA] = '0';
