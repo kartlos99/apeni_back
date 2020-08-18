@@ -16,6 +16,18 @@ if (empty($postData->comment)) {
     $comment = "NULL";
 }
 
+$operTime = $timeOnServer;
+
+if ($postData->operationTime != "") {
+
+    $operTime = $postData->operationTime;
+
+    $sqlDeleteBeerInput = "DELETE FROM `storehousebeerinpit` WHERE `inputDate` = '$postData->operationTime'";
+    $sqlDeleteBarrelOutput = "DELETE FROM `storehousebarreloutput` WHERE `outputDate` = '$postData->operationTime'";
+    mysqli_query($con, $sqlDeleteBarrelOutput);
+    mysqli_query($con, $sqlDeleteBeerInput);
+    $response[DATA] = "items Removed!";
+}
 
 if (isset($postData->inputBeer) && count($postData->inputBeer) > 0) {
 
@@ -23,7 +35,7 @@ if (isset($postData->inputBeer) && count($postData->inputBeer) > 0) {
     for ($i = 0; $i < count($postData->inputBeer); $i++) {
         $receiveItem = $postData->inputBeer[$i];
 
-        $receiveDate = $receiveItem->receiveDate;
+//        $receiveDate = $receiveItem->receiveDate;
         $beerID = $receiveItem->beerID;
         $canTypeID = $receiveItem->canTypeID;
         $count = $receiveItem->count;
@@ -34,7 +46,7 @@ if (isset($postData->inputBeer) && count($postData->inputBeer) > 0) {
         if ($i > 0) {
             $multiValue .= ",";
         }
-        $multiValue .= "('$receiveDate', '$postData->modifyUserID', '$beerID',
+        $multiValue .= "('$operTime', '$postData->modifyUserID', '$beerID',
         '$canTypeID', '$count', '$postData->chek', $comment, '$timeOnServer', '$postData->modifyUserID')";
     }
 
@@ -70,14 +82,14 @@ if (isset($postData->outputBarrels) && count($postData->outputBarrels) > 0) {
     for ($i = 0; $i < count($postData->outputBarrels); $i++) {
         $barrelItem = $postData->outputBarrels[$i];
 
-        $outputDate = $barrelItem->outputDate;
+//        $outputDate = $barrelItem->outputDate;
         $canTypeID = $barrelItem->canTypeID;
         $count = $barrelItem->count;
 
         if ($i > 0) {
             $multiValue .= ",";
         }
-        $multiValue .= "('$outputDate', '$postData->modifyUserID', '$canTypeID', '$count', 
+        $multiValue .= "('$operTime', '$postData->modifyUserID', '$canTypeID', '$count', 
         '$postData->chek', $comment, '$timeOnServer', '$postData->modifyUserID')";
     }
 
