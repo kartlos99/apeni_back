@@ -1,9 +1,10 @@
 <?php
-
+namespace Apeni\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
+checkToken();
 
 $operationTime = $_GET['operationTime'];
 

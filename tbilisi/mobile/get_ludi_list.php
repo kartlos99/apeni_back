@@ -1,11 +1,12 @@
 <?php
-
+namespace Apeni\JWT;
 // ---------- get ludi list ----------
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('connection.php');
+checkToken();
 
 $sql = "SELECT * FROM ludi where `active`=1 order by id" ;
 // $sql = "SELECT * FROM obieqtebi where `active`=1 order by dasaxeleba" ;

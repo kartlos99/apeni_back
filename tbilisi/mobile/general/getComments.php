@@ -1,8 +1,10 @@
 <?php
+namespace Apeni\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
+checkToken();
 
 $timeForOrder = date("Y-m-d", time() + HOUR_DIFF_ON_SERVER * 3600 - 24 * 3600);
 $timeForMitana = date("Y-m-d", time() + HOUR_DIFF_ON_SERVER * 3600 - 3 * 24 * 3600);

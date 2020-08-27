@@ -1,12 +1,13 @@
 <?php
-
+namespace Apeni\JWT;
+use VersionControl;
 // ---------- chanaweris washla (3 in 1) ----------
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-
+checkToken();
 //$currTime = date("Y-m-d H:i:s", time()+4*3600);
 
 // Takes raw data from the request

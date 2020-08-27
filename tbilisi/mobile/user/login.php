@@ -1,5 +1,5 @@
 <?php
-
+namespace Apeni\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
@@ -23,7 +23,21 @@ $sql = "SELECT id, username, name, type FROM `users`
 $result = mysqli_query($con, $sql);
 
 if (mysqli_num_rows($result) == 1) {
-    $response[DATA] = mysqli_fetch_assoc($result);
+    $userData = mysqli_fetch_assoc($result);
+
+    $payload = [
+        'iat' => time(),
+        'iss' => 'localhost',
+        'exp' => time() + 30 * 60,
+        'userID' => $userData['id'],
+        'userType' => $userData['type'],
+        'username' => $userData['username']
+    ];
+
+    $token = JWT::encode($payload, SECRET_KEY);
+    $userData['token'] = $token;
+
+    $response[DATA] = $userData;
 } else {
     $response[SUCCESS] = false;
     $response[ERROR_TEXT] = "can't identify user!";

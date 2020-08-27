@@ -1,11 +1,12 @@
 <?php
-
+namespace Apeni\JWT;
 // ---------- get amonaweri M ----------
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('connection.php');
+checkToken();
 
 // time() funqcia gvibrnebs serveris mimdinare dros, chven vart +4 saati
 // $dges = date("Y-m-d", time()+4*3600);  

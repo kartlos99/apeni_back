@@ -1,11 +1,12 @@
 <?php
-
+namespace Apeni\JWT;
 // ---------- get fasebi ----------
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('connection.php');
+checkToken();
 
 //$dges = $_GET["tarigi"];
 

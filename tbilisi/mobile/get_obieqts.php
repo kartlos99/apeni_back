@@ -1,11 +1,12 @@
 <?php
-
+namespace Apeni\JWT;
 // ---------- get obieqts ----------
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('connection.php');
+checkToken();
 
 $sql = "SELECT * FROM obieqtebi where `active`=1 order by dasaxeleba" ;
 $arr = array();

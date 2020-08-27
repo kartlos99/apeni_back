@@ -1,9 +1,12 @@
 <?php
+namespace Apeni\JWT;
+use OrderHelper;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
+checkToken();
 
 $receivedOrderID = $_GET["orderID"];
 
