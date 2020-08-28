@@ -60,6 +60,7 @@ if ($pos !== false) {
 <input type="hidden" id="currUserdata"
        data-ut="<?php echo $userType ?>"
        data-page="<?= $thisPage ?>"
+       data-tkn="<?= $_SESSION['tkn'] ?>"
        data-userID="<?= $_SESSION['userID'] ?>"/>
 
 <div class="wrapper">

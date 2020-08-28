@@ -1,4 +1,6 @@
 <?php
+namespace Apeni\JWT;
+
 
 session_start();
 $error = '';
@@ -38,6 +40,19 @@ if (isset($_POST['submit'])) {
                 $_SESSION['usertype'] = $userData['type'];
                 $_SESSION['username_exp'] = $subName;
                 $_SESSION['username'] = $userData['username'];
+
+            $payload = [
+                'iat' => time(),
+                'iss' => 'localhost',
+                'exp' => time() + 60 * 60,
+                'userID' => $userData['id'],
+                'userType' => $userData['type'],
+                'username' => $userData['username']
+            ];
+
+            $token = JWT::encode($payload, SECRET_KEY);
+
+            $_SESSION['tkn'] = $token;
 
 //                if ($results['passExp'] < 0) {
 //                    $_SESSION['username'] = $subName;

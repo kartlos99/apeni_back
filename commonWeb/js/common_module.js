@@ -31,6 +31,10 @@ let mainMenu = $('ul.components');
 mainMenu.find('li').removeClass('active');
 mainMenu.find('li.' + pageJS).addClass('active');
 
+let tkn = "Bearer " + $('#currUserdata').attr("data-tkn");
+// window.localStorage.setItem('tkn', tkn);
+$('#currUserdata').attr("data-tkn", "-");
+
 function printout(x) {
     console.log("printed:", x);
 }

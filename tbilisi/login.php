@@ -1,5 +1,7 @@
 <?php
 include_once '_webLoad.php';
+include_once('../jwt/JWT.php');
+include_once('../jwt/extension.php');
 include_once('../commonWeb/php/loginScript.php'); // Includes Login Script
 
 // print_r($_SESSION);
