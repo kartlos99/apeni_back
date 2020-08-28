@@ -28,7 +28,7 @@ if (mysqli_num_rows($result) == 1) {
     $payload = [
         'iat' => time(),
         'iss' => 'localhost',
-        'exp' => time() + 30 * 60,
+        'exp' => time() + 60 * 60,
         'userID' => $userData['id'],
         'userType' => $userData['type'],
         'username' => $userData['username']

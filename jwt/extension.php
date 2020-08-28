@@ -1,4 +1,5 @@
 <?php
+namespace Apeni\JWT;
 
 class BeforeValidException extends \UnexpectedValueException
 {

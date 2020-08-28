@@ -1,5 +1,4 @@
 <?php
-
 include_once '_header.php';
 
 $phesh = hash('sha256', 'as');
