@@ -1,33 +1,7 @@
 
-body {
-	background-color: #7aa4a7;
+div.login-field {
+    margin-bottom: 16px;
 }
-div {
-    margin : 16px;
-}
-
-.centered {
-    text-align: center;
-}
-
-ul li.mmenu {
-	color: #a0a;
-	background: #fa6;
-	display: inline-block;
-	margin: 0;
-	padding: 6px;
-	border: 5px;
-	border-color: #a0a;
-	border-radius: 6px;
-
-}
-
-ul li.mmenu:hover {
-	color: #fa6;
-	background: #a0a;
-	border: 0px;
-}
-
 
 .dark1 {
 	background: #c90;
@@ -60,4 +34,8 @@ ul li.mmenu:hover {
     border-color: #a0a;
     text-align: center;
 }
-    
+
+.panel-heading {
+	font-size: medium;
+	font-weight: bold;
+}

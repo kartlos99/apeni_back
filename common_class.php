@@ -107,3 +107,27 @@ class VersionControl {
         mysqli_query($this->con, $sql);
     }
 }
+
+class DataProvider {
+    public $dbConn;
+
+    function __construct($dbConn) {
+        $this->dbConn = $dbConn;
+    }
+
+    function getBarrels() {
+        $bData = [];
+        $sql = "SELECT * FROM `kasri` ORDER BY `sortValue`";
+        $result = mysqli_query($this->dbConn, $sql);
+        if ($result) {
+            $arr = [];
+            while ($rs = mysqli_fetch_assoc($result)) {
+                $arr[] = $rs;
+            }
+            foreach ($arr as $key => $item) {
+                $bData[$item['id']] = $item;
+            }
+        }
+        return $bData;
+    }
+}

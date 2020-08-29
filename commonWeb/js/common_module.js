@@ -39,6 +39,31 @@ function printout(x) {
     console.log("printed:", x);
 }
 
+let monthObj = {
+    "1": "იანვარი",
+    "2": "თებერვალი",
+    "3": "მარტი",
+    "4": "აპრილი",
+    "5": "მაისი",
+    "6": "ივნისი",
+    "7": "ივლისი",
+    "8": "აგვისტო",
+    "9": "სექტემბერი",
+    "10": "ოქტომბერი",
+    "11": "ნოემბერი",
+    "12": "დეკემბერი"
+}
+
+function showError(code, text) {
+    if (code == 401)
+        var res = confirm("საჭიროებს ავტორიზაციის გავლას!");
+        if (res == true) {
+            window.location.replace("logout.php");
+        }
+    else
+        alert(text)
+}
+
 function loadTypesList(parentID, selector, pos = 0) {
     var data = {
         'parentID': parentID

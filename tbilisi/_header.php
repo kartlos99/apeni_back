@@ -27,6 +27,7 @@ $userType = isset($_SESSION['usertype']) ? $_SESSION['usertype'] : 0 ;
           integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../commonWeb/css/sidebar-style.css">
+    <link rel="stylesheet" href="../commonWeb/css/main.css">
     <!-- Scrollbar Custom CSS -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
