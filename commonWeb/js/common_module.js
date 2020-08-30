@@ -64,6 +64,18 @@ function showError(code, text) {
         alert(text)
 }
 
+function getFormatedDate() {
+    let date = new Date();
+    let dt = date.getFullYear() + "-";
+    let month = date.getMonth() + 1;
+    if (month < 10) month = "0" + month;
+    dt += month + "-";
+    let day = date.getDate();
+    if (day < 10) day = "0" + day;
+    dt += day;
+    return dt;
+}
+
 function loadTypesList(parentID, selector, pos = 0) {
     var data = {
         'parentID': parentID

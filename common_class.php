@@ -19,7 +19,9 @@ class OrderHelper
         $orderIDs = trim($orderIDs, ',');
 
 
-        $sql = " SELECT * FROM `order_items` WHERE `orderID` IN ($orderIDs) ";
+        $sql = "SELECT oi.*, l.dasaxeleba FROM `order_items` oi " .
+            "LEFT JOIN ludi l ON l.id = oi.beerID " .
+            "WHERE `orderID` IN ($orderIDs) ";
 
         $orderItems = [];
         $result = mysqli_query($this->con, $sql);
@@ -117,7 +119,7 @@ class DataProvider {
 
     function getBarrels() {
         $bData = [];
-        $sql = "SELECT * FROM `kasri` ORDER BY `sortValue`";
+        $sql = "SELECT * FROM `kasri` ORDER BY `sortValue` desc";
         $result = mysqli_query($this->dbConn, $sql);
         if ($result) {
             $arr = [];

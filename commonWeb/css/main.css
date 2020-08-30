@@ -39,3 +39,43 @@ div.login-field {
 	font-size: medium;
 	font-weight: bold;
 }
+
+div.order-unit {
+    margin: 8px;
+    padding: 8px;
+    border: #5a82ae solid 2px;
+    border-radius: 8px;
+    background: #e3e5e5;
+}
+
+div.order-completed {
+    border: #fc9593 solid 2px;
+    background: #fae3e5;
+}
+
+.fa-circle {
+    color: #ff6f00;
+}
+
+td.order-chek {
+    text-align: end;
+}
+
+.title-field {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.client {
+    width: 40%;
+}
+.distributor {
+    width: 30%;
+}
+.order-status {
+    width: 20%;
+}
+
+.table {
+    margin-bottom: 4px ;
+}

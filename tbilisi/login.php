@@ -36,7 +36,7 @@ if (isset($_SESSION['username'])) {
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link href="../commonWeb/css/main.css" rel="stylesheet">
 
-    <title>Lima iCloud - Login</title>
+    <title>Apeni - Login</title>
 
 </head>
 <body background="../commonWeb/img/beerBkg.jpg">
