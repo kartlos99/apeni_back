@@ -8,7 +8,7 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once('_load.php');
 
-//checkToken();
+checkToken();
 
 $receivedDate = $_GET["date"];
 

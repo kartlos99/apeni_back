@@ -1,5 +1,4 @@
 // let mTkn = window.localStorage.getItem('tkn');
-printout(tkn);
 let saleMonthToClone;
 let saleRowToClone;
 let mainDiv = $('div.mainContainer');
@@ -17,9 +16,9 @@ function getSales()
 
             if (resp.success) {
                 let sData = resp.data
-                console.log(sData);
+
                 Object.entries(sData).forEach(function (sItem) {
-                    console.log(saleMonthToClone)
+
                     let newSaleMonth = saleMonthToClone.clone();
 
                     let monthID = monthObj[sItem[0]];
