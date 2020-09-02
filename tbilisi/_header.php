@@ -38,6 +38,7 @@ $userType = isset($_SESSION['usertype']) ? $_SESSION['usertype'] : 0 ;
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
           integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body onpageshow="f_show()" onpagehide="f_hide()">
 <?php
@@ -89,7 +90,7 @@ if ($pos !== false) {
             <!-- <li><a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a></li> -->
             <li><a href="logout.php" class="article">გასვლა</a></li>
         </ul>
-        <div class="onbuttom">v 2.0.0</div>
+        <div class="onbuttom">v 2.0.1</div>
     </nav>
     <!--sidebar-->
 

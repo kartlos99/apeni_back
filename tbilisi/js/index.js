@@ -21,12 +21,11 @@ function getSales()
 
                     let newSaleMonth = saleMonthToClone.clone();
 
-                    let monthID = monthObj[sItem[0]];
-                    let unitTitle = monthID + " - აღებული თანხა: " + sItem[1].money + " ₾";
-                    newSaleMonth.find('div.panel-heading').text(unitTitle);
-
                     let monthSalesContainer = newSaleMonth.find('tbody.beer-sale-items');
+                    let monthTotalLiter = 0;
+
                     Object.values(sItem[1].sales).forEach(function (sRow) {
+                        monthTotalLiter += parseInt(sRow.liter);
                         let newSaleRow = saleRowToClone.clone();
                         newSaleRow.find('td.beer-name').text(sRow.beerName);
                         newSaleRow.find('td.price').text(sRow.price);
@@ -39,6 +38,10 @@ function getSales()
 
                         monthSalesContainer.append(newSaleRow);
                     });
+
+                    let monthID = monthObj[sItem[0]];
+                    let unitTitle = monthID + " - ლიტრაჟი: " + monthTotalLiter + " ლტ.";
+                    newSaleMonth.find('div.panel-heading').text(unitTitle);
 
                     mainDiv.append(newSaleMonth);
                 })

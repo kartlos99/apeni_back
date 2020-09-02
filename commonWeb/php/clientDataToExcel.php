@@ -23,6 +23,8 @@ $output = '<table class="table" bordered="1">';
 if (isset($_GET["clientID"])) {
 
     $clientID = $_GET["clientID"];
+    $startDate = $_GET["startDate"];
+    $endDate = $_GET["endDate"];
 
     if ($clientID > 0) {
         $myobj = "a";
@@ -53,7 +55,7 @@ if (isset($_GET["clientID"])) {
             c.username
             FROM `client_actions` AS c
         WHERE 
-            clientID = $clientID AND YEAR(c.tarigi) > 2019
+            clientID = $clientID AND Date(c.tarigi) >= '$startDate' AND Date(c.tarigi) <= '$endDate'
         ORDER by c.tarigi DESC ";
 
         $result = mysqli_query($con, $sql);
@@ -98,7 +100,7 @@ if (isset($_GET["clientID"])) {
             c.username
             FROM `client_actions` AS c, obieqtebi AS o
         WHERE 
-            c.clientID = o.id AND YEAR(c.tarigi) > 2019
+            c.clientID = o.id AND Date(c.tarigi) >= '$startDate' AND Date(c.tarigi) <= '$endDate'
         ORDER by c.tarigi DESC";
 
         $result = mysqli_query($con, $sql);
