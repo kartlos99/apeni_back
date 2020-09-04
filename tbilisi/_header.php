@@ -58,6 +58,9 @@ if ($pos !== false) {
     $thisPage = 'currentOrders';
 }
 
+if ($userType != ADMIN && $thisPage != 'currentOrders')
+    header("Location: logout.php");
+
 ?>
 <input type="hidden" id="currUserdata"
        data-ut="<?php echo $userType ?>"
@@ -74,12 +77,14 @@ if ($pos !== false) {
         </div>
 
         <ul class="list-unstyled components">
+            <?php if ($userType == ADMIN) : ?>
             <li class="index">
                 <a href="index.php">თვის შედეგები</a>
             </li>
             <li class="byClient">
                 <a href="byClient.php">ობიექტები</a>
             </li>
+            <?php endif; ?>
             <li class="currentOrders">
                 <a href="currentOrders.php">შეკვეთები</a>
             </li>

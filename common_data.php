@@ -7,6 +7,9 @@ define('ERROR_CODE', 'errorCode');
 define('DATA', 'data');
 define('XARJI', 'xarji');
 
+const ADMIN = 2;
+const DISTRIBUTOR = 1;
+
 const HOUR_DIFF_ON_SERVER = 2; // home 2 hour, on server 4 hour
 
 
