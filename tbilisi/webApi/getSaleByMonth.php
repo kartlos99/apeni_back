@@ -8,11 +8,15 @@ require_once('_load.php');
 
 checkToken();
 
+$year = isset($_GET['year']) ? $_GET['year'] : 2020;
+
 $sqlSales = "SELECT 
 concat(YEAR(s.saleDate), MONTH(s.saleDate), s.beerID) AS ID,
 YEAR(s.saleDate) AS weli,
 MONTH(s.saleDate) AS tve,
 l.dasaxeleba AS beerName,
+l.color,
+l.id AS beerID,
 round(sum(s.count * k.litraji * s.unitPrice), 2) AS price,
 sum(s.count * k.litraji) AS liter
 FROM `sales` s
@@ -23,7 +27,7 @@ ON  s.beerID = l.id
 LEFT JOIN kasri AS k
 ON  s.canTypeID = k.id
 
-WHERE YEAR(s.saleDate) > 2019    
+WHERE YEAR(s.saleDate) = $year    
 
 GROUP BY
 	YEAR(s.saleDate), 
@@ -49,7 +53,7 @@ ON  s.beerID = l.id
 LEFT JOIN kasri AS k
 ON  s.canTypeID = k.id
 
-WHERE YEAR(s.saleDate) > 2019    
+WHERE YEAR(s.saleDate) = $year    
 
 GROUP BY
 	YEAR(s.saleDate), 
@@ -67,7 +71,7 @@ SELECT
     SUM(tanxa) AS money
 FROM
     `moneyoutput`
-WHERE YEAR(tarigi) > 2019    
+WHERE YEAR(tarigi) = $year    
 GROUP BY
     YEAR(tarigi),
     MONTH(tarigi)";

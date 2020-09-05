@@ -39,6 +39,7 @@ $userType = isset($_SESSION['usertype']) ? $_SESSION['usertype'] : 0 ;
           integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
 </head>
 <body onpageshow="f_show()" onpagehide="f_hide()">
 <?php
