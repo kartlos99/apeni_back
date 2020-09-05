@@ -32,6 +32,12 @@ $clients = $dataProvider->getClients();
     </table>
 
     <button id="btnDone" class="btn">ჩამოტვირთვა</button>
+    <button id="btnUpdateChart" class="btn">დიაგრამის განახლება</button>
 
+
+    <div>
+        <div id=container1></div>
+        <div id=container2></div>
+    </div>
 
 <?php include_once '_footer.php'; ?>
