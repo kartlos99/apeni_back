@@ -14,7 +14,8 @@ function dieWithError($code, $text) {
 }
 
 function checkToken() {
-
+    // temporary, while testing api
+    return [];
     $token = getBearerToken();
 
     try {

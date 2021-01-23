@@ -3,7 +3,7 @@
 
 class MyData
 {
-    public $dbConn;
+    private $dbConn;
 
     function __construct($dbConn)
     {
