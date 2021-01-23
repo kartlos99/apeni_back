@@ -13,10 +13,14 @@ class MyData
     function getTanks()
     {
         $bData = [];
-        $sql = "SELECT * FROM `tanks` ORDER BY `sortValue` desc";
+        $sql = "
+            SELECT t.*, di.code FROM `tanks` t
+            LEFT JOIN dictionary_items di ON tankType = di.id
+            WHERE active = 1
+            ORDER BY tankType, sortValue";
         $arr = $this->getDataAsArray($sql);
         foreach ($arr as $key => $item) {
-            $bData[$item['id']] = $item;
+            $bData[$item[ID]] = $item;
         }
         return $bData;
     }
@@ -35,6 +39,8 @@ class MyData
             while ($rs = mysqli_fetch_assoc($result)) {
                 $arr[] = $rs;
             }
+        } else {
+            \Apeni\JWT\dieWithError(COMMON_SQL_ERROR_CODE, mysqli_error($this->dbConn));
         }
         return $arr;
     }

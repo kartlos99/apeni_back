@@ -6,6 +6,7 @@ define('ERROR_TEXT', 'errorText');
 define('ERROR_CODE', 'errorCode');
 define('DATA', 'data');
 define('XARJI', 'xarji');
+define('ID', 'ID');
 
 const ADMIN = 2;
 const DISTRIBUTOR = 1;
@@ -39,3 +40,5 @@ $response[ERROR_TEXT] = '';
 
 const ER_CODE_ORDER_SORTING = 1101;
 const ER_CODE_ORDER_UPD_DISTRIBUTOR = 1102;
+
+const COMMON_SQL_ERROR_CODE = 2001;
