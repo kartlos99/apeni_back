@@ -9,8 +9,12 @@ checkToken();
 $json = file_get_contents('php://input');
 $postData = json_decode($json);
 
-$deleteSql = "UPDATE `orders` SET `orderStatusID` = " . ORDER_STATUS_DELETED . "
-WHERE ID = " . $postData->orderID;
+$deleteSql =
+    "UPDATE `orders` SET " .
+    "`orderStatusID` = " . ORDER_STATUS_DELETED .
+    ", `modifyDate` = '$timeOnServer', " .
+    " `modifyUserID` = $postData->modifyUserID " .
+    " WHERE ID = " . $postData->orderID;
 
 
 if (!mysqli_query($con, $deleteSql)) {

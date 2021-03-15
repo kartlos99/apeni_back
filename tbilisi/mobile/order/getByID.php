@@ -15,8 +15,11 @@ $orderHelper = new OrderHelper($con);
 
 $sql = "
 SELECT o.`ID`, date(o.`orderDate`) AS orderDate, o.`orderStatusID`, o.`distributorID`, o.`clientID`, 
-       o.`comment`, o.`sortValue`, o.`modifyDate`, o.`modifyUserID`, di.code AS orderStatus FROM `orders` o
+       o.`comment`, o.`sortValue`, o.`modifyDate`, o.`modifyUserID`, di.code AS orderStatus, 
+  ifnull(cr.needCleaning, 0) AS needCleaning, (SELECT COUNT(ID) FROM `orders_history` WHERE `ID` = o.id) AS isEdited 
+FROM `orders` o
 LEFT JOIN dictionary_items di ON di.id = o.orderStatusID
+LEFT JOIN cleaningreport cr ON o.clientID = cr.clientID
 WHERE o.ID = " . $receivedOrderID;
 
 $result = mysqli_query($con, $sql);
