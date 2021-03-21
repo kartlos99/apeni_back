@@ -6,7 +6,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 // Takes raw data from the request
 $json = file_get_contents('php://input');
 
@@ -66,6 +66,11 @@ if (mysqli_query($con, $sqlAddClient)) {
         $vc = new VersionControl($con);
         $vc->updateVersionFor(CLIENT_VCS);
         $vc->updateVersionFor(PRICE_VCS);
+
+        $sqlAddInitialSystemClear =
+            "INSERT INTO `gawmenda` (`obieqtis_id`, `distributor_id`, `tarigi`) " .
+            "VALUES ( '$clientID', '$sessionData->userID', '$timeOnServer')";
+        mysqli_query($con, $sqlAddInitialSystemClear);
     } else {
         $response[SUCCESS] = false;
         $response[ERROR_TEXT] = mysqli_error($con);

@@ -15,14 +15,13 @@ function dieWithError($code, $text) {
 
 function checkToken() {
     // temporary, while testing api
-    return [];
+    // return [];
     $token = getBearerToken();
 
     try {
 
-        $dataPayload = JWT::decode($token, SECRET_KEY, ['HS256']);
-
-        return json_encode($dataPayload);
+//        $dataPayload = JWT::decode($token, SECRET_KEY, ['HS256']);
+        return JWT::decode($token, SECRET_KEY, ['HS256']);
 
     } catch (ExpiredException $e) {
         $errorText = $e->getMessage();
