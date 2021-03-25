@@ -15,7 +15,7 @@ if (isset($_GET["date"])) {
 
 $dataArr = [];
 
-$chek = $_GET['chek'];
+$chek = isset($_GET['chek']) ? $_GET['chek'] : 0;
 
 if ($chek == 0) {
 // carieli kasrebi (obieqtebidan amogebuli da sawobidan gagzavnili sawarmoshi)

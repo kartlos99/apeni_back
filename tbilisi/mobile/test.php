@@ -7,6 +7,34 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once('connection.php');
 
+function getBalanceMap($dbConn, $clientID = 0)
+{
+
+    $sqlQuery = "CALL getBarrelBalanceByID($clientID)";
+    $arr = [];
+    $mMap = [];
+    $result = mysqli_query($dbConn, $sqlQuery);
+    while ($rs = mysqli_fetch_assoc($result)) {
+        $arr[] = $rs;
+        $mMap[$rs['canTypeID']] = $rs['balance'];
+    }
+//return $arr;
+    global $rt;
+    $rt = 2;
+    $nArr = array_filter($arr, function ($obj) {
+        echo $obj['balance'] . " ";
+        if ($obj['canTypeID'] == $rt) return true;
+        return false;
+    });
+
+
+    return $nArr;
+}
+
+echo json_encode(count(getBalanceMap($con,73)));
+die();
+die(print_r($arr));
+
 //$currTime = date("Y-m-d H:i:s", time()+4*3600);
 
 // Takes raw data from the request

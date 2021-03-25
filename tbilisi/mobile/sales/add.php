@@ -37,9 +37,38 @@ $result = mysqli_query($con, $getOrderSql);
 // obieqtze bolo aqtiuri Sekvetis ID
 $orderID = mysqli_fetch_assoc($result)['orderID'];
 
+// check for valid barrels values
+if (isset($postData->barrels)) {
+    $balanceMap = getBalanceMap($con, $postData->clientID);
+    foreach ($postData->barrels as $barrelOutput) {
+        if (!isset($balanceMap[$barrelOutput->canTypeID]) || $barrelOutput->count > $balanceMap[$barrelOutput->canTypeID]['balance']) {
+            dieWithError(
+                ER_CODE_EXTRA_BARREL_OUTPUT,
+                sprintf(ER_TEXT_EXTRA_BARREL_OUTPUT, $balanceMap[$barrelOutput->canTypeID]['dasaxeleba'], $barrelOutput->count)
+            );
+        }
+    }
+}
 
 
 if (isset($postData->sales) && count($postData->sales) > 0) {
+
+    // Check for balance in Storehouse
+    $storeBalanceArr = getFullBarrelsBalanceInStore($con);
+    foreach ($postData->sales as $saleItm) {
+        $stRow = [];
+        array_filter($storeBalanceArr, function ($stItem) {
+            global $stRow;
+            global $saleItm;
+            if ($stItem['beerID'] == $saleItm->beerID && $stItem['barrelID'] == $saleItm->canTypeID) {
+                $stRow = $stItem;
+                return true;
+            }
+            return false;
+        });
+        if (!isset($stRow['balance']) || $stRow['balance'] < $saleItm->count)
+            dieWithError(COMMON_ERROR_CODE, ER_TEXT_EXTRA_BARREL_SALE);
+    }
 
     if ($orderID == 0) {
         // if no order make it
@@ -181,3 +210,29 @@ echo json_encode($response);
 
 // $response[DATA] = $sql;
 // die(json_encode($response));
+
+function getBalanceMap($dbConn, $clientID = 0)
+{
+    $sqlQuery = "CALL getBarrelBalanceByID($clientID);";
+    $mMap = [];
+    $result = mysqli_query($dbConn, $sqlQuery);
+    while ($rs = mysqli_fetch_assoc($result)) {
+        $mMap[$rs['canTypeID']] = $rs;
+    }
+    $result->close();
+    $dbConn->next_result();
+    return $mMap;
+}
+
+function getFullBarrelsBalanceInStore($dbConn)
+{
+    $sql = "call getFullBarrelsBalanceInStore(0);";
+    $fArr = [];
+    $result = mysqli_query($dbConn, $sql);
+    while ($rs = mysqli_fetch_assoc($result)) {
+        $fArr[] = $rs;
+    }
+    $result->close();
+    $dbConn->next_result();
+    return $fArr;
+}

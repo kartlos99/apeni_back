@@ -42,3 +42,10 @@ const ER_CODE_ORDER_SORTING = 1101;
 const ER_CODE_ORDER_UPD_DISTRIBUTOR = 1102;
 
 const COMMON_SQL_ERROR_CODE = 2001;
+const COMMON_ERROR_CODE = 1001;
+
+
+const ER_CODE_EXTRA_BARREL_OUTPUT = 2201;
+const ER_TEXT_EXTRA_BARREL_OUTPUT = "ობიექტზე არ არის შეყვანილი რაოდენობის კასრი: %s -> %d";
+
+const ER_TEXT_EXTRA_BARREL_SALE = "საწყობში არავაქვს ამდენი რაოდენობა!";
