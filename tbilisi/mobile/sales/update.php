@@ -1,4 +1,5 @@
 <?php
+
 namespace Apeni\JWT;
 // ---------- gadascem dRes, gibrunebs shekveTebs ----------
 
@@ -91,15 +92,18 @@ if (isset($postData->barrels) && count($postData->barrels) > 0) {
 }
 
 if (isset($postData->money)) {
+    $moneyItm = $postData->money[0];
 
-    $takeMoneyDate = $postData->money->takeMoneyDate;
-    $amount = $postData->money->amount;
-    $id = $postData->money->ID;
+    $takeMoneyDate = $moneyItm->takeMoneyDate;
+    $amount = $moneyItm->amount;
+    $paymentType = $moneyItm->paymentType;
+    $id = $moneyItm->ID;
 
     $moneyUpdateSql = "
     UPDATE `moneyoutput` SET
         `tarigi` = '$takeMoneyDate',
         `tanxa` = '$amount',
+        `paymentType` = '$paymentType',
         `comment` = $saleComment,
         `modifyDate` = '$timeOnServer',
         `modifyUserID` = $postData->modifyUserID

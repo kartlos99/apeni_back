@@ -1,4 +1,5 @@
 <?php
+
 namespace Apeni\JWT;
 // ---------- chanaweris amogeba (redaqtirebistvis) ----------
 
@@ -60,6 +61,7 @@ if ($id != 0) {
             `obieqtis_id` AS clientID,
             `distributor_id` AS distributorID,
             `tanxa` AS amount,
+            `paymentType`,
             `comment`
         FROM
             `moneyoutput`

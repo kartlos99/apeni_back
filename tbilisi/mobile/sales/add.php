@@ -1,4 +1,5 @@
 <?php
+
 namespace Apeni\JWT;
 // ---------- gadascem dRes, gibrunebs shekveTebs ----------
 
@@ -178,11 +179,19 @@ if (isset($postData->barrels)) {
 
 if (isset($postData->money)) {
 
-    $takeMoneyDate = $postData->money->takeMoneyDate;
-    $amount = $postData->money->amount;
+    $multiValue = "";
+    for ($i = 0; $i < count($postData->money); $i++) {
+        $moneyItm = $postData->money[$i];
 
-    $multiValue = "('$takeMoneyDate', '$postData->clientID', '$postData->distributorID', 
-        '$amount', $saleComment, '$timeOnServer', '$postData->modifyUserID')";
+        $takeMoneyDate = $moneyItm->takeMoneyDate;
+        $amount = $moneyItm->amount;
+        $paymentType = $moneyItm->paymentType;
+
+        if ($i > 0) $multiValue .= ",";
+
+        $multiValue .= "('$takeMoneyDate', '$postData->clientID', '$postData->distributorID', 
+        '$amount', '$paymentType', $saleComment, '$timeOnServer', '$postData->modifyUserID')";
+    }
 
     $moneyInsertSql = "
     INSERT INTO `moneyoutput`(
@@ -190,6 +199,7 @@ if (isset($postData->money)) {
         `obieqtis_id`,
         `distributor_id`,
         `tanxa`,
+        `paymentType`,
         `comment`,
         `modifyDate`,
         `modifyUserID`
