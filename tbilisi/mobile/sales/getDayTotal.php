@@ -11,7 +11,8 @@ $distrId = $_GET["distrid"];
 
 $barrelFilterByDistr = $distrId == 0 ? "" : " AND distributorID = '$distrId' ";
 
-$sqlMoney = "SELECT round(IFNULL(sum(tanxa),0),2) AS money FROM `moneyoutput` WHERE DATE(tarigi) = '$receivedDate' ";
+$sqlMoney = "SELECT `paymentType`, round(IFNULL(sum(tanxa),0),2) AS amount FROM `moneyoutput` WHERE DATE(tarigi) = '$receivedDate'
+ GROUP BY `paymentType`";
 $sqlBarrelOutput = "
 SELECT canTypeID, SUM(backCount) AS backCount, SUM(saleCount) as saleCount from ( SELECT
     `canTypeID`,
@@ -69,11 +70,11 @@ while ($rs = mysqli_fetch_assoc($saleResult)) {
     $saleArr[] = $rs;
 }
 
-//$moneyArr = [];
-$moneyAmount = 0;
+$moneyArr = [];
 $moneyResult = mysqli_query($con, $sqlMoney);
-if (mysqli_num_rows($moneyResult) > 0)
-    $moneyAmount = mysqli_fetch_assoc($moneyResult)['money'];
+while ($rs = mysqli_fetch_assoc($moneyResult)) {
+    $moneyArr[] = $rs;
+}
 
 $barrelArr = [];
 $barrelResult = mysqli_query($con, $sqlBarrelOutput);
@@ -89,7 +90,7 @@ while ($rs = mysqli_fetch_assoc($xarjResult)) {
 
 $resultArr = [];
 $resultArr['sale'] = $saleArr;
-$resultArr['takenMoney'] = $moneyAmount;
+$resultArr['takenMoney'] = $moneyArr;
 $resultArr['barrels'] = $barrelArr;
 $resultArr[XARJI] = $xarjArr;
 
