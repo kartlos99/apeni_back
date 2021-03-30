@@ -49,3 +49,7 @@ const ER_CODE_EXTRA_BARREL_OUTPUT = 2201;
 const ER_TEXT_EXTRA_BARREL_OUTPUT = "ობიექტზე არ არის შეყვანილი რაოდენობის კასრი: %s -> %d";
 
 const ER_TEXT_EXTRA_BARREL_SALE = "საწყობში არავაქვს ამდენი რაოდენობა!";
+
+const ER_CODE_ADD_SALES = 2203;
+const ER_CODE_BARREL_OUTPUT = 2204;
+const ER_CODE_MONEY_OUTPUT = 2205;

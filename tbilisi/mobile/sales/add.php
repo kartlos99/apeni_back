@@ -130,10 +130,49 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
         $response[DATA] = "sale-done";
         if ($shouldChangeStatus)
             $orderHelper->checkOrderCompletion($orderID);
+
+        if ($postData->isReplace == 1) {
+
+            $multiValue = "";
+            for ($i = 0; $i < count($postData->sales); $i++) {
+                $saleItem = $postData->sales[$i];
+
+                $outputDate = $saleItem->saleDate;
+                $canTypeID = $saleItem->canTypeID;
+                $count = $saleItem->count;
+
+                if ($i > 0) {
+                    $multiValue .= ",";
+                }
+                $multiValue .= "('$outputDate', '$postData->clientID', '$postData->distributorID', '$canTypeID', '$count', $saleComment, '$timeOnServer', '$postData->modifyUserID')";
+            }
+
+            $barrelsInsertSql = "
+                INSERT INTO `barrel_output`(
+                    `outputDate`,
+                    `clientID`,
+                    `distributorID`,
+                    `canTypeID`,
+                    `count`,
+                    `comment`,
+                    `modifyDate`,
+                    `modifyUserID`
+                )
+                VALUES " . $multiValue;
+
+//            echo $barrelsInsertSql . " ";
+            if (mysqli_query($con, $barrelsInsertSql))
+                $response[DATA] .= "-replace-";
+            else {
+                $response[SUCCESS] = false;
+                $response[ERROR_TEXT] = mysqli_errno($con) . " " . mysqli_error($con);
+                $response[ERROR_CODE] = ER_CODE_BARREL_OUTPUT;
+            }
+        }
     } else {
         $response[SUCCESS] = false;
-        $response[ERROR_TEXT] = mysqli_error($con);
-        $response[ERROR_CODE] = mysqli_errno($con);
+        $response[ERROR_TEXT] = mysqli_errno($con) . " " . mysqli_error($con);
+        $response[ERROR_CODE] = ER_CODE_ADD_SALES;
     }
 }
 
@@ -172,12 +211,12 @@ if (isset($postData->barrels)) {
         $response[DATA] .= " barrel-done";
     } else {
         $response[SUCCESS] = false;
-        $response[ERROR_TEXT] = mysqli_error($con);
-        $response[ERROR_CODE] = mysqli_errno($con);
+        $response[ERROR_TEXT] = mysqli_errno($con) . " " . mysqli_error($con);
+        $response[ERROR_CODE] = ER_CODE_BARREL_OUTPUT;
     }
 }
 
-if (isset($postData->money)) {
+if (isset($postData->money) && count($postData->money) > 0) {
 
     $multiValue = "";
     for ($i = 0; $i < count($postData->money); $i++) {
@@ -210,8 +249,8 @@ if (isset($postData->money)) {
         $response[DATA] .= " money-done";
     } else {
         $response[SUCCESS] = false;
-        $response[ERROR_TEXT] = mysqli_error($con);
-        $response[ERROR_CODE] = mysqli_errno($con);
+        $response[ERROR_TEXT] = mysqli_errno($con) . " " . mysqli_error($con);
+        $response[ERROR_CODE] = ER_CODE_MONEY_OUTPUT;
     }
 }
 
