@@ -11,8 +11,7 @@ $distrId = $_GET["distrid"];
 
 $barrelFilterByDistr = $distrId == 0 ? "" : " AND distributorID = '$distrId' ";
 
-$sqlMoney = "SELECT `paymentType`, round(IFNULL(sum(tanxa),0),2) AS amount FROM `moneyoutput` WHERE DATE(tarigi) = '$receivedDate'
- GROUP BY `paymentType`";
+$sqlMoney = "SELECT `paymentType`, round(IFNULL(sum(tanxa),0),2) AS amount FROM `moneyoutput` WHERE DATE(tarigi) = '$receivedDate' ";
 $sqlBarrelOutput = "
 SELECT canTypeID, SUM(backCount) AS backCount, SUM(saleCount) as saleCount from ( SELECT
     `canTypeID`,
@@ -52,14 +51,16 @@ WHERE
 ";
 
 $grouping = " GROUP BY s.beerID ";
+$groupMoney = " GROUP BY `paymentType` ";
 
 if ($distrId == 0) {
     $sqlSale .= $grouping;
+    $sqlMoney .= $groupMoney;
 } else {
     // konkretuli distributori .....
     $sqlSale .= " AND s.distributorID = '$distrId' " . $grouping;
 
-    $sqlMoney .= " AND distributor_id = '$distrId' ";
+    $sqlMoney .= " AND distributor_id = '$distrId' " . $groupMoney;
 
     $sqlXarji .= " AND `distributor_id` = $distrId";
 }
