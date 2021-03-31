@@ -262,7 +262,7 @@ echo json_encode($response);
 
 function getBalanceMap($dbConn, $clientID = 0)
 {
-    $sqlQuery = "CALL getBarrelBalanceByID($clientID);";
+    $sqlQuery = "CALL getBarrelBalanceByID($clientID, 0);";
     $mMap = [];
     $result = mysqli_query($dbConn, $sqlQuery);
     while ($rs = mysqli_fetch_assoc($result)) {

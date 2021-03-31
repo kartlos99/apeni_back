@@ -30,6 +30,23 @@ if (empty($postData->comment)) {
 
 if (isset($postData->sales) && count($postData->sales) > 0) {
     $saleItem = $postData->sales[0];
+
+    // Check for balance in Storehouse
+    $storeBalanceArr = getFullBarrelsBalanceInStore($con, $saleItem->ID);
+    $stRow = [];
+    array_filter($storeBalanceArr, function ($stItem) {
+        global $stRow;
+        global $saleItem;
+        if ($stItem['beerID'] == $saleItem->beerID && $stItem['barrelID'] == $saleItem->canTypeID) {
+            $stRow = $stItem;
+            return true;
+        }
+        return false;
+    });
+    if (!isset($stRow['balance']) || $stRow['balance'] < $saleItem->count)
+        dieWithError(COMMON_ERROR_CODE, ER_TEXT_EXTRA_BARREL_SALE);
+
+
     $response[DATA] = $saleItem->ID;
     if ($saleItem->ID > 0) {
 
@@ -67,6 +84,16 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
 
 if (isset($postData->barrels) && count($postData->barrels) > 0) {
     $barrelItem = $postData->barrels[0];
+
+    // check for valid empty barrel amount
+    $balanceMap = getBalanceMap($con, $postData->clientID, $barrelItem->ID);
+    if (!isset($balanceMap[$barrelItem->canTypeID]) || $barrelItem->count > $balanceMap[$barrelItem->canTypeID]['balance']) {
+        dieWithError(
+            ER_CODE_EXTRA_BARREL_OUTPUT,
+            sprintf(ER_TEXT_EXTRA_BARREL_OUTPUT, $balanceMap[$barrelItem->canTypeID]['dasaxeleba'], $barrelItem->count)
+        );
+    }
+
     $response[DATA] = $barrelItem->ID;
     if ($barrelItem->ID > 0) {
 
@@ -85,13 +112,13 @@ if (isset($postData->barrels) && count($postData->barrels) > 0) {
             $response[DATA] = "barrel-updated";
         } else {
             $response[SUCCESS] = false;
-            $response[ERROR_TEXT] = mysqli_error($con);
-            $response[ERROR_CODE] = mysqli_errno($con);
+            $response[ERROR_TEXT] = mysqli_errno($con) . " $barrelsUpdateSql " . mysqli_error($con);
+            $response[ERROR_CODE] = ER_CODE_BARREL_OUTPUT;
         }
     }
 }
 
-if (isset($postData->money)) {
+if (isset($postData->money) && count($postData->money) > 0) {
     $moneyItm = $postData->money[0];
 
     $takeMoneyDate = $moneyItm->takeMoneyDate;
@@ -123,3 +150,29 @@ echo json_encode($response);
 
 // $response[DATA] = $sql;
 // die(json_encode($response));
+
+function getBalanceMap($dbConn, $clientID, $exceptRecID)
+{
+    $sqlQuery = "CALL getBarrelBalanceByID($clientID, $exceptRecID);";
+    $mMap = [];
+    $result = mysqli_query($dbConn, $sqlQuery);
+    while ($rs = mysqli_fetch_assoc($result)) {
+        $mMap[$rs['canTypeID']] = $rs;
+    }
+    $result->close();
+    $dbConn->next_result();
+    return $mMap;
+}
+
+function getFullBarrelsBalanceInStore($dbConn, $exceptRecID)
+{
+    $sql = "call getFullBarrelsBalanceInStore(0, $exceptRecID);";
+    $fArr = [];
+    $result = mysqli_query($dbConn, $sql);
+    while ($rs = mysqli_fetch_assoc($result)) {
+        $fArr[] = $rs;
+    }
+    $result->close();
+    $dbConn->next_result();
+    return $fArr;
+}
