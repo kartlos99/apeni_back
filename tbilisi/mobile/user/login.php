@@ -37,6 +37,15 @@ if (mysqli_num_rows($result) == 1) {
     $token = JWT::encode($payload, SECRET_KEY);
     $userData['token'] = $token;
 
+    $sqlPermissions = "SELECT `permissionID` FROM `permission_mapping` WHERE `roleID` = " . $userData['type'];
+    $permResult = mysqli_query($con, $sqlPermissions);
+    $permissions = [];
+    while ($rs = mysqli_fetch_assoc($permResult)) {
+        $permissions[] = $rs['permissionID'];
+    }
+
+    $userData['permissions'] = $permissions;
+
     $response[DATA] = $userData;
 } else {
     $response[SUCCESS] = false;

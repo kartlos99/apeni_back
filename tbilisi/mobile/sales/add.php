@@ -275,7 +275,7 @@ function getBalanceMap($dbConn, $clientID = 0)
 
 function getFullBarrelsBalanceInStore($dbConn)
 {
-    $sql = "call getFullBarrelsBalanceInStore(0);";
+    $sql = "call getFullBarrelsBalanceInStore(0, 0);";
     $fArr = [];
     $result = mysqli_query($dbConn, $sql);
     while ($rs = mysqli_fetch_assoc($result)) {
