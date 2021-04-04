@@ -59,7 +59,7 @@ if ($pos !== false) {
     $thisPage = 'currentOrders';
 }
 
-if ($userType != ADMIN && $thisPage != 'currentOrders')
+if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
     header("Location: logout.php");
 
 ?>
@@ -78,7 +78,7 @@ if ($userType != ADMIN && $thisPage != 'currentOrders')
         </div>
 
         <ul class="list-unstyled components">
-            <?php if ($userType == ADMIN) : ?>
+            <?php if ($userType == USERTYPE_ADMIN) : ?>
             <li class="index">
                 <a href="index.php">თვის შედეგები</a>
             </li>

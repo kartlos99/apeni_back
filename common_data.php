@@ -8,8 +8,9 @@ define('DATA', 'data');
 define('XARJI', 'xarji');
 define('ID', 'ID');
 
-const ADMIN = 2;
-const DISTRIBUTOR = 1;
+const USERTYPE_ADMIN = 9;
+const USERTYPE_MANAGER = 10;
+const USERTYPE_DISTRIBUTOR = 11;
 
 const HOUR_DIFF_ON_SERVER = 2; // home 2 hour, on server 4 hour
 
@@ -53,3 +54,12 @@ const ER_TEXT_EXTRA_BARREL_SALE = "საწყობში არავაქ�
 const ER_CODE_ADD_SALES = 2203;
 const ER_CODE_BARREL_OUTPUT = 2204;
 const ER_CODE_MONEY_OUTPUT = 2205;
+
+const ER_CODE_NO_PERMISSION = 1401;
+const ER_TEXT_NO_PERMISSION = "არაგაქვთ ოპერაციის განხორციელების უფლება!";
+
+const ER_CODE_CANT_CHECK_DEBT = 3001;
+const ER_TEXT_CANT_CHECK_DEBT = "ვერ მოხერხდა დავალიანების გამოთვლა!";
+
+const ER_CODE_DEBT_ON_CLIENT = 3002;
+const ER_TEXT_DEBT_ON_CLIENT = "ობიექტზე არსებობს დავალიანება!";

@@ -9,7 +9,7 @@ include_once('../commonWeb/php/loginScript.php'); // Includes Login Script
 
 if (isset($_SESSION['username'])) {
 
-    if ($_SESSION['usertype'] == ADMIN)
+    if ($_SESSION['usertype'] == USERTYPE_ADMIN)
         header('location: index.php');
     else
         header('location: currentOrders.php');
