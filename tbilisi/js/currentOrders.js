@@ -43,7 +43,7 @@ function getOrders() {
                 let oData = resp.data
 
                 let sordedData = oData.sort(function (a, b) {
-                    if (a.client < b.client)
+                    if (a.sortValue < b.sortValue)
                         return 1;
                     else
                         return -1

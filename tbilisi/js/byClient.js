@@ -1,16 +1,16 @@
-
-var currDate = new Date();
-var strDate1 = dateformat(currDate);
+let currDate = new Date();
+let strDate1 = dateformat(currDate);
 currDate.setDate(currDate.getDate() + 1);
-var strDate2 = dateformat(currDate);
+let strDate2 = dateformat(currDate);
 
 let dateInput1 = $('#date1');
 let dateInput2 = $('#date2');
+let summaryContainer = $('#summary');
 
 $('#btnDone').on('click', function (e) {
     clientID = $('#selectClient').val();
     window.location.href = "../commonWeb/php/clientDataToExcel.php?clientID=" + clientID
-    + "&startDate=" + dateInput1.val() + "&endDate=" + dateInput2.val();
+        + "&startDate=" + dateInput1.val() + "&endDate=" + dateInput2.val();
 });
 
 $(document).ready(function () {
@@ -54,34 +54,52 @@ function getData(date1, date2) {
                         beerIds.push(item.beerID);
                         beerObjects.push(
                             {
-                                'name' : item.beerName,
-                                'id' : item.beerID,
+                                'name': item.beerName,
+                                'id': item.beerID,
                                 'data': [],
+                                'summary': 0,
                                 'color': item.color
                             }
                         );
                     }
-                })
+                });
+
+                beerObjects.sort(function (a, b) {
+                    if (a.id < b.id)
+                        return 1
+                    else
+                        return -1
+                });
 
                 let grByClient = groupBy(sData, x => parseInt(x.clientID));
 
-                grByClient.forEach(function (client) {
+                let sorted = new Map([...grByClient.entries()].sort(function (a, b) {
+                    let reducer = (acum, currVal) => acum + parseInt(currVal.liter);
+                    let sum_a = a[1].reduce(reducer, 0);
+                    let sum_b = b[1].reduce(reducer, 0);
+                    if (sum_a < sum_b)
+                        return 1
+                    else
+                        return -1
+                }));
+
+                sorted.forEach(function (client) {
                     // printout(client)
                     obieqtebi.push(client[0].clientName);
 
                     beerObjects.forEach(function (beer) {
-                        let m = client.filter( it => it.beerID == beer.id)
-                        if (m.length == 1)
+                        let m = client.filter(it => it.beerID == beer.id)
+                        if (m.length == 1) {
                             beer.data.push(parseInt(m[0].liter));
-                        else
+                            beer.summary += parseInt(m[0].liter);
+                        } else
                             beer.data.push(0);
                     });
                 });
 
-                drawChart()
-
+                showSummaryAmount();
+                drawChart();
             } else {
-                console.log(resp);
                 showError(resp.errorCode, resp.errorText);
             }
         }
@@ -90,11 +108,16 @@ function getData(date1, date2) {
 
 function drawChart() {
 
-    var optionO = {
+    let optionO = {
         chart: {
             type: 'bar'
         },
         tooltip: {
+            formatter: function() {
+                return '<b>' + this.x + '</b></br>'
+                    + this.series.name + ': <b>' + this.y
+                    + '</b></br>სულ: <b>' + this.total + '</b>';
+            }
         },
         title: {
             text: "რეალიზაცია ობიექტების მიხედვით"
@@ -121,6 +144,15 @@ function drawChart() {
         series: beerObjects
     };
 
-    optionO.chart.height = obieqtebi.length * 30 +160 + 'px';
+    optionO.chart.height = obieqtebi.length * 30 + 160 + 'px';
     Highcharts.chart('container1', optionO);
+}
+
+function showSummaryAmount() {
+    summaryContainer.empty();
+    beerObjects.forEach(function (beerObj) {
+        let itm = $('<li />').text(beerObj.name + ": " + beerObj.summary);
+        summaryContainer.prepend(itm);
+    })
+    summaryContainer.prepend($('<span />').text("ჯამური ლიტრაჟი"));
 }

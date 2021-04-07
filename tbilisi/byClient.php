@@ -31,8 +31,20 @@ $clients = $dataProvider->getClients();
         </tr>
     </table>
 
-    <button id="btnDone" class="btn">ჩამოტვირთვა</button>
-    <button id="btnUpdateChart" class="btn">დიაგრამის განახლება</button>
+<table width="100%">
+    <tr>
+        <td>
+            <button id="btnDone" class="btn">ჩამოტვირთვა</button>
+            <button id="btnUpdateChart" class="btn">დიაგრამის განახლება</button>
+        </td>
+        <td>
+            <div id="summary"></div>
+        </td>
+    </tr>
+</table>
+
+
+
 
 
     <div>
