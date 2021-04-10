@@ -4,7 +4,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 
 // Takes raw data from the request
 $json = file_get_contents('php://input');
@@ -19,16 +19,34 @@ if (empty($postData->comment)) {
 
 $operTime = $timeOnServer;
 
-if ($postData->operationTime != "") {
+// check for valid barrels values
+if (isset($postData->outputBarrels) && count($postData->outputBarrels) > 0) {
+    $actualdate = $postData->operationTime ;
+    $balanceMap = getEmptyBarrelsBalanceMap($con, $actualdate, $postData->groupID);
+
+    foreach ($postData->outputBarrels as $barrelOutput) {
+        if (!isset($balanceMap[$barrelOutput->canTypeID]) || $balanceMap[$barrelOutput->canTypeID]['balance'] < $barrelOutput->count) {
+            dieWithError(
+                ER_CODE_EXTRA_BARREL_OUTPUT_STORE,
+                sprintf(ER_TEXT_EXTRA_BARREL_OUTPUT_STORE,
+                    $actualdate,
+                    $balanceMap[$barrelOutput->canTypeID]['dasaxeleba'],
+                    $barrelOutput->count)
+            );
+        }
+    }
+}
+
+//if ($postData->operationTime != "") {
 
     $operTime = $postData->operationTime;
 
-    $sqlDeleteBeerInput = "DELETE FROM `storehousebeerinpit` WHERE `inputDate` = '$postData->operationTime'";
-    $sqlDeleteBarrelOutput = "DELETE FROM `storehousebarreloutput` WHERE `outputDate` = '$postData->operationTime'";
+    $sqlDeleteBeerInput = "DELETE FROM `storehousebeerinpit` WHERE `groupID` = '$postData->groupID'";
+    $sqlDeleteBarrelOutput = "DELETE FROM `storehousebarreloutput` WHERE `groupID` = '$postData->groupID'";
     mysqli_query($con, $sqlDeleteBarrelOutput);
     mysqli_query($con, $sqlDeleteBeerInput);
     $response[DATA] = "items Removed!";
-}
+//}
 
 if (isset($postData->inputBeer) && count($postData->inputBeer) > 0) {
 
@@ -47,11 +65,12 @@ if (isset($postData->inputBeer) && count($postData->inputBeer) > 0) {
         if ($i > 0) {
             $multiValue .= ",";
         }
-        $multiValue .= "('$operTime', '$postData->modifyUserID', '$beerID',
-        '$canTypeID', '$count', '$postData->chek', $comment, '$timeOnServer', '$postData->modifyUserID')";
+        $multiValue .= "('$postData->groupID', '$operTime', '$sessionData->userID', '$beerID',
+        '$canTypeID', '$count', '$postData->chek', $comment, '$timeOnServer', '$sessionData->userID')";
     }
 
     $sql = "INSERT INTO `storehousebeerinpit`(
+        `groupID`,                                  
         `inputDate`,
         `distributorID`,
         `beerID`,
@@ -90,11 +109,12 @@ if (isset($postData->outputBarrels) && count($postData->outputBarrels) > 0) {
         if ($i > 0) {
             $multiValue .= ",";
         }
-        $multiValue .= "('$operTime', '$postData->modifyUserID', '$canTypeID', '$count', 
-        '$postData->chek', $comment, '$timeOnServer', '$postData->modifyUserID')";
+        $multiValue .= "('$postData->groupID', '$operTime', '$sessionData->userID', '$canTypeID', '$count', 
+        '$postData->chek', $comment, '$timeOnServer', '$sessionData->userID')";
     }
 
     $sql = "INSERT INTO `storehousebarreloutput`(
+        `groupID`,
         `outputDate`,
         `distributorID`,
         `barrelID`,
@@ -106,8 +126,6 @@ if (isset($postData->outputBarrels) && count($postData->outputBarrels) > 0) {
     )
     VALUES " . $multiValue;
 
-// $response[DATA] = $sql;
-// die(json_encode($response));
     if (mysqli_query($con, $sql)) {
         $response[DATA] = "outputBarrelFromStore-done";
     } else {
@@ -118,9 +136,20 @@ if (isset($postData->outputBarrels) && count($postData->outputBarrels) > 0) {
 }
 
 
-
-
 echo json_encode($response);
 
 // $response[DATA] = $sql;
 // die(json_encode($response));
+
+function getEmptyBarrelsBalanceMap($dbConn, $date, $exceptGroupID)
+{
+    $sqlQuery = "CALL getEmptyBarrelsInStore('$date', '$exceptGroupID');";
+    $mMap = [];
+    $result = mysqli_query($dbConn, $sqlQuery);
+    while ($rs = mysqli_fetch_assoc($result)) {
+        $mMap[$rs['canTypeID']] = $rs;
+    }
+    $result->close();
+    $dbConn->next_result();
+    return $mMap;
+}

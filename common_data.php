@@ -47,7 +47,10 @@ const COMMON_ERROR_CODE = 1001;
 
 
 const ER_CODE_EXTRA_BARREL_OUTPUT = 2201;
-const ER_TEXT_EXTRA_BARREL_OUTPUT = "ობიექტზე არ არის შეყვანილი რაოდენობის კასრი: %s -> %d";
+const ER_TEXT_EXTRA_BARREL_OUTPUT = "შეყვანილი რაოდენობის კასრი არ არის ობიექტზე: %s -> %d";
+
+const ER_CODE_EXTRA_BARREL_OUTPUT_STORE = 2202;
+const ER_TEXT_EXTRA_BARREL_OUTPUT_STORE = "შეყვანილი რაოდენობის ცარელი კასრი არ არის საწყობში, მითითებული დროისთვის.\nდრო: %s, \n%s -> %d";
 
 const ER_TEXT_EXTRA_BARREL_SALE = "საწყობში არავაქვს ამდენი რაოდენობა!";
 

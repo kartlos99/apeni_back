@@ -6,18 +6,19 @@ header("Content-Type: application/json; charset=UTF-8");
 require_once('../connection.php');
 checkToken();
 
-$operationTime = $_GET['operationTime'];
+$groupID = $_GET['groupID'];
 
-$filterInput = $operationTime == "" ? "" : "WHERE inputDate = '$operationTime' ";
-$filterOutput = $operationTime == "" ? "" : "WHERE outputDate = '$operationTime' ";
+$filterInput = $groupID == "" ? "" : "WHERE groupID = '$groupID' ";
+$filterOutput = $groupID == "" ? "" : "WHERE groupID = '$groupID' ";
 
 $sql =
-    "SELECT `ID`, `inputDate` AS ioDate, `distributorID`, `beerID`, `barrelID`, `count`, `chek`, `comment`, `modifyDate`, `modifyUserID` " .
+    "SELECT `ID`, `groupID`, `inputDate` AS ioDate, `distributorID`, `beerID`, `barrelID`, `count`, `chek`, `comment`, `modifyDate`, `modifyUserID` " .
     "FROM `storehousebeerinpit` " . $filterInput .
     "UNION " .
-    "SELECT `ID`, `outputDate` AS ioDate, `distributorID`, 0 AS `beerID`, `barrelID`, `count`, `chek`, `comment`, `modifyDate`, `modifyUserID` " .
+    "SELECT `ID`, `groupID`, `outputDate` AS ioDate, `distributorID`, 0 AS `beerID`, `barrelID`, `count`, `chek`, `comment`, `modifyDate`, `modifyUserID` " .
     "FROM `storehousebarreloutput` " . $filterOutput .
-    "ORDER BY ioDate DESC, beerID";
+    "ORDER BY ioDate DESC, beerID
+    limit 50 ";
 
 
 $arr = [];
