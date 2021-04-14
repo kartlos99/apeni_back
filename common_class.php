@@ -31,7 +31,9 @@ class OrderHelper
 
 
         $sql =
-            "SELECT `orderID`, `beerID`, `chek`,`canTypeID`, sum(`count`) AS `count` FROM `sales` 
+            "SELECT `orderID`, `beerID`, `chek`,`canTypeID`, sum(`count`) AS `count`, u.username AS distributor FROM `sales` s 
+            LEFT JOIN users u 
+            ON u.id = s.`modifyUserID` 
             WHERE `orderID` IN ($orderIDs)
             GROUP BY `orderID`, `beerID`, `canTypeID`";
 
@@ -61,6 +63,68 @@ class OrderHelper
             $orders[$index]['sales'] = $oSales;
         }
 
+        return $orders;
+    }
+
+    function attachTakenMoney($orders, $date) {
+        $clientIDs = "";
+        foreach ($orders as $order) {
+            $clientIDs .= $order['clientID'] . ',';
+        }
+        $clientIDs = trim($clientIDs, ',');
+
+        $sqlMoneyPerClient =
+            "SELECT `obieqtis_id`, `distributor_id`, SUM(`tanxa`) AS money FROM `moneyoutput` 
+                WHERE date(`tarigi`) = '$date' AND `obieqtis_id` IN ($clientIDs)
+                GROUP BY `obieqtis_id` ";
+
+        $moneyArr = [];
+        $resultMoney = mysqli_query($this->con, $sqlMoneyPerClient);
+        if (mysqli_num_rows($resultMoney) > 0)
+            while ($rs = mysqli_fetch_assoc($resultMoney)) {
+                $moneyArr[] = $rs;
+            }
+
+        foreach ($orders as $index => $order) {
+            $amount = [];
+            foreach ($moneyArr as $item) {
+                if ($order['clientID'] == $item['obieqtis_id']) {
+                    $amount[] = $item;
+                }
+            }
+            $orders[$index]['amount'] = $amount;
+        }
+        return $orders;
+    }
+
+    function attachEmptyBarrels($orders, $date) {
+        $clientIDs = "";
+        foreach ($orders as $order) {
+            $clientIDs .= $order['clientID'] . ',';
+        }
+        $clientIDs = trim($clientIDs, ',');
+
+        $sqlBarrelsPerClient =
+            "SELECT `clientID`, `distributorID`, `canTypeID`, SUM(`count`) AS `count` FROM `barrel_output` 
+                WHERE date(`outputDate`) = '$date' AND `clientID` IN ($clientIDs)
+                GROUP BY `clientID`, `canTypeID` ";
+
+        $arr = [];
+        $result = mysqli_query($this->con, $sqlBarrelsPerClient);
+        if (mysqli_num_rows($result) > 0)
+            while ($rs = mysqli_fetch_assoc($result)) {
+                $arr[] = $rs;
+            }
+
+        foreach ($orders as $index => $order) {
+            $barrels = [];
+            foreach ($arr as $item) {
+                if ($order['clientID'] == $item['clientID']) {
+                    $barrels[] = $item;
+                }
+            }
+            $orders[$index]['emptyBarrels'] = $barrels;
+        }
         return $orders;
     }
 
