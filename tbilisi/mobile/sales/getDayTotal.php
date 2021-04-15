@@ -21,7 +21,7 @@ FROM
     `barrel_output`
 WHERE
     DATE(`outputDate`) = '$receivedDate' $barrelFilterByDistr
-UNION
+UNION ALL
 SELECT
     `canTypeID`,
     0 AS backCount,
