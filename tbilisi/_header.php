@@ -74,7 +74,7 @@ if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
     <nav id="sidebar">
         <div class="sidebar-header">
             <h3 id="loged_username"><?= $_SESSION['username'] ?></h3>
-            <h5><?= $userType == 2 ? "admin" : "user" ?></h5>
+            <h5><?= $userType == USERTYPE_ADMIN ? "admin" : "user" ?></h5>
         </div>
 
         <ul class="list-unstyled components">
