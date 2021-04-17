@@ -16,7 +16,7 @@ $orders = [];
 $orderHelper = new OrderHelper($con);
 
 $sql = "
-SELECT o.*, di.code AS orderStatus , ifnull(cr.needCleaning, 0) AS needCleaning,
+SELECT o.*, di.code AS orderStatus , ifnull(cr.needCleaning, 0) AS needCleaning, ifnull(cr.passDays, 0) AS passDays,
        (SELECT COUNT(ID) FROM `orders_history` WHERE `ID` = o.id) AS isEdited
 FROM `orders` o
 LEFT JOIN dictionary_items di ON di.id = o.orderStatusID

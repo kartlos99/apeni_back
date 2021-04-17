@@ -7,7 +7,7 @@ require_once('../connection.php');
 checkToken();
 $clientID = $_GET["clientID"];
 
-$sql = "SELECT dbt.*, ifnull(cr.needCleaning, 0) AS needCleaning FROM `clients_debt` dbt
+$sql = "SELECT dbt.*, ifnull(cr.needCleaning, 0) AS needCleaning, ifnull(cr.passDays, 0) AS passDays FROM `clients_debt` dbt
 LEFT JOIN cleaningreport cr
 ON dbt.`clientID` = cr.clientID 
 WHERE dbt.`clientID` = $clientID";
