@@ -12,9 +12,12 @@ $orderID = $_GET["orderID"];
 
 
 $sqlOrderHistory =
-    "SELECT * FROM `orders_history` WHERE `ID` = $orderID
-UNION
-SELECT 0, o.* FROM `orders` o WHERE `ID` = $orderID;";
+    "SELECT oh.*, d.code AS orderStatus FROM 
+        (SELECT * FROM `orders_history` WHERE `ID` = $orderID
+        UNION
+        SELECT 0, o.* FROM `orders` o WHERE `ID` = $orderID ) oh
+     LEFT JOIN dictionary_items d 
+         ON d.id = oh.orderStatusId;";
 
 $sqlOrderItemHistory =
     "SELECT * FROM `order_items_history` WHERE orderID = $orderID
