@@ -15,7 +15,9 @@ WHERE dbt.`clientID` = $clientID";
 $result = mysqli_query($con, $sql);
 
 if ($result) {
-    $response[DATA] = mysqli_fetch_assoc($result);
+    $dataArr = mysqli_fetch_assoc($result);
+    $dataArr['barrels'] = getBarrelsBalanceList($con, $clientID);
+    $response[DATA] = $dataArr;
 } else {
     $response[SUCCESS] = false;
     $response[ERROR_TEXT] = "can't get debt!";
@@ -25,3 +27,18 @@ if ($result) {
 echo json_encode($response);
 
 mysqli_close($con);
+
+
+function getBarrelsBalanceList($dbConn, $clientID = 0)
+{
+    $sqlQuery = "CALL getBarrelBalanceByID($clientID, 0);";
+    $arr = [];
+    $result = mysqli_query($dbConn, $sqlQuery);
+    while ($rs = mysqli_fetch_assoc($result)) {
+        if ($rs['balance'] != 0)
+            $arr[] = $rs;
+    }
+    $result->close();
+    $dbConn->next_result();
+    return $arr;
+}
