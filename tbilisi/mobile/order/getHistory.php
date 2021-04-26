@@ -21,7 +21,8 @@ $sqlOrderHistory =
 $sqlOrderItemHistory =
     "SELECT * FROM `order_items_history` WHERE orderID = $orderID
 UNION
-SELECT 0, oit.*, 0 FROM `order_items` oit WHERE orderID = $orderID;";
+SELECT 0, oit.*, 0 FROM `order_items` oit WHERE orderID = $orderID
+ORDER BY modifyDate, beerID ;";
 
 $orders = [];
 $result = mysqli_query($con, $sqlOrderHistory);
