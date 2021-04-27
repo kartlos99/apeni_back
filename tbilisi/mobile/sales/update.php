@@ -85,13 +85,15 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
 if (isset($postData->barrels) && count($postData->barrels) > 0) {
     $barrelItem = $postData->barrels[0];
 
-    // check for valid empty barrel amount
-    $balanceMap = getBalanceMap($con, $postData->clientID, $barrelItem->ID);
-    if (!isset($balanceMap[$barrelItem->canTypeID]) || $barrelItem->count > $balanceMap[$barrelItem->canTypeID]['balance']) {
-        dieWithError(
-            ER_CODE_EXTRA_BARREL_OUTPUT,
-            sprintf(ER_TEXT_EXTRA_BARREL_OUTPUT, $balanceMap[$barrelItem->canTypeID]['dasaxeleba'], $barrelItem->count)
-        );
+    // check for valid empty barrel amount : except 'zugdidi' id=64
+    if ($postData->clientID != 64) {
+        $balanceMap = getBalanceMap($con, $postData->clientID, $barrelItem->ID);
+        if (!isset($balanceMap[$barrelItem->canTypeID]) || $barrelItem->count > $balanceMap[$barrelItem->canTypeID]['balance']) {
+            dieWithError(
+                ER_CODE_EXTRA_BARREL_OUTPUT,
+                sprintf(ER_TEXT_EXTRA_BARREL_OUTPUT, $balanceMap[$barrelItem->canTypeID]['dasaxeleba'], $barrelItem->count)
+            );
+        }
     }
 
     $response[DATA] = $barrelItem->ID;

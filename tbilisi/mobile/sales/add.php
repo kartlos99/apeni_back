@@ -38,8 +38,8 @@ $result = mysqli_query($con, $getOrderSql);
 // obieqtze bolo aqtiuri Sekvetis ID
 $orderID = mysqli_fetch_assoc($result)['orderID'];
 
-// check for valid barrels values
-if (isset($postData->barrels)) {
+// check for valid barrels values : except 'zugdidi' id=64
+if (isset($postData->barrels) && $postData->clientID != 64) {
     $balanceMap = getBalanceMap($con, $postData->clientID);
     foreach ($postData->barrels as $barrelOutput) {
         if (!isset($balanceMap[$barrelOutput->canTypeID]) || $barrelOutput->count > $balanceMap[$barrelOutput->canTypeID]['balance']) {
