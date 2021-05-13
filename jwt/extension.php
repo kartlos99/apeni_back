@@ -43,3 +43,20 @@ function getBearerToken()
     }
     return "";
 }
+
+function getRegion() {
+    $REGION_KEY = "Region";
+    $region = null;
+    if (isset($_SERVER[$REGION_KEY])) {
+        $region = trim($_SERVER[$REGION_KEY]);
+    } else if (function_exists('apache_request_headers')) {
+        $requestHeaders = apache_request_headers();
+        $requestHeaders = array_combine(array_map('ucwords',
+            array_keys($requestHeaders)),
+            array_values($requestHeaders));
+        if (isset($requestHeaders[$REGION_KEY])) {
+            $region = trim($requestHeaders[$REGION_KEY]);
+        }
+    }
+    return $region;
+}
