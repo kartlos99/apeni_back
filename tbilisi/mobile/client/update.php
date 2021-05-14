@@ -20,7 +20,7 @@ $client = $postData->obieqti;
 $prices = $postData->prices;
 
 
-$sqlUpdateClient = "UPDATE `obieqtebi` SET " .
+$sqlUpdateClient = "UPDATE $CUSTOMER_TB SET " .
     "`dasaxeleba` = '$client->dasaxeleba'," .
     "`adress` = '$client->adress'," .
     "`tel` = '$client->tel'," .

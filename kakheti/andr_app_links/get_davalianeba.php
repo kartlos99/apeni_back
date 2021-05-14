@@ -21,7 +21,7 @@ SELECT
     ifnull(k.`k30_out`, 0) AS `k30out`,
     ifnull(k.`k50_out`, 0) AS `k50out`
 FROM
-	obieqtebi AS o
+	customer AS o
 LEFT JOIN  
 	sumof_prpaykin AS s
 ON s.obj_id = o.id

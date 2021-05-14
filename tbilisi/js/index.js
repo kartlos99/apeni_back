@@ -8,9 +8,7 @@ function getSales(year) {
     $.ajax({
         url: 'webApi/getSaleByMonth.php?year=' + year,
         dataType: 'json',
-        headers: {
-            'Authorization': tkn
-        },
+        headers: getHeaders(),
         success: function (resp) {
 
             if (resp.success) {

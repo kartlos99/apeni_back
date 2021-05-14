@@ -38,9 +38,7 @@ function getData(date1, date2) {
     $.ajax({
         url: 'webApi/getClients.php?date1=' + date1 + '&date2=' + date2,
         dataType: 'json',
-        headers: {
-            'Authorization': tkn
-        },
+        headers: getHeaders(),
         success: function (resp) {
 
             if (resp.success) {

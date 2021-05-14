@@ -29,7 +29,7 @@ FROM
 LEFT JOIN ludi AS l
 ON
     b.ludis_id = l.id 
-left join obieqtebi o
+left join customer o
 ON
 	o.id = b.`obieqtis_id`
 WHERE b.obieqtis_id NOT IN(185, 187, 192) AND b.tarigi BETWEEN '$d1' AND '$d2'     

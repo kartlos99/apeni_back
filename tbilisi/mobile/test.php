@@ -79,7 +79,7 @@ require_once('connection.php');
 //header("Location: http://localhost/weblogin/login.php");
 
 $myobj = "a";
-    $sql = "select dasaxeleba from obieqtebi where id= 27";
+    $sql = "select dasaxeleba from $CUSTOMER_TB where id = 27";
     $res1 = $con->query($sql);
     while($r = mysqli_fetch_assoc($res1)){
     $myobj = $r["dasaxeleba"];
@@ -104,7 +104,7 @@ echo false;
 $dro = date("Y-m-d H:i:s", time()+4*3600);
 
 $sql = "
-    SELECT * FROM `obieqtebi`
+    SELECT * FROM $CUSTOMER_TB
     ";
 
 $sql1 = "

@@ -11,7 +11,7 @@ $objID = $_GET["objID"];
 if($objID > 0)
 {
     $myobj = "a";
-    $sql = "select dasaxeleba from obieqtebi where id= $objID";
+    $sql = "select dasaxeleba from customer where id= $objID";
     $res1 = $con->query($sql);
     while($r = mysqli_fetch_assoc($res1)){
     $myobj = $r["dasaxeleba"];

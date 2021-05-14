@@ -27,7 +27,7 @@ if($beerId == "0"){ // axali ludis chawera
 	    $newBeer_id = mysqli_insert_id($con);
 	    
 	    $id_arr = array();
-	    $sql_obj_ids = "SELECT id FROM `obieqtebi` ";
+	    $sql_obj_ids = "SELECT id FROM $CUSTOMER_TB ";
 	    
 	    $result = $con->query($sql_obj_ids);
     

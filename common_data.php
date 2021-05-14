@@ -38,7 +38,6 @@ $response[ERROR_CODE] = 0;
 $response[ERROR_TEXT] = '';
 
 
-
 const ER_CODE_ORDER_SORTING = 1101;
 const ER_CODE_ORDER_UPD_DISTRIBUTOR = 1102;
 
@@ -66,3 +65,8 @@ const ER_TEXT_CANT_CHECK_DEBT = "ვერ მოხერხდა დავა
 
 const ER_CODE_DEBT_ON_CLIENT = 3002;
 const ER_TEXT_DEBT_ON_CLIENT = "ობიექტზე არსებობს დავალიანება!";
+
+
+//  ****************  DB const values  *******************
+
+$CUSTOMER_TB = "`customer`";

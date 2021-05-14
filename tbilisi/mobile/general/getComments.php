@@ -28,7 +28,7 @@ SELECT 0 AS clientID, `comment`, `modifyDate`, `modifyUserID`, 'E' as op FROM `c
 WHERE c.`comment` <> '' AND date(c.`modifyDate`) >= '$timeForMitana'
     
     ) a
-    LEFT JOIN obieqtebi ob ON a.clientID = ob.id
+    LEFT JOIN $CUSTOMER_TB ob ON a.clientID = ob.id
     LEFT JOIN users u ON a.modifyUserID = u.id
     
 GROUP BY a.clientID, a.comment

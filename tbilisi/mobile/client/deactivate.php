@@ -30,7 +30,7 @@ if ($result) {
 } else
     dieWithError(ER_CODE_CANT_CHECK_DEBT, ER_TEXT_CANT_CHECK_DEBT);
 
-$sql = "UPDATE `obieqtebi` SET `active` = 0 WHERE `id` = " . $postData->clientID;
+$sql = "UPDATE $CUSTOMER_TB SET `active` = 0 WHERE `id` = " . $postData->clientID;
 
 if (mysqli_query($con, $sql)) {
     $response[DATA] = SUCCESS;

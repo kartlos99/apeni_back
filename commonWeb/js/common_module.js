@@ -35,6 +35,14 @@ let tkn = "Bearer " + $('#currUserdata').attr("data-tkn");
 // window.localStorage.setItem('tkn', tkn);
 $('#currUserdata').attr("data-tkn", "-");
 
+function getHeaders() {
+    return {
+        'Authorization': tkn,
+        'Client' : 'web',
+        'Region' : '1'
+    }
+}
+
 function printout(x) {
     console.log("printed:", x);
 }

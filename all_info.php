@@ -90,7 +90,7 @@ if ($logged == false){
  
 require_once('imports.php');
 
-$sql = "SELECT * FROM obieqtebi where `active`=1 order by dasaxeleba" ;
+$sql = "SELECT * FROM $CUSTOMER_TB where `active`=1 order by dasaxeleba" ;
 //$arr = array();
 $result = $con->query($sql);
 
@@ -197,7 +197,7 @@ mysqli_close($con);
         var dt2 = $('#date2').val();
         var ur = location.protocol + '//apeni.ge/results_by_obj.php?date1='+dt1+'&date2='+dt2;
         
-        // ******************** obieqtebi **************************************
+        // ******************** customer **************************************
         $.ajax({
             url: ur,
             method: 'get',

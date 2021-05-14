@@ -7,7 +7,7 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once('connection.php');
 
-$sql = "SELECT * FROM moneyoutput join users join obieqtebi on (moneyoutput.distributor_id = users.id) and (moneyoutput.obieqtis_id = obieqtebi.id) where obieqtis_id = '2'" ;
+$sql = "SELECT * FROM moneyoutput join users join customer on (moneyoutput.distributor_id = users.id) and (moneyoutput.obieqtis_id = customer.id) where obieqtis_id = '2'" ;
 $arr = array();
 $result = $con->query($sql);
     

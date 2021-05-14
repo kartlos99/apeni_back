@@ -9,7 +9,7 @@ require_once('connection.php');
 checkToken();
 
 $sql = "SELECT * FROM ludi where `active`=1 order by id" ;
-// $sql = "SELECT * FROM obieqtebi where `active`=1 order by dasaxeleba" ;
+// $sql = "SELECT * FROM $CUSTOMER_TB where `active`=1 order by dasaxeleba" ;
 $arr = array();
 // $result = $con->query($sql);
 $result = mysqli_query($con, $sql);

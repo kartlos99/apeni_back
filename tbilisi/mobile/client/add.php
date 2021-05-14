@@ -22,7 +22,7 @@ $prices = $postData->prices;
 
 
 
-$sqlAddClient = "INSERT INTO `obieqtebi`(
+$sqlAddClient = "INSERT INTO $CUSTOMER_TB (
     `dasaxeleba`,
     `adress`,
     `tel`,

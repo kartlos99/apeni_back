@@ -29,7 +29,7 @@ FROM
 LEFT JOIN ludi AS l
 ON
     b.ludis_id = l.id 
-left join obieqtebi o
+left join customer o
 ON
 	o.id = b.`obieqtis_id`
 WHERE b.tarigi BETWEEN '$d1' AND '$d2'     

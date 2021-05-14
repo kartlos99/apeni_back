@@ -30,7 +30,7 @@ $arr_id =  explode('|',$id_ebi);
 if($moqmedeba == "ახალი ობიექტი"){
 
     $sql = "INSERT INTO 
-        `obieqtebi` 
+        $CUSTOMER_TB 
         (`dasaxeleba`, `adress`, `tel`, `comment`, `sk`, `sakpiri`, `reg_date`, `chek`) 
         VALUES 
         ('$name', '$adress', '$tel', '$comment', '$sk', '$sakpiri', '$currTime', '$chek')";
@@ -66,7 +66,7 @@ if($moqmedeba == "ახალი ობიექტი"){
 
 if($moqmedeba == "რედაქტირება"){
     $obj_id = $_POST["obj_id"];
-    $sql = "UPDATE obieqtebi
+    $sql = "UPDATE customer
             SET 
             `dasaxeleba` = '$name', `adress`= '$adress', `tel`='$tel', `comment`='$comment', `sk` = '$sk', `sakpiri` = '$sakpiri', `chek` = '$chek'
             WHERE

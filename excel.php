@@ -23,7 +23,7 @@ if(isset($_GET["objID"]))
     
     if($objID > 0){
         $myobj = "a";
-        $sql = "select dasaxeleba from obieqtebi where id= $objID";
+        $sql = "select dasaxeleba from customer where id= $objID";
         $res1 = $con->query($sql);
         while($r = mysqli_fetch_assoc($res1)){
             $myobj = $r["dasaxeleba"];
@@ -94,7 +94,7 @@ if(isset($_GET["objID"]))
             
             b.comment,
             c.name
-            FROM `amonaweri_obj` b, users c, obieqtebi o
+            FROM `amonaweri_obj` b, users c, customer o
         WHERE 
             b.distributor_id = c.id AND b.obieqtis_id = o.id AND YEAR(tarigi) > $year
         ORDER by b.tarigi DESC

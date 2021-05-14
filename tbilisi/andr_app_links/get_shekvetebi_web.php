@@ -65,7 +65,7 @@ while ($row = mysqli_fetch_assoc($rs)) {
 $sql = "SELECT
     tarigi1,
     DATE_FORMAT(tarigi, '%Y-%m-%d %H:%i') AS tarigi_hhmm,
-    obieqtebi.dasaxeleba AS obieqti,
+    $CUSTOMER_TB.dasaxeleba AS obieqti,
     obieqtis_id,
     ludi.dasaxeleba,
     (k30in) AS in_30,
@@ -112,7 +112,7 @@ SELECT
 FROM
     `shekvetebi`
 ) AS a
-LEFT JOIN obieqtebi ON obieqtis_id = obieqtebi.id
+LEFT JOIN $CUSTOMER_TB ON obieqtis_id = $CUSTOMER_TB.id
 LEFT JOIN ludi ON ludis_id = ludi.id
 LEFT JOIN users ON distributor_id = users.id
 WHERE

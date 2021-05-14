@@ -16,7 +16,7 @@ SELECT
     g.comment
 FROM
     `gawmenda` AS g
-LEFT JOIN obieqtebi AS o
+LEFT JOIN $CUSTOMER_TB AS o
 ON
     g.obieqtis_id = o.id
 WHERE

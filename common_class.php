@@ -134,10 +134,10 @@ class DataProvider {
     }
 
     function getClients() {
-        $sql = "SELECT id, dasaxeleba FROM `obieqtebi` WHERE `active`=1 ORDER BY dasaxeleba";
+        $sql = "SELECT id, dasaxeleba FROM `customer` WHERE `active`=1 ORDER BY dasaxeleba";
         $result = mysqli_query($this->dbConn, $sql);
+        $arr = [];
         if ($result) {
-            $arr = [];
             while ($rs = mysqli_fetch_assoc($result)) {
                 $arr[] = $rs;
             }
