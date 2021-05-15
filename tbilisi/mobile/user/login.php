@@ -1,4 +1,5 @@
 <?php
+
 namespace Apeni\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -43,8 +44,17 @@ if (mysqli_num_rows($result) == 1) {
     while ($rs = mysqli_fetch_assoc($permResult)) {
         $permissions[] = $rs['permissionID'];
     }
-
     $userData['permissions'] = $permissions;
+
+    $sqlAllowedRegions =
+        "SELECT `regionID`, `name` FROM `user_to_region_map` map, `regions` reg
+         WHERE `userID` = " . $userData['id'] . " AND map.`regionID` = reg.ID";
+    $regionsResult = mysqli_query($con, $sqlAllowedRegions);
+    $regions = [];
+    while ($rs = mysqli_fetch_assoc($regionsResult)) {
+        $regions[] = $rs;
+    }
+    $userData['regions'] = $regions;
 
     $response[DATA] = $userData;
 } else {
