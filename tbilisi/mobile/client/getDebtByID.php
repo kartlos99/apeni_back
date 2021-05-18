@@ -1,4 +1,5 @@
 <?php
+
 namespace Apeni\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -7,6 +8,7 @@ require_once('../connection.php');
 checkToken();
 $clientID = $_GET["clientID"];
 
+// region doesn't matter for debt
 $sql = "SELECT dbt.*, ifnull(cr.needCleaning, 0) AS needCleaning, ifnull(cr.passDays, 0) AS passDays FROM `clients_debt` dbt
 LEFT JOIN cleaningreport cr
 ON dbt.`clientID` = cr.clientID 

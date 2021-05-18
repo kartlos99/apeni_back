@@ -70,3 +70,4 @@ const ER_TEXT_DEBT_ON_CLIENT = "ობიექტზე არსებობ�
 //  ****************  DB const values  *******************
 
 $CUSTOMER_TB = "`customer`";
+//$CUSTOMER_MAP_TB = "`customer_to_region_map`";

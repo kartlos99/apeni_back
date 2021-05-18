@@ -1,5 +1,8 @@
 <?php
+
 namespace Apeni\JWT;
+
+use DbKey;
 use VersionControl;
 
 header("Access-Control-Allow-Origin: *");
@@ -7,19 +10,16 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
 $sessionData = checkToken();
+$dbKey = new DbKey();
+
 // Takes raw data from the request
 $json = file_get_contents('php://input');
 
 // Converts it into a PHP object
 $postData = json_decode($json);
 
-//$response[DATA] = "0";
-
-
 $client = $postData->obieqti;
-
 $prices = $postData->prices;
-
 
 
 $sqlAddClient = "INSERT INTO $CUSTOMER_TB (
@@ -49,13 +49,15 @@ if (mysqli_query($con, $sqlAddClient)) {
     $clientID = mysqli_insert_id($con);
 
     $multiValue = "";
-    for ($i = 0; $i < count($prices); $i++){
+    for ($i = 0; $i < count($prices); $i++) {
         $priceItem = $prices[$i];
 
         $beerID = $priceItem->beer_id;
         $price = $priceItem->fasi;
 
-        if ($i > 0) { $multiValue .= ","; }
+        if ($i > 0) {
+            $multiValue .= ",";
+        }
         $multiValue .= "('$clientID', '$beerID', '$price', '$timeOnServer', '0')";
     }
 
@@ -71,6 +73,11 @@ if (mysqli_query($con, $sqlAddClient)) {
             "INSERT INTO `gawmenda` (`obieqtis_id`, `distributor_id`, `tarigi`) " .
             "VALUES ( '$clientID', '$sessionData->userID', '$timeOnServer')";
         mysqli_query($con, $sqlAddInitialSystemClear);
+
+        $sqlInsertCustomerMap =
+            "INSERT INTO $dbKey::$CUSTOMER_MAP_TB (`customerID`, `regionID`, `active`) VALUES ('$clientID', '$sessionData->regionID', 1);";
+        mysqli_query($con, $sqlInsertCustomerMap);
+
     } else {
         $response[SUCCESS] = false;
         $response[ERROR_TEXT] = mysqli_error($con);

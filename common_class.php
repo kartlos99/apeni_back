@@ -145,3 +145,7 @@ class DataProvider {
         return $arr;
     }
 }
+
+class DbKey {
+    public static $CUSTOMER_MAP_TB = "`customer_to_region_map`";
+}
