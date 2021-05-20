@@ -4,14 +4,14 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 
 $clientID = $_GET["clientID"];
 
 $getOrderSql = "
 SELECT ifnull(max(o.ID), 0) AS orderID FROM `orders` o
 LEFT JOIN dictionary_items di ON di.id = o.orderStatusID
-WHERE di.code = 'order_active' AND o.`clientID` = " . $clientID;
+WHERE di.code = 'order_active' AND o.`regionID` = {$sessionData->regionID} AND o.`clientID` = " . $clientID;
 
 $result = mysqli_query($con, $getOrderSql);
 // obieqtze bolo aqtiuri Sekvetis ID

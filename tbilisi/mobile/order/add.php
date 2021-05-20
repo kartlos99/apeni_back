@@ -6,7 +6,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 // Takes raw data from the request
 $json = file_get_contents('php://input');
 
@@ -23,8 +23,9 @@ if (empty($postData->comment)) {
 
 
 $sql_insert_order = "
-INSERT INTO `orders`(`orderDate`, `orderStatusID`, `distributorID`, `clientID`, `comment`, `sortValue`, `modifyDate`, `modifyUserID`) 
+INSERT INTO `orders`(`regionID`, `orderDate`, `orderStatusID`, `distributorID`, `clientID`, `comment`, `sortValue`, `modifyDate`, `modifyUserID`) 
 VALUES (
+'$sessionData->regionID',        
 '$postData->orderDate',
 $postData->orderStatus,
 $postData->distributorID,

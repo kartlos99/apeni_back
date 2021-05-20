@@ -4,7 +4,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 // Takes raw data from the request
 $json = file_get_contents('php://input');
 
@@ -14,8 +14,8 @@ $postData = json_decode($json);
 $response[DATA] = "";
 
 $sqlAddComment =
-    "INSERT INTO `comments`(`comment`, `modifyDate`, `modifyUserID`) " .
-    "VALUES ('$postData->comment', '$timeOnServer', '$postData->modifyUserID')";
+    "INSERT INTO `comments`(`regionID`, `comment`, `modifyDate`, `modifyUserID`) " .
+    "VALUES ('$sessionData->regionID', '$postData->comment', '$timeOnServer', '$postData->modifyUserID')";
 
 if (mysqli_query($con, $sqlAddComment)) {
     $response[DATA] = "done";

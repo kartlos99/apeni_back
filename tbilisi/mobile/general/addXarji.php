@@ -4,7 +4,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 // Takes raw data from the request
 $json = file_get_contents('php://input');
 
@@ -12,8 +12,8 @@ $json = file_get_contents('php://input');
 $postData = json_decode($json);
 
 $sql =
-    "INSERT INTO `xarjebi`(`tarigi`, `distributor_id`, `tanxa`, `comment`) VALUES ( " .
-    "'$postData->date', '$postData->distributorID', $postData->amount, '$postData->comment' )";
+    "INSERT INTO `xarjebi`(`regionID`, `tarigi`, `distributor_id`, `tanxa`, `comment`) VALUES ( " .
+    "'$sessionData->regionID', '$postData->date', '$postData->distributorID', $postData->amount, '$postData->comment' )";
 
 if(mysqli_query($con, $sql)){
     $response[DATA] = mysqli_insert_id($con);

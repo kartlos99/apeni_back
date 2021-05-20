@@ -21,7 +21,7 @@ function checkToken()
     // return [];
     $token = getBearerToken();
     $regionID = getRegion();
-    if (is_null($regionID) || $regionID == "0")
+    if (!is_numeric($regionID) || $regionID == "0")
         dieWithError(409, "no region set!");
 
     try {
