@@ -4,7 +4,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 
 //$http_response_header
 if (isset($_GET["date"])) {
@@ -34,7 +34,7 @@ if ($chek == 0) {
         FROM
             `storehousebarreloutput`
         WHERE
-            DATE(`outputDate`) <= '$date'
+            DATE(`outputDate`) <= '$date' AND `regionID` = {$sessionData->regionID}
         GROUP BY
             `barrelID`
     ) sout
@@ -47,7 +47,7 @@ if ($chek == 0) {
         FROM
             `barrel_output`
         WHERE
-            DATE(`outputDate`) <= '$date'
+            DATE(`outputDate`) <= '$date' AND `regionID` = {$sessionData->regionID}
         GROUP BY
             canTypeID
     ) SIN
@@ -78,13 +78,13 @@ if ($chek == 0) {
         SELECT `beerID`, `barrelID`, SUM(`inputToStore`) AS inputToStore, SUM(saleCount) AS saleCount 
     FROM (
         SELECT `beerID`, `canTypeID` AS barrelID , 0 AS inputToStore, SUM(`count`) AS saleCount FROM `sales` 
-            WHERE DATE(`saleDate`) <= '$date'
+            WHERE DATE(`saleDate`) <= '$date' AND `regionID` = {$sessionData->regionID}
         GROUP BY `beerID`, `canTypeID`
     
         UNION ALL
     
         SELECT `beerID`, `barrelID` , SUM(`count`) inputToStore, 0 AS saleCount FROM `storehousebeerinpit` 
-            WHERE DATE(`inputDate`) <= '$date' and chek = '0'
+            WHERE DATE(`inputDate`) <= '$date' and chek = '0' AND `regionID` = {$sessionData->regionID}
         GROUP BY `beerID`, `barrelID`
     ) bf
         GROUP BY beerID, barrelID
@@ -114,13 +114,13 @@ if ($chek == '1') {
 FROM (
     SELECT `beerID`, `canTypeID` AS barrelID, 0 AS inputToStore, sum(`count`) AS saleCount FROM `order_items` oi
     LEFT JOIN orders o ON o.ID = oi.orderID
-    WHERE o.orderDate <= '$date' AND oi.`chek` = '1'
+    WHERE o.orderDate <= '$date' AND oi.`chek` = '1' AND o.`regionID` = {$sessionData->regionID}
     GROUP BY `beerID`, `canTypeID`
 
     UNION ALL
 
     SELECT `beerID`, `barrelID` , SUM(`count`) inputToStore, 0 AS saleCount FROM `storehousebeerinpit` 
-        WHERE DATE(`inputDate`) <= '$date' and chek = '1'
+        WHERE DATE(`inputDate`) <= '$date' and chek = '1' AND `regionID` = {$sessionData->regionID}
     GROUP BY `beerID`, `barrelID`
 ) bf
     GROUP BY beerID, barrelID

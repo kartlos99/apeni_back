@@ -4,7 +4,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 
 // Takes raw data from the request
 $json = file_get_contents('php://input');
@@ -17,8 +17,8 @@ $response[DATA] = "";
 if ($postData->recordID == "0") { // axali chanaweri
 
     $sql =
-        "INSERT INTO `gawmenda` (`obieqtis_id`, `distributor_id`, `tarigi`) " .
-        "VALUES ( '$postData->clientID', '$postData->distributorID', '$timeOnServer')";
+        "INSERT INTO `gawmenda` (`regionID`, `obieqtis_id`, `distributor_id`, `tarigi`) " .
+        "VALUES ('$sessionData->regionID', '$postData->clientID', '$postData->distributorID', '$timeOnServer')";
     $doneText = "ჩანაწერი დაემატა!";
 
 } else { // delete

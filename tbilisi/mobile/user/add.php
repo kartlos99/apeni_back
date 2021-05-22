@@ -1,12 +1,15 @@
 <?php
+
 namespace Apeni\JWT;
+
+use DbKey;
 use VersionControl;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 
 // Takes raw data from the request
 $json = file_get_contents('php://input');
@@ -43,9 +46,16 @@ if ($user->id == "") {
 }
 
 if (mysqli_query($con, $sql)) {
-    $response[DATA] = $user->id == "" ? mysqli_insert_id($con) : $user->id;
+    $userID = mysqli_insert_id($con);
+    $response[DATA] = $user->id == "" ? $userID : $user->id;
     $vc = new VersionControl($con);
     $vc->updateVersionFor(USER_VCS);
+
+    if ($user->id == "") {
+        $sqlInsertCustomerMap =
+            "INSERT INTO " . DbKey::$USER_MAP_TB . " (`userID`, `regionID`) VALUES ('$userID', '$sessionData->regionID');";
+        mysqli_query($con, $sqlInsertCustomerMap);
+    }
 } else {
     $response[SUCCESS] = false;
     $response[ERROR_TEXT] = mysqli_error($con);

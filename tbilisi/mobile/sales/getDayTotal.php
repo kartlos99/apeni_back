@@ -4,14 +4,14 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 
 $receivedDate = $_GET["tarigi"];
 $distrId = $_GET["distrid"];
 
 $barrelFilterByDistr = $distrId == 0 ? "" : " AND distributorID = '$distrId' ";
 
-$sqlMoney = "SELECT `paymentType`, round(IFNULL(sum(tanxa),0),2) AS amount FROM `moneyoutput` WHERE DATE(tarigi) = '$receivedDate' ";
+$sqlMoney = "SELECT `paymentType`, round(IFNULL(sum(tanxa),0),2) AS amount FROM `moneyoutput` WHERE DATE(tarigi) = '$receivedDate' AND `regionID` = {$sessionData->regionID}";
 $sqlBarrelOutput = "
 SELECT canTypeID, SUM(backCount) AS backCount, SUM(saleCount) as saleCount from ( SELECT
     `canTypeID`,
@@ -20,7 +20,7 @@ SELECT canTypeID, SUM(backCount) AS backCount, SUM(saleCount) as saleCount from 
 FROM
     `barrel_output`
 WHERE
-    DATE(`outputDate`) = '$receivedDate' $barrelFilterByDistr
+    DATE(`outputDate`) = '$receivedDate' $barrelFilterByDistr AND `regionID` = {$sessionData->regionID}
 UNION ALL
 SELECT
     `canTypeID`,
@@ -29,12 +29,12 @@ SELECT
 FROM
     `sales`
 WHERE
-    DATE(`saleDate`) = '$receivedDate' $barrelFilterByDistr
+    DATE(`saleDate`) = '$receivedDate' $barrelFilterByDistr AND `regionID` = {$sessionData->regionID}
     ) a
 GROUP by `canTypeID`
 ";
 
-$sqlXarji = "SELECT * FROM `xarjebi` WHERE DATE(tarigi) = '$receivedDate'";
+$sqlXarji = "SELECT * FROM `xarjebi` WHERE DATE(tarigi) = '$receivedDate' AND `regionID` = {$sessionData->regionID}";
 
 
 $sqlSale = "
@@ -47,7 +47,7 @@ FROM
 LEFT JOIN ludi AS l ON  s.beerID = l.id
 LEFT JOIN kasri AS k ON k.id = s.canTypeID
 WHERE
-    DATE(s.saleDate) = '$receivedDate'
+    DATE(s.saleDate) = '$receivedDate' AND `regionID` = {$sessionData->regionID}
 ";
 
 $grouping = " GROUP BY s.beerID ";

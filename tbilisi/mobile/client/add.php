@@ -10,7 +10,6 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
 $sessionData = checkToken();
-$dbKey = new DbKey();
 
 // Takes raw data from the request
 $json = file_get_contents('php://input');
@@ -75,7 +74,7 @@ if (mysqli_query($con, $sqlAddClient)) {
         mysqli_query($con, $sqlAddInitialSystemClear);
 
         $sqlInsertCustomerMap =
-            "INSERT INTO $dbKey::$CUSTOMER_MAP_TB (`customerID`, `regionID`, `active`) VALUES ('$clientID', '$sessionData->regionID', 1);";
+            "INSERT INTO " . DbKey::$CUSTOMER_MAP_TB . " (`customerID`, `regionID`, `active`) VALUES ('$clientID', '$sessionData->regionID', 1);";
         mysqli_query($con, $sqlInsertCustomerMap);
 
     } else {

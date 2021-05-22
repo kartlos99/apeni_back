@@ -148,4 +148,5 @@ class DataProvider {
 
 class DbKey {
     public static $CUSTOMER_MAP_TB = "`customer_to_region_map`";
+    public static $USER_MAP_TB = "`user_to_region_map`";
 }

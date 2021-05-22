@@ -9,7 +9,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 
 // Takes raw data from the request
 $json = file_get_contents('php://input');
@@ -32,7 +32,7 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
     $saleItem = $postData->sales[0];
 
     // Check for balance in Storehouse
-    $storeBalanceArr = getFullBarrelsBalanceInStore($con, $saleItem->ID);
+    $storeBalanceArr = getFullBarrelsBalanceInStore($con, $saleItem->ID, $sessionData->regionID);
     $stRow = [];
     array_filter($storeBalanceArr, function ($stItem) {
         global $stRow;
@@ -166,9 +166,9 @@ function getBalanceMap($dbConn, $clientID, $exceptRecID)
     return $mMap;
 }
 
-function getFullBarrelsBalanceInStore($dbConn, $exceptRecID)
+function getFullBarrelsBalanceInStore($dbConn, $exceptRecID, $regionID)
 {
-    $sql = "call getFullBarrelsBalanceInStore(0, $exceptRecID);";
+    $sql = "call getFullBarrelsBalanceInStore(0, $exceptRecID, $regionID);";
     $fArr = [];
     $result = mysqli_query($dbConn, $sql);
     while ($rs = mysqli_fetch_assoc($result)) {

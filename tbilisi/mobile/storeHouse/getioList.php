@@ -1,15 +1,20 @@
 <?php
+
 namespace Apeni\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 
 $groupID = $_GET['groupID'];
 
-$filterInput = $groupID == "" ? "" : "WHERE groupID = '$groupID' ";
-$filterOutput = $groupID == "" ? "" : "WHERE groupID = '$groupID' ";
+$filterInput = "WHERE `regionID` = {$sessionData->regionID} ";
+$filterOutput = "WHERE `regionID` = {$sessionData->regionID} ";
+if ($groupID != "") {
+    $filterInput .= " AND groupID = '$groupID' ";
+    $filterOutput .= " AND groupID = '$groupID' ";
+}
 
 $sql =
     "SELECT `ID`, `groupID`, `inputDate` AS ioDate, `distributorID`, `beerID`, `barrelID`, `count`, `chek`, `comment`, `modifyDate`, `modifyUserID` " .

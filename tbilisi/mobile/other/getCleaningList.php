@@ -4,7 +4,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 
 $sql = "
 SELECT
@@ -20,7 +20,7 @@ LEFT JOIN $CUSTOMER_TB AS o
 ON
     g.obieqtis_id = o.id
 WHERE
-	o.active = 1
+	o.active = 1 AND g.`regionID` = {$sessionData->regionID}
 GROUP BY dasaxeleba    
 ORDER BY passDays DESC
 ";

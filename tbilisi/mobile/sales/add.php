@@ -9,7 +9,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 
 // Takes raw data from the request
 $json = file_get_contents('php://input');
@@ -32,7 +32,7 @@ if (empty($postData->comment)) {
 $getOrderSql = "
 SELECT ifnull(max(o.ID), 0) AS orderID FROM `orders` o
 LEFT JOIN dictionary_items di ON di.id = o.orderStatusID
-WHERE di.code = 'order_active' AND o.`clientID` = " . $postData->clientID;
+WHERE di.code = 'order_active' AND o.`regionID` = {$sessionData->regionID} AND o.`clientID` = " . $postData->clientID;
 
 $result = mysqli_query($con, $getOrderSql);
 // obieqtze bolo aqtiuri Sekvetis ID
@@ -55,7 +55,7 @@ if (isset($postData->barrels) && $postData->clientID != 64) {
 if (isset($postData->sales) && count($postData->sales) > 0) {
 
     // Check for balance in Storehouse
-    $storeBalanceArr = getFullBarrelsBalanceInStore($con);
+    $storeBalanceArr = getFullBarrelsBalanceInStore($con, $sessionData->regionID);
     foreach ($postData->sales as $saleItm) {
         $stRow = [];
         array_filter($storeBalanceArr, function ($stItem) {
@@ -76,8 +76,9 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
         $shouldChangeStatus = false;
 
         $sql_insert_order = "
-    INSERT INTO `orders`(`orderDate`, `orderStatusID`, `distributorID`, `clientID`, `comment`, `modifyDate`, `modifyUserID`) 
+    INSERT INTO `orders`(`regionID`, `orderDate`, `orderStatusID`, `distributorID`, `clientID`, `comment`, `modifyDate`, `modifyUserID`) 
     VALUES (
+    '$sessionData->regionID',
     '$dateOnServer',
     " . ORDER_STATUS_AUTO_CREATED . ",
     $postData->distributorID,
@@ -106,12 +107,13 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
         if ($i > 0) {
             $multiValue .= ",";
         }
-        $multiValue .= "('$saleDate', '$postData->clientID', '$postData->distributorID', '$beerID', '$price',
+        $multiValue .= "('$sessionData->regionID', '$saleDate', '$postData->clientID', '$postData->distributorID', '$beerID', '$price',
         '$canTypeID', '$count', '$orderID', $saleComment, '$timeOnServer', '$postData->modifyUserID')";
     }
 
     $salesInsertSql = "
     INSERT INTO `sales`(
+        `regionID`, 
         `saleDate`,
         `clientID`,
         `distributorID`,
@@ -144,11 +146,12 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
                 if ($i > 0) {
                     $multiValue .= ",";
                 }
-                $multiValue .= "('$outputDate', '$postData->clientID', '$postData->distributorID', '$canTypeID', '$count', $saleComment, '$timeOnServer', '$postData->modifyUserID')";
+                $multiValue .= "('$sessionData->regionID', '$outputDate', '$postData->clientID', '$postData->distributorID', '$canTypeID', '$count', $saleComment, '$timeOnServer', '$postData->modifyUserID')";
             }
 
             $barrelsInsertSql = "
                 INSERT INTO `barrel_output`(
+                    `regionID`, 
                     `outputDate`,
                     `clientID`,
                     `distributorID`,
@@ -190,12 +193,13 @@ if (isset($postData->barrels)) {
         if ($i > 0) {
             $multiValue .= ",";
         }
-        $multiValue .= "('$outputDate', '$postData->clientID', '$postData->distributorID', 
+        $multiValue .= "('$sessionData->regionID', '$outputDate', '$postData->clientID', '$postData->distributorID', 
         '$canTypeID', '$count', $saleComment, '$timeOnServer', '$postData->modifyUserID')";
     }
 
     $barrelsInsertSql = "
     INSERT INTO `barrel_output`(
+        `regionID`, 
         `outputDate`,
         `clientID`,
         `distributorID`,
@@ -228,12 +232,13 @@ if (isset($postData->money) && count($postData->money) > 0) {
 
         if ($i > 0) $multiValue .= ",";
 
-        $multiValue .= "('$takeMoneyDate', '$postData->clientID', '$postData->distributorID', 
+        $multiValue .= "('$sessionData->regionID', '$takeMoneyDate', '$postData->clientID', '$postData->distributorID', 
         '$amount', '$paymentType', $saleComment, '$timeOnServer', '$postData->modifyUserID')";
     }
 
     $moneyInsertSql = "
     INSERT INTO `moneyoutput`(
+        `regionID`,
         `tarigi`,
         `obieqtis_id`,
         `distributor_id`,
@@ -273,9 +278,9 @@ function getBalanceMap($dbConn, $clientID = 0)
     return $mMap;
 }
 
-function getFullBarrelsBalanceInStore($dbConn)
+function getFullBarrelsBalanceInStore($dbConn, $regionID)
 {
-    $sql = "call getFullBarrelsBalanceInStore(0, 0);";
+    $sql = "call getFullBarrelsBalanceInStore(0, 0, $regionID);";
     $fArr = [];
     $result = mysqli_query($dbConn, $sql);
     while ($rs = mysqli_fetch_assoc($result)) {

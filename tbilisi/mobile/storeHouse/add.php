@@ -22,7 +22,7 @@ $operTime = $timeOnServer;
 // check for valid barrels values
 if (isset($postData->outputBarrels) && count($postData->outputBarrels) > 0) {
     $actualdate = $postData->operationTime ;
-    $balanceMap = getEmptyBarrelsBalanceMap($con, $actualdate, $postData->groupID);
+    $balanceMap = getEmptyBarrelsBalanceMap($con, $actualdate, $postData->groupID, $sessionData->regionID);
 
     foreach ($postData->outputBarrels as $barrelOutput) {
         if (!isset($balanceMap[$barrelOutput->canTypeID]) || $balanceMap[$barrelOutput->canTypeID]['balance'] < $barrelOutput->count) {
@@ -65,11 +65,12 @@ if (isset($postData->inputBeer) && count($postData->inputBeer) > 0) {
         if ($i > 0) {
             $multiValue .= ",";
         }
-        $multiValue .= "('$postData->groupID', '$operTime', '$sessionData->userID', '$beerID',
+        $multiValue .= "('$sessionData->regionID', '$postData->groupID', '$operTime', '$sessionData->userID', '$beerID',
         '$canTypeID', '$count', '$postData->chek', $comment, '$timeOnServer', '$sessionData->userID')";
     }
 
     $sql = "INSERT INTO `storehousebeerinpit`(
+        `regionID`,
         `groupID`,                                  
         `inputDate`,
         `distributorID`,
@@ -109,11 +110,12 @@ if (isset($postData->outputBarrels) && count($postData->outputBarrels) > 0) {
         if ($i > 0) {
             $multiValue .= ",";
         }
-        $multiValue .= "('$postData->groupID', '$operTime', '$sessionData->userID', '$canTypeID', '$count', 
+        $multiValue .= "('$sessionData->regionID', '$postData->groupID', '$operTime', '$sessionData->userID', '$canTypeID', '$count', 
         '$postData->chek', $comment, '$timeOnServer', '$sessionData->userID')";
     }
 
     $sql = "INSERT INTO `storehousebarreloutput`(
+        `regionID`,
         `groupID`,
         `outputDate`,
         `distributorID`,
@@ -141,9 +143,9 @@ echo json_encode($response);
 // $response[DATA] = $sql;
 // die(json_encode($response));
 
-function getEmptyBarrelsBalanceMap($dbConn, $date, $exceptGroupID)
+function getEmptyBarrelsBalanceMap($dbConn, $date, $exceptGroupID, $regionID)
 {
-    $sqlQuery = "CALL getEmptyBarrelsInStore('$date', '$exceptGroupID');";
+    $sqlQuery = "CALL getEmptyBarrelsInStore('$date', '$exceptGroupID', $regionID);";
     $mMap = [];
     $result = mysqli_query($dbConn, $sqlQuery);
     while ($rs = mysqli_fetch_assoc($result)) {

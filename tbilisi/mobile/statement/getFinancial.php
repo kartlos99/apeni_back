@@ -1,4 +1,5 @@
 <?php
+
 namespace Apeni\JWT;
 
 header("Access-Control-Allow-Origin: *");
@@ -20,23 +21,24 @@ SELECT
     WHERE
         a.tarigi <= b.tarigi
         AND
-        clientID = $clientID) AS `bal`,
+        clientID = $clientID AND a.`regionID` = {$sessionData->regionID}
+        ) AS `bal`,
     id,
     comment
     FROM `amonaweri_money` b
 WHERE
-    clientID = $clientID 
+    clientID = $clientID AND b.`regionID` = {$sessionData->regionID}
 ORDER by b.tarigi DESC 
 LIMIT $offset, $pageSize";
 
-$totalPagesSql = "SELECT count(*) FROM `amonaweri_money` b WHERE clientID = $clientID";
+$totalPagesSql = "SELECT count(*) FROM `amonaweri_money` b WHERE clientID = $clientID AND `regionID` = {$sessionData->regionID}";
 $resultTotalCount = mysqli_query($con, $totalPagesSql);
 $totalRowCount = mysqli_fetch_array($resultTotalCount)[0];
 
 $arr = [];
 $result = mysqli_query($con, $sql);
 
-while($rs = mysqli_fetch_assoc($result)) {
+while ($rs = mysqli_fetch_assoc($result)) {
     $arr[] = $rs;
 }
 
