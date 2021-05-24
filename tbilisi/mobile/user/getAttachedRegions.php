@@ -7,26 +7,26 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
 checkToken();
-$clientID = 0;
-if (isset( $_GET["clientID"]))
-    $clientID = $_GET["clientID"];
-else dieWithError(COMMON_ERROR_CODE, "client is Not set!");
+$userID = 0;
+if (isset( $_GET["userID"]))
+    $userID = $_GET["userID"];
+else dieWithError(COMMON_ERROR_CODE, "user is Not set!");
 
 $sql =
     "SELECT
     r.ID,
     r.name,
-    IFNULL(cMap.active, 0) AS attached
+    IFNULL(uMap.id, 0) AS attached
 FROM
     `regions` r
 LEFT JOIN(
     SELECT * FROM
-        `customer_to_region_map`
+        `user_to_region_map`
     WHERE
-        customer_to_region_map.active = 1 AND customer_to_region_map.customerID = $clientID
-) cMap
+        user_to_region_map.userID = $userID
+) uMap
 ON
-    cMap.`regionID` = r.ID";
+    uMap.`regionID` = r.ID";
 
 $arr = array();
 $result = $con->query($sql);
