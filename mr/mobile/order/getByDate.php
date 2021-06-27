@@ -39,7 +39,7 @@ while ($rs = mysqli_fetch_assoc($result)) {
 }
 
 if (count($orders) > 0) {
-    $response[DATA] = $orderHelper->attachItemsToOrder($orders);
+    $response[DATA] = $orderHelper->attachRegions($orderHelper->attachItemsToOrder($orders));
 } else {
     $response[DATA] = $orders;
 }

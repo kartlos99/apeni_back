@@ -20,12 +20,12 @@ $orderComment = "'$postData->comment'";
 if (empty($postData->comment)) {
     $orderComment = "NULL";
 }
-
+$orderRegion = $postData->regionID == 0 ? $sessionData->regionID : $postData->regionID;
 
 $sql_insert_order = "
 INSERT INTO `orders`(`regionID`, `orderDate`, `orderStatusID`, `distributorID`, `clientID`, `comment`, `sortValue`, `modifyDate`, `modifyUserID`) 
 VALUES (
-'$sessionData->regionID',        
+'$orderRegion',        
 '$postData->orderDate',
 $postData->orderStatus,
 $postData->distributorID,

@@ -1,12 +1,15 @@
 <?php
 
 namespace Apeni\JWT;
+use DataProvider;
+
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
 checkToken();
 $clientID = $_GET["clientID"];
+$dataProvider = new DataProvider($con);
 
 // region doesn't matter for debt
 $sql = "SELECT dbt.*, ifnull(cr.needCleaning, 0) AS needCleaning, ifnull(cr.passDays, 0) AS passDays FROM `clients_debt` dbt
@@ -19,6 +22,7 @@ $result = mysqli_query($con, $sql);
 if ($result) {
     $dataArr = mysqli_fetch_assoc($result);
     $dataArr['barrels'] = getBarrelsBalanceList($con, $clientID);
+    $dataArr['availableRegions'] = $dataProvider->getAvailableRegionsForCustomer($clientID);
     $response[DATA] = $dataArr;
 } else {
     $response[SUCCESS] = false;

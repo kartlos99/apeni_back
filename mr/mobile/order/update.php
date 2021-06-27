@@ -6,7 +6,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 
 // Takes raw data from the request
 $json = file_get_contents('php://input');
@@ -20,12 +20,13 @@ $orderComment = "'$postData->comment'";
 if (empty($postData->comment)) {
     $orderComment = "NULL";
 }
-
+$orderRegion = $postData->regionID == 0 ? $sessionData->regionID : $postData->regionID;
 
 $orderUpdateSql = "
 UPDATE
     `orders`
 SET
+    `regionID` = '$orderRegion',
     `orderDate` = '$postData->orderDate',
     `orderStatusID` = $postData->orderStatus,
     `distributorID` = $postData->distributorID,

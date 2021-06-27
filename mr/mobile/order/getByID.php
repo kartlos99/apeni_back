@@ -28,7 +28,7 @@ while ($rs = mysqli_fetch_assoc($result)) {
 }
 
 if (count($orders) == 1) {
-    $response[DATA] = $orderHelper->attachItemsToOrder($orders);
+    $response[DATA] = $orderHelper->attachRegions($orderHelper->attachItemsToOrder($orders));
 } else {
     $response[SUCCESS] = false;
     $response[ERROR_TEXT] = "can't find order!";

@@ -15,6 +15,7 @@ $postData = json_decode($json);
 
 $setOrderValueSql =
     "UPDATE `orders` SET " .
+    "`regionID` = '$postData->regionID', " .
     "`distributorID` = '$postData->distributorID', " .
     "`modifyDate` = '$timeOnServer', " .
     "`modifyUserID` = $postData->modifyUserID " .

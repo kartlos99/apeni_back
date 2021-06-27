@@ -64,6 +64,21 @@ class OrderHelper
         return $orders;
     }
 
+    function attachRegions($orders) {
+        $sqlQuery = "SELECT `customerID`, `regionID` FROM `customer_to_region_map` WHERE `active` = 1";
+        $rMap = [];
+        $result = mysqli_query($this->con, $sqlQuery);
+        while ($rs = mysqli_fetch_assoc($result)) {
+            $rMap[$rs['customerID']][] = $rs['regionID'];
+        }
+
+        foreach ($orders as $index => $order) {
+            $orders[$index]['availableRegions'] = $rMap[$order['clientID']];
+        }
+
+        return $orders;
+    }
+
     function checkOrderCompletion($orderID)
     {
         $isCompleted = true;
@@ -115,6 +130,20 @@ class DataProvider {
 
     function __construct($dbConn) {
         $this->dbConn = $dbConn;
+    }
+
+    function getAvailableRegionsForCustomer($customerID) {
+        $sqlQuery = "SELECT rm.`regionID`, r.name FROM `customer_to_region_map` rm
+            LEFT JOIN regions r ON r.ID = rm.`regionID`
+            WHERE rm.`active` = 1 AND `customerID` = $customerID
+            ORDER BY r.name ";
+
+        $result = mysqli_query($this->dbConn, $sqlQuery);
+        $arr = [];
+        while ($rs = mysqli_fetch_assoc($result)) {
+            $arr[] = $rs;
+        }
+        return $arr;
     }
 
     function getBarrels() {
