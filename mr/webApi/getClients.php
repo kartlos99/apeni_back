@@ -5,7 +5,7 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once('_load.php');
 
-checkToken();
+$sessionData = checkToken();
 
 $date1 = $_GET['date1'];
 $date2 = $_GET['date2'];
@@ -21,8 +21,9 @@ LEFT JOIN $CUSTOMER_TB o ON o.id = s.clientID
 LEFT JOIN ludi l ON l.id = s.beerID
 LEFT JOIN kasri k ON k.id = s.canTypeID
 WHERE 
-s.saleDate BETWEEN '$date1' AND '$date2' AND 
-o.active = 1
+s.saleDate BETWEEN '$date1' AND '$date2' 
+AND o.active = 1
+AND regionID = {$sessionData->regionID}
 GROUP BY
 s.clientID, s.beerID
 ORDER BY liter DESC";

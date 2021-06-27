@@ -8,7 +8,7 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once('_load.php');
 
-checkToken();
+$sessionData = checkToken();
 
 $receivedDate = $_GET["date"];
 
@@ -25,10 +25,10 @@ LEFT JOIN (
 LEFT JOIN $CUSTOMER_TB cl ON cl.id = o.clientID
 LEFT JOIN users u ON u.id = o.distributorID
 WHERE 
-    (( date(`orderDate`) = '$receivedDate' OR di.code = 'order_active' ) 
+    ((( date(`orderDate`) = '$receivedDate' OR di.code = 'order_active' ) 
     AND di.code <> 'order_deleted' 
     AND date(`orderDate`) <= '$receivedDate') 
-    OR date(s.dt) = '$receivedDate'";
+    OR date(s.dt) = '$receivedDate') AND o.`regionID` = {$sessionData->regionID}";
 
 $result = mysqli_query($con, $sql);
 while ($rs = mysqli_fetch_assoc($result)) {

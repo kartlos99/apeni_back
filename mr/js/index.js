@@ -129,6 +129,7 @@ function showChart1(data, beerIDs) {
 
 let ready = $(document).ready(function () {
     console.log("ready!");
+    getRegions();
     // $('#typename_id').attr("data-nn", 0);
     // $('#brandname_id').attr("data-nn", 1);
     // $('#modelname_id').attr("data-nn", 2);

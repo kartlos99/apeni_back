@@ -15,6 +15,7 @@ $('#btnDone').on('click', function (e) {
 
 $(document).ready(function () {
     console.log("ready!");
+    getRegions();
 
     dateInput1.attr('max', strDate1);
 

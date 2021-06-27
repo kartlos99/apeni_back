@@ -7,6 +7,7 @@ let tarigi = "";
 
 $(document).ready(function () {
     console.log("ready!");
+    getRegions();
 
     let cloneItemsContainer = $('#cloneContainerDiv');
     orderUnitToClone = cloneItemsContainer.find('div.order-unit');
