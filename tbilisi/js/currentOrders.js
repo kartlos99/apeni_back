@@ -33,9 +33,7 @@ function getOrders() {
     $.ajax({
         url: 'webApi/getOrders.php?date=' + tarigi,
         dataType: 'json',
-        headers: {
-            'Authorization': tkn
-        },
+        headers: getHeaders(),
         success: function (resp) {
             ordersList.empty();
 

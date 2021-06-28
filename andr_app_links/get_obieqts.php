@@ -7,7 +7,7 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once('connection.php');
 
-$sql = "SELECT * FROM obieqtebi where `active`=1 order by dasaxeleba" ;
+$sql = "SELECT * FROM customer where `active`=1 order by dasaxeleba" ;
 $arr = array();
 $result = $con->query($sql);
     

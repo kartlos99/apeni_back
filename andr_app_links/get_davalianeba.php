@@ -25,7 +25,7 @@ FROM
 LEFT JOIN kasri_back AS k
 ON
     s.obj_id = k.obieqtis_id
-LEFT JOIN obieqtebi AS o
+LEFT JOIN $CUSTOMER_TB AS o
 ON s.obj_id = o.id
     
 ";

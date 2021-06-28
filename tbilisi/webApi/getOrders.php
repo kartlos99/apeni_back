@@ -22,7 +22,7 @@ LEFT JOIN (
     SELECT date(saleDate) AS dt, orderID FROM `sales` 
 	GROUP BY orderID
 ) s ON s.orderID = o.ID
-LEFT JOIN obieqtebi cl ON cl.id = o.clientID
+LEFT JOIN $CUSTOMER_TB cl ON cl.id = o.clientID
 LEFT JOIN users u ON u.id = o.distributorID
 WHERE 
     (( date(`orderDate`) = '$receivedDate' OR di.code = 'order_active' ) 

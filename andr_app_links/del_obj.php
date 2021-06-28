@@ -28,7 +28,7 @@ if($obj_id > 0){
         LEFT JOIN kasri_back AS k
         ON
             s.obj_id = k.obieqtis_id
-        LEFT JOIN obieqtebi AS o
+        LEFT JOIN $CUSTOMER_TB AS o
         ON s.obj_id = o.id
         WHERE o.id = $obj_id
     ";
@@ -41,7 +41,7 @@ if($obj_id > 0){
         echo "დავალიანების განულებამდე ობიექტი არ წაიშლება!";
     }else{
         
-        $sql = "UPDATE obieqtebi
+        $sql = "UPDATE $CUSTOMER_TB
                 SET 
                 `active` = 0
                 WHERE

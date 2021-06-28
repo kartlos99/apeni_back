@@ -17,7 +17,7 @@ SUM(s.count * k.litraji) AS liter,
 round(SUM(s.count * k.litraji * s.unitPrice), 2) AS price,
 l.color
 from sales s 
-LEFT JOIN obieqtebi o ON o.id = s.clientID
+LEFT JOIN $CUSTOMER_TB o ON o.id = s.clientID
 LEFT JOIN ludi l ON l.id = s.beerID
 LEFT JOIN kasri k ON k.id = s.canTypeID
 WHERE 

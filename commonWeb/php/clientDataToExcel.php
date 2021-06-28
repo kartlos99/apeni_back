@@ -28,7 +28,7 @@ if (isset($_GET["clientID"])) {
 
     if ($clientID > 0) {
         $myobj = "a";
-        $sql = "select dasaxeleba from obieqtebi where id= $clientID";
+        $sql = "select dasaxeleba from customer where id= $clientID";
         $res1 = mysqli_query($con, $sql);
         while ($r = mysqli_fetch_assoc($res1)) {
             $myobj = $r["dasaxeleba"];
@@ -98,7 +98,7 @@ if (isset($_GET["clientID"])) {
             c.id,
             c.comment,
             c.username
-            FROM `client_actions` AS c, obieqtebi AS o
+            FROM `client_actions` AS c, customer AS o
         WHERE 
             c.clientID = o.id AND Date(c.tarigi) >= '$startDate' AND Date(c.tarigi) <= '$endDate'
         ORDER by c.tarigi DESC";

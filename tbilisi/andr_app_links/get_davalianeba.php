@@ -22,7 +22,7 @@ SELECT
     ifnull(k.`k30_out`, 0) AS `k30out`,
     ifnull(k.`k50_out`, 0) AS `k50out`
 FROM
-	obieqtebi AS o
+	$CUSTOMER_TB AS o
 LEFT JOIN  
 	sumof_prpaykin AS s
 ON s.obj_id = o.id
@@ -61,7 +61,7 @@ mysqli_close($con);
     // LEFT JOIN kasri_back AS k
     // ON
     //     s.obj_id = k.obieqtis_id
-    // LEFT JOIN obieqtebi AS o
+    // LEFT JOIN $CUSTOMER_TB AS o
     // ON s.obj_id = o.id
 
 

@@ -24,7 +24,7 @@ if($obj_id > 0){
             ifnull(k.`k30_out`, 0) AS `k30out`,
             ifnull(k.`k50_out`, 0) AS `k50out`
         FROM
-        	obieqtebi AS o
+        	$CUSTOMER_TB AS o
         LEFT JOIN  
         	sumof_prpaykin AS s
         ON s.obj_id = o.id
@@ -43,7 +43,7 @@ if($obj_id > 0){
         echo "დავალიანების განულებამდე ობიექტი არ წაიშლება!";
     }else{
         
-        $sql = "UPDATE obieqtebi
+        $sql = "UPDATE $CUSTOMER_TB
                 SET 
                 `active` = 0
                 WHERE
