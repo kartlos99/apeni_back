@@ -36,7 +36,9 @@ while ($rs = mysqli_fetch_assoc($result)) {
 }
 
 if (count($orders) > 0) {
-    $response[DATA] = $orderHelper->attachItemsToOrder($orders);
+    $d1 = $orderHelper->attachItemsToOrder($orders);
+    $d2 = $orderHelper->attachTakenMoney($d1, $receivedDate);
+    $response[DATA] = $orderHelper->attachEmptyBarrels($d2, $receivedDate);
 } else {
     $response[DATA] = $orders;
 }
