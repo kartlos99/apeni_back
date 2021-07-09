@@ -129,7 +129,8 @@ class OrderHelper
     }
 
     function attachRegions($orders) {
-        $sqlQuery = "SELECT `customerID`, `regionID` FROM `customer_to_region_map` WHERE `active` = 1";
+
+        $sqlQuery = "SELECT `customerID`, `regionID` FROM `customer_to_region_map`";
         $rMap = [];
         $result = mysqli_query($this->con, $sqlQuery);
         while ($rs = mysqli_fetch_assoc($result)) {
