@@ -45,3 +45,9 @@ function checkToken()
 
     return [];
 }
+
+function hasOwnStorage($dbConn, $regionID)
+{
+    $rg = mysqli_fetch_assoc(mysqli_query($dbConn, "SELECT `ownStorage` FROM `regions` WHERE `ID`=$regionID"));
+    return $rg['ownStorage'] == 1;
+}

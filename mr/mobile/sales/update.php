@@ -31,21 +31,22 @@ if (empty($postData->comment)) {
 if (isset($postData->sales) && count($postData->sales) > 0) {
     $saleItem = $postData->sales[0];
 
-    // Check for balance in Storehouse
-    $storeBalanceArr = getFullBarrelsBalanceInStore($con, $saleItem->ID, $sessionData->regionID);
-    $stRow = [];
-    array_filter($storeBalanceArr, function ($stItem) {
-        global $stRow;
-        global $saleItem;
-        if ($stItem['beerID'] == $saleItem->beerID && $stItem['barrelID'] == $saleItem->canTypeID) {
-            $stRow = $stItem;
-            return true;
-        }
-        return false;
-    });
-    if (!isset($stRow['balance']) || $stRow['balance'] < $saleItem->count)
-        dieWithError(COMMON_ERROR_CODE, ER_TEXT_EXTRA_BARREL_SALE);
-
+    if (hasOwnStorage($con, $sessionData->regionID)) {
+        // Check for balance in Storehouse
+        $storeBalanceArr = getFullBarrelsBalanceInStore($con, $saleItem->ID, $sessionData->regionID);
+        $stRow = [];
+        array_filter($storeBalanceArr, function ($stItem) {
+            global $stRow;
+            global $saleItem;
+            if ($stItem['beerID'] == $saleItem->beerID && $stItem['barrelID'] == $saleItem->canTypeID) {
+                $stRow = $stItem;
+                return true;
+            }
+            return false;
+        });
+        if (!isset($stRow['balance']) || $stRow['balance'] < $saleItem->count)
+            dieWithError(COMMON_ERROR_CODE, ER_TEXT_EXTRA_BARREL_SALE);
+    }
 
     $response[DATA] = $saleItem->ID;
     if ($saleItem->ID > 0) {
