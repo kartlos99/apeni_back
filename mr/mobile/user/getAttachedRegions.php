@@ -16,7 +16,7 @@ $sql =
     "SELECT
     r.`ID`,
     r.`name`,
-    r,`ownStorage`,
+    r.`ownStorage`,
     IFNULL(uMap.id, 0) AS attached
 FROM
     `regions` r

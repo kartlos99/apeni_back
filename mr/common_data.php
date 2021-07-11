@@ -51,7 +51,7 @@ const ER_TEXT_EXTRA_BARREL_OUTPUT = "შეყვანილი რაოდე
 const ER_CODE_EXTRA_BARREL_OUTPUT_STORE = 2202;
 const ER_TEXT_EXTRA_BARREL_OUTPUT_STORE = "შეყვანილი რაოდენობის ცარელი კასრი არ არის საწყობში, მითითებული დროისთვის.\nდრო: %s, \n%s -> %d";
 
-const ER_TEXT_EXTRA_BARREL_SALE = "საწყობში არავაქვს ამდენი რაოდენობა!";
+const ER_TEXT_EXTRA_BARREL_SALE = "საწყობში არაგვაქვს ამდენი რაოდენობა!";
 
 const ER_CODE_ADD_SALES = 2203;
 const ER_CODE_BARREL_OUTPUT = 2204;

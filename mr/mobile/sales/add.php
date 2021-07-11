@@ -4,6 +4,8 @@ namespace Apeni\JWT;
 // ---------- gadascem dRes, gibrunebs shekveTebs ----------
 
 use OrderHelper;
+use DataProvider;
+use QueryHelper;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -18,6 +20,8 @@ $json = file_get_contents('php://input');
 $postData = json_decode($json);
 
 $orderHelper = new OrderHelper($con);
+$dataProvider = new DataProvider($con);
+$queryHelper = new QueryHelper();
 
 // **********************************************************************************
 
@@ -73,6 +77,15 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
         }
     } else {
         // check balance in global StoreHouse
+        $globalStorageDada = $dataProvider->sqlToArray($queryHelper->queryGlobalStoreBalance($postData->sales[0]->saleDate));
+        $amountByBarrelMap = [];
+        foreach ($globalStorageDada as $row) {
+            $amountByBarrelMap[$row['id']] = $row['initialAmount'] + $row['globalIncome'] - $row['globalOutput'];
+        }
+        foreach ($postData->sales as $saleItm) {
+            if ($saleItm->count > $amountByBarrelMap[$saleItm->canTypeID])
+                dieWithError(COMMON_ERROR_CODE, ER_TEXT_EXTRA_BARREL_SALE);
+        }
     }
 
 
