@@ -16,6 +16,7 @@ $sql =
     "SELECT
     r.ID,
     r.name,
+    0 as `ownStorage`,
     IFNULL(cMap.active, 0) AS attached
 FROM
     `regions` r
