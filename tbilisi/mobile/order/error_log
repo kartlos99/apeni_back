@@ -1,3 +1,0 @@
-[20-Apr-2020 21:19:17 UTC] PHP Warning:  require_once(connection.php): failed to open stream: No such file or directory in /home/apenige2/public_html/tbilisi/mobile/order/getByDate.php on line 8
-[20-Apr-2020 21:19:17 UTC] PHP Fatal error:  require_once(): Failed opening required 'connection.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/apenige2/public_html/tbilisi/mobile/order/getByDate.php on line 8
-[20-Apr-2020 21:29:25 UTC] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, boolean given in /home/apenige2/public_html/tbilisi/mobile/order/getByDate.php on line 25
