@@ -10,11 +10,13 @@ let summaryContainer = $('#summary');
 $('#btnDone').on('click', function (e) {
     clientID = $('#selectClient').val();
     window.location.href = "../commonWeb/php/clientDataToExcel.php?clientID=" + clientID
-        + "&startDate=" + dateInput1.val() + "&endDate=" + dateInput2.val();
+        + "&startDate=" + dateInput1.val() + "&endDate=" + dateInput2.val()
+        + "&regionID=" + currentRegionID;
 });
 
 $(document).ready(function () {
     console.log("ready!");
+    getRegions();
 
     dateInput1.attr('max', strDate1);
 

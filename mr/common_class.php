@@ -31,7 +31,9 @@ class OrderHelper
 
 
         $sql =
-            "SELECT `orderID`, `beerID`, `chek`,`canTypeID`, sum(`count`) AS `count` FROM `sales` 
+            "SELECT `orderID`, `beerID`, `chek`,`canTypeID`, sum(`count`) AS `count`, u.username AS distributor FROM `sales` s 
+            LEFT JOIN users u 
+            ON u.id = s.`modifyUserID` 
             WHERE `orderID` IN ($orderIDs)
             GROUP BY `orderID`, `beerID`, `canTypeID`";
 
@@ -64,8 +66,74 @@ class OrderHelper
         return $orders;
     }
 
-    function attachRegions($orders) {
-        $sqlQuery = "SELECT `customerID`, `regionID` FROM `customer_to_region_map` WHERE `active` = 1";
+    function attachTakenMoney($orders, $date)
+    {
+        $clientIDs = "";
+        foreach ($orders as $order) {
+            $clientIDs .= $order['clientID'] . ',';
+        }
+        $clientIDs = trim($clientIDs, ',');
+
+        $sqlMoneyPerClient =
+            "SELECT `obieqtis_id`, `distributor_id`, SUM(`tanxa`) AS money FROM `moneyoutput` 
+                WHERE date(`tarigi`) = '$date' AND `obieqtis_id` IN ($clientIDs)
+                GROUP BY `obieqtis_id` ";
+
+        $moneyArr = [];
+        $resultMoney = mysqli_query($this->con, $sqlMoneyPerClient);
+        if (mysqli_num_rows($resultMoney) > 0)
+            while ($rs = mysqli_fetch_assoc($resultMoney)) {
+                $moneyArr[] = $rs;
+            }
+
+        foreach ($orders as $index => $order) {
+            $amount = [];
+            foreach ($moneyArr as $item) {
+                if ($order['clientID'] == $item['obieqtis_id']) {
+                    $amount[] = $item;
+                }
+            }
+            $orders[$index]['amount'] = $amount;
+        }
+        return $orders;
+    }
+
+    function attachEmptyBarrels($orders, $date)
+    {
+        $clientIDs = "";
+        foreach ($orders as $order) {
+            $clientIDs .= $order['clientID'] . ',';
+        }
+        $clientIDs = trim($clientIDs, ',');
+
+        $sqlBarrelsPerClient =
+            "SELECT `clientID`, `distributorID`, `canTypeID`, SUM(`count`) AS `count` FROM `barrel_output` 
+                WHERE date(`outputDate`) = '$date' AND `clientID` IN ($clientIDs)
+                GROUP BY `clientID`, `canTypeID` ";
+
+        $arr = [];
+        $result = mysqli_query($this->con, $sqlBarrelsPerClient);
+        if (mysqli_num_rows($result) > 0)
+            while ($rs = mysqli_fetch_assoc($result)) {
+                $arr[] = $rs;
+            }
+
+        foreach ($orders as $index => $order) {
+            $barrels = [];
+            foreach ($arr as $item) {
+                if ($order['clientID'] == $item['clientID']) {
+                    $barrels[] = $item;
+                }
+            }
+            $orders[$index]['emptyBarrels'] = $barrels;
+        }
+        return $orders;
+    }
+
+    function attachRegions($orders)
+    {
+
+        $sqlQuery = "SELECT `customerID`, `regionID` FROM `customer_to_region_map`";
         $rMap = [];
         $result = mysqli_query($this->con, $sqlQuery);
         while ($rs = mysqli_fetch_assoc($result)) {
@@ -107,11 +175,12 @@ class OrderHelper
             mysqli_query($this->con, $updateOrderSql);
         }
 
-        return $isCompleted ;
+        return $isCompleted;
     }
 }
 
-class VersionControl {
+class VersionControl
+{
     public $con;
 
     function __construct($db_con)
@@ -119,21 +188,42 @@ class VersionControl {
         $this->con = $db_con;
     }
 
-    function updateVersionFor($field) {
+    function updateVersionFor($field)
+    {
         $sql = "UPDATE `versionflow` SET $field = $field + 1 ";
         mysqli_query($this->con, $sql);
     }
 }
 
-class DataProvider {
+class DataProvider
+{
     public $dbConn;
 
-    function __construct($dbConn) {
+    function __construct($dbConn)
+    {
         $this->dbConn = $dbConn;
     }
 
-    function getAvailableRegionsForCustomer($customerID) {
-        $sqlQuery = "SELECT rm.`regionID`, r.name FROM `customer_to_region_map` rm
+    function sqlToArray($sqlQuery)
+    {
+        $resultArr = [];
+        $result = mysqli_query($this->dbConn, $sqlQuery);
+        if ($result) {
+            while ($rs = mysqli_fetch_assoc($result)) {
+                $resultArr[] = $rs;
+            }
+            return $resultArr;
+        } else {
+            $response[SUCCESS] = false;
+            $response[ERROR_TEXT] = "sqlToArray: can't execute the sql query! " . $sqlQuery;
+            $response[ERROR_CODE] = 132;
+            die(json_encode($response));
+        }
+    }
+
+    function getAvailableRegionsForCustomer($customerID)
+    {
+        $sqlQuery = "SELECT rm.`regionID`, r.name, r.ownStorage FROM `customer_to_region_map` rm
             LEFT JOIN regions r ON r.ID = rm.`regionID`
             WHERE rm.`active` = 1 AND `customerID` = $customerID
             ORDER BY r.name ";
@@ -146,7 +236,8 @@ class DataProvider {
         return $arr;
     }
 
-    function getBarrels() {
+    function getBarrels()
+    {
         $bData = [];
         $sql = "SELECT * FROM `kasri` ORDER BY `sortValue` desc";
         $result = mysqli_query($this->dbConn, $sql);
@@ -162,7 +253,8 @@ class DataProvider {
         return $bData;
     }
 
-    function getClients() {
+    function getClients()
+    {
         $sql = "SELECT id, dasaxeleba FROM `customer` WHERE `active`=1 ORDER BY dasaxeleba";
         $result = mysqli_query($this->dbConn, $sql);
         $arr = [];
@@ -175,7 +267,53 @@ class DataProvider {
     }
 }
 
-class DbKey {
+class DbKey
+{
     public static $CUSTOMER_MAP_TB = "`customer_to_region_map`";
     public static $USER_MAP_TB = "`user_to_region_map`";
+}
+
+class QueryHelper
+{
+
+    function queryGlobalStoreBalance($date, $saleExceptionID = '', $outputExceptionID = '')
+    {
+        $additionalSaleFilter = $saleExceptionID == '' ? '' : " AND s.ID <> $saleExceptionID ";
+        $additionalOutputFilter = $outputExceptionID == '' ? '' : " AND s.ID <> $outputExceptionID ";
+
+        return "
+            SELECT k.id, k.dasaxeleba AS barrelName, k.initialAmount,
+                ifnull(bout.val, 0) +
+                ifnull(sbout.val, 0) AS globalIncome,
+                ifnull(sal.val, 0) +
+                ifnull(shinput.val, 0) AS globalOutput
+            FROM `kasri` k
+            LEFT JOIN (
+                SELECT `canTypeID`, SUM(`count`) AS val FROM `barrel_output` brl
+                LEFT JOIN regions r ON r.ID = brl.regionID
+                WHERE r.ownStorage = 0 AND DATE(`outputDate`) <= '$date' $additionalOutputFilter
+                GROUP BY `canTypeID`
+            ) bout ON k.id = bout.canTypeID
+            
+            LEFT JOIN (
+                SELECT `barrelID`, SUM(`count`) AS val FROM `storehousebarreloutput` s
+                LEFT JOIN regions r ON r.ID = s.regionID
+                WHERE r.ownStorage = 1 AND DATE(`outputDate`) <= '$date'
+                GROUP BY `barrelID`
+            ) sbout ON k.id = sbout.barrelID
+            
+            LEFT JOIN (
+                SELECT `canTypeID`, SUM(`count`) AS val FROM `sales` s
+                LEFT JOIN regions r ON r.ID = s.regionID
+                WHERE r.ownStorage = 0 AND DATE(`saleDate`) <= '$date' $additionalSaleFilter
+                GROUP BY `canTypeID`
+            ) sal ON k.id = sal.canTypeID
+            
+            LEFT JOIN (
+                SELECT `barrelID`, SUM(`count`) AS val FROM `storehousebeerinpit` s
+                LEFT JOIN regions r ON r.ID = s.regionID
+                WHERE r.ownStorage = 1 AND `chek`=0 AND DATE(`inputDate`) <= '$date'
+                GROUP BY `barrelID`
+            ) shinput ON k.id = shinput.barrelID";
+    }
 }

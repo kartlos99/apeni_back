@@ -7,6 +7,7 @@ let tarigi = "";
 
 $(document).ready(function () {
     console.log("ready!");
+    getRegions();
 
     let cloneItemsContainer = $('#cloneContainerDiv');
     orderUnitToClone = cloneItemsContainer.find('div.order-unit');
@@ -67,8 +68,18 @@ function getOrders() {
                     newOrder.find('td.client').text(order.client);
                     newOrder.find('td.distributor').text(order.distr);
                     newOrder.find('td.order-status').text(order.statusName);
+
+                    if (order.sales.length > 0) {
+                        newOrder.find('table.table-mitana').removeClass("hidden");
+                        newOrder.find('td.delivery').text(order.sales[0].distributor);
+                    }
+                    if (order.amount.length > 0) {
+                        newOrder.find('table.table-mitana').removeClass("hidden");
+                        newOrder.find('td.money').text("აღებული: " + order.amount[0].money + "₾");
+                    }
+
                     if (isChek) {
-                        var iconChk = $('<i />').addClass("fas fa-circle fa-2x");
+                        let iconChk = $('<i />').addClass("fas fa-circle fa-2x");
                         newOrder.find('td.order-chek').append(iconChk);
                     }
                     if (order.comment != null) {
@@ -84,7 +95,7 @@ function getOrders() {
                     for (bID of beerIDs) {
                         let newOrderRow = orderRowToClone.clone();
 
-                        var oneBeerItems = order.items.filter(x => x.beerID == bID);
+                        let oneBeerItems = order.items.filter(x => x.beerID == bID);
                         if (oneBeerItems.length > 0) {
                             newOrderRow.find('td.beer-name').text(oneBeerItems[0].dasaxeleba)
                             oneBeerItems.forEach(function (bItem) {
@@ -92,6 +103,17 @@ function getOrders() {
                             });
                             rowContainer.append(newOrderRow);
                         }
+                    }
+
+                    if (order.emptyBarrels.length > 0) {
+                        let newOrderRow = orderRowToClone.clone();
+                        newOrderRow.addClass("empty-barrels");
+                        newOrderRow.find('td.beer-name').text('წამოღბული კასრები')
+
+                        order.emptyBarrels.forEach(function (emptyItem) {
+                            newOrderRow.find('td.' + emptyItem.canTypeID).text(emptyItem.count);
+                        });
+                        rowContainer.append(newOrderRow);
                     }
 
                     if (order.items.length > 0)

@@ -6,7 +6,7 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once('_load.php');
 
-checkToken();
+$sessionData = checkToken();
 
 $year = isset($_GET['year']) ? $_GET['year'] : 2020;
 
@@ -27,8 +27,8 @@ ON  s.beerID = l.id
 LEFT JOIN kasri AS k
 ON  s.canTypeID = k.id
 
-WHERE YEAR(s.saleDate) = $year    
-
+WHERE
+    YEAR(s.saleDate) = $year AND regionID = {$sessionData->regionID}
 GROUP BY
 	YEAR(s.saleDate), 
     MONTH(s.saleDate),    
@@ -53,7 +53,7 @@ ON  s.beerID = l.id
 LEFT JOIN kasri AS k
 ON  s.canTypeID = k.id
 
-WHERE YEAR(s.saleDate) = $year    
+WHERE YEAR(s.saleDate) = $year AND regionID = {$sessionData->regionID}
 
 GROUP BY
 	YEAR(s.saleDate), 
@@ -71,7 +71,7 @@ SELECT
     SUM(tanxa) AS money
 FROM
     `moneyoutput`
-WHERE YEAR(tarigi) = $year    
+WHERE YEAR(tarigi) = $year AND regionID = {$sessionData->regionID}
 GROUP BY
     YEAR(tarigi),
     MONTH(tarigi)";

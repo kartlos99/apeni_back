@@ -14,8 +14,9 @@ else dieWithError(COMMON_ERROR_CODE, "user is Not set!");
 
 $sql =
     "SELECT
-    r.ID,
-    r.name,
+    r.`ID`,
+    r.`name`,
+    r.`ownStorage`,
     IFNULL(uMap.id, 0) AS attached
 FROM
     `regions` r

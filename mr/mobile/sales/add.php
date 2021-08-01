@@ -4,6 +4,8 @@ namespace Apeni\JWT;
 // ---------- gadascem dRes, gibrunebs shekveTebs ----------
 
 use OrderHelper;
+use DataProvider;
+use QueryHelper;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -18,6 +20,8 @@ $json = file_get_contents('php://input');
 $postData = json_decode($json);
 
 $orderHelper = new OrderHelper($con);
+$dataProvider = new DataProvider($con);
+$queryHelper = new QueryHelper();
 
 // **********************************************************************************
 
@@ -54,22 +58,36 @@ if (isset($postData->barrels) && $postData->clientID != 64) {
 
 if (isset($postData->sales) && count($postData->sales) > 0) {
 
-    // Check for balance in Storehouse
-    $storeBalanceArr = getFullBarrelsBalanceInStore($con, $sessionData->regionID);
-    foreach ($postData->sales as $saleItm) {
-        $stRow = [];
-        array_filter($storeBalanceArr, function ($stItem) {
-            global $stRow;
-            global $saleItm;
-            if ($stItem['beerID'] == $saleItm->beerID && $stItem['barrelID'] == $saleItm->canTypeID) {
-                $stRow = $stItem;
-                return true;
-            }
-            return false;
-        });
-        if (!isset($stRow['balance']) || $stRow['balance'] < $saleItm->count)
-            dieWithError(COMMON_ERROR_CODE, ER_TEXT_EXTRA_BARREL_SALE);
+    if (hasOwnStorage($con, $sessionData->regionID)) {
+        // Check for balance in Storehouse
+        $storeBalanceArr = getFullBarrelsBalanceInStore($con, $sessionData->regionID);
+        foreach ($postData->sales as $saleItm) {
+            $stRow = [];
+            array_filter($storeBalanceArr, function ($stItem) {
+                global $stRow;
+                global $saleItm;
+                if ($stItem['beerID'] == $saleItm->beerID && $stItem['barrelID'] == $saleItm->canTypeID) {
+                    $stRow = $stItem;
+                    return true;
+                }
+                return false;
+            });
+            if (!isset($stRow['balance']) || $stRow['balance'] < $saleItm->count)
+                dieWithError(COMMON_ERROR_CODE, ER_TEXT_EXTRA_BARREL_SALE);
+        }
+    } else {
+        // check balance in global StoreHouse
+        $globalStorageDada = $dataProvider->sqlToArray($queryHelper->queryGlobalStoreBalance($postData->sales[0]->saleDate));
+        $amountByBarrelMap = [];
+        foreach ($globalStorageDada as $row) {
+            $amountByBarrelMap[$row['id']] = $row['initialAmount'] + $row['globalIncome'] - $row['globalOutput'];
+        }
+        foreach ($postData->sales as $saleItm) {
+            if ($saleItm->count > $amountByBarrelMap[$saleItm->canTypeID])
+                dieWithError(COMMON_ERROR_CODE, ER_TEXT_EXTRA_BARREL_SALE);
+        }
     }
+
 
     if ($orderID == 0) {
         // if no order make it

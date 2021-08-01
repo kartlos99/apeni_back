@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "../../tbilisi/_webLoad.php";
+require_once "../../mr/_webLoad.php";
 
 if (!isset($_SESSION['username'])) {
     $url = "http" . ((!empty($_SERVER['HTTPS'])) ? "s" : "") . "://" . $_SERVER['SERVER_NAME'] . $folder . "/login.php";
@@ -22,6 +22,7 @@ $output = '<table class="table" bordered="1">';
 
 if (isset($_GET["clientID"])) {
 
+    $regionID = $_GET["regionID"];
     $clientID = $_GET["clientID"];
     $startDate = $_GET["startDate"];
     $endDate = $_GET["endDate"];
@@ -56,6 +57,7 @@ if (isset($_GET["clientID"])) {
             FROM `client_actions` AS c
         WHERE 
             clientID = $clientID AND Date(c.tarigi) >= '$startDate' AND Date(c.tarigi) <= '$endDate'
+            AND c.regionID = $regionID
         ORDER by c.tarigi DESC ";
 
         $result = mysqli_query($con, $sql);
@@ -101,6 +103,7 @@ if (isset($_GET["clientID"])) {
             FROM `client_actions` AS c, customer AS o
         WHERE 
             c.clientID = o.id AND Date(c.tarigi) >= '$startDate' AND Date(c.tarigi) <= '$endDate'
+            AND c.regionID = $regionID
         ORDER by c.tarigi DESC";
 
         $result = mysqli_query($con, $sql);

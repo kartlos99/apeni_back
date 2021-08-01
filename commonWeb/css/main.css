@@ -63,7 +63,19 @@ td.order-chek {
 
 .title-field {
     font-size: 16px;
-    font-weight: bold;
+    font-weight: bolder;
+}
+
+.empty-barrels {
+    background: #c8c8b2;
+    font-style: italic;
+    border-radius: 4px;
+}
+
+.table-mitana {
+    background: #c8c8b2;
+    align-content: end;
+    border-radius: 4px;
 }
 
 .client {
@@ -78,4 +90,8 @@ td.order-chek {
 
 .table {
     margin-bottom: 4px ;
+}
+
+.region-container {
+    padding: 12px;
 }

@@ -9,7 +9,7 @@ if (!isset($_SESSION['username'])) {
     header("Location: $url");
 }
 //print_r($_SESSION);
-$userType = isset($_SESSION['usertype']) ? $_SESSION['usertype'] : 0 ;
+$userType = isset($_SESSION['usertype']) ? $_SESSION['usertype'] : 0;
 
 ?>
 
@@ -34,7 +34,7 @@ $userType = isset($_SESSION['usertype']) ? $_SESSION['usertype'] : 0 ;
 
     <link rel="stylesheet" href="../commonWeb/css/alk-sanet.min.css"/>
     <link rel="stylesheet" href="../commonWeb/css/bpg-arial.min.css"/>
-<!--    <link rel="stylesheet" href="style/local.css">-->
+    <!--    <link rel="stylesheet" href="style/local.css">-->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
           integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
@@ -67,6 +67,7 @@ if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
        data-ut="<?php echo $userType ?>"
        data-page="<?= $thisPage ?>"
        data-tkn="<?= $_SESSION['tkn'] ?>"
+       data-regionID="0"
        data-userID="<?= $_SESSION['userID'] ?>"/>
 
 <div class="wrapper">
@@ -74,17 +75,17 @@ if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
     <nav id="sidebar">
         <div class="sidebar-header">
             <h3 id="loged_username"><?= $_SESSION['username'] ?></h3>
-            <h5><?= $userType == 2 ? "admin" : "user" ?></h5>
+            <h5><?= $userType == USERTYPE_ADMIN ? "admin" : "user" ?></h5>
         </div>
 
         <ul class="list-unstyled components">
             <?php if ($userType == USERTYPE_ADMIN) : ?>
-            <li class="index">
-                <a href="index.php">თვის შედეგები</a>
-            </li>
-            <li class="byClient">
-                <a href="byClient.php">ობიექტები</a>
-            </li>
+                <li class="index">
+                    <a href="index.php">თვის შედეგები</a>
+                </li>
+                <li class="byClient">
+                    <a href="byClient.php">ობიექტები</a>
+                </li>
             <?php endif; ?>
             <li class="currentOrders">
                 <a href="currentOrders.php">შეკვეთები</a>
@@ -92,11 +93,16 @@ if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
 
         </ul>
 
+        <div class="region-container">
+            <label for="selRegion">რეგიონი</label>
+            <select id="selRegion" class="form-control"></select>
+        </div>
+
         <ul class="list-unstyled CTAs">
             <!-- <li><a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a></li> -->
             <li><a href="logout.php" class="article">გასვლა</a></li>
         </ul>
-        <div class="onbuttom">v 2.0.1</div>
+        <div class="onbuttom">v 3.0.1</div>
     </nav>
     <!--sidebar-->
 

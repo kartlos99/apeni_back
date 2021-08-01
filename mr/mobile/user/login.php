@@ -47,7 +47,7 @@ if (mysqli_num_rows($result) == 1) {
     $userData['permissions'] = $permissions;
 
     $sqlAllowedRegions =
-        "SELECT `regionID`, `name` FROM `user_to_region_map` map, `regions` reg
+        "SELECT `regionID`, `name`, `ownStorage` FROM `user_to_region_map` map, `regions` reg
          WHERE `userID` = " . $userData['id'] . " AND map.`regionID` = reg.ID";
     $regionsResult = mysqli_query($con, $sqlAllowedRegions);
     $regions = [];

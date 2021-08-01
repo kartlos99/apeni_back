@@ -21,15 +21,23 @@ $barrels = $dataProvider->getBarrels();
             <div class="order-header">
                 <table class="table ">
                     <tr>
+                        <td>შეკვეთა</td>
                         <td class="client title-field"></td>
                         <td class="distributor title-field"></td>
                         <td class="order-status title-field"></td>
                         <td class="order-chek"></td>
                     </tr>
                 </table>
+                <table class="table hidden table-mitana">
+                    <tr>
+                        <td>მიტანა</td>
+                        <td class="delivery title-field"></td>
+                        <td class="money title-field"></td>
+                    </tr>
+                </table>
             </div>
             <div class="order-body ">
-                <table class="table ">
+                <table class="table table-hover">
                     <thead>
                     <th>ლუდი</th>
                     <?php foreach ($barrels as $key => $br) : ?>

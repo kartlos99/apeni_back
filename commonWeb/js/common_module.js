@@ -25,21 +25,29 @@ function f_show() {
 function f_hide() {
 }
 
-var pageJS = $('#currUserdata').attr("data-page");
+let REGION_ID_KEY = "regionID";
+let USER_ID_KEY = "userID";
+
+let viewSessionData = $('#currUserdata');
+let viewSelectRegion = $('#selRegion')
+
+let pageJS = viewSessionData.attr("data-page");
 console.log("currPage:", pageJS);
 let mainMenu = $('ul.components');
 mainMenu.find('li').removeClass('active');
 mainMenu.find('li.' + pageJS).addClass('active');
 
-let tkn = "Bearer " + $('#currUserdata').attr("data-tkn");
+let tkn = "Bearer " + viewSessionData.attr("data-tkn");
+let currentRegionID = getCookie(REGION_ID_KEY);
+
 // window.localStorage.setItem('tkn', tkn);
-$('#currUserdata').attr("data-tkn", "-");
+viewSessionData.attr("data-tkn", "-");
 
 function getHeaders() {
     return {
         'Authorization': tkn,
-        'Client' : 'web',
-        'Region' : '1'
+        'Client': 'web',
+        'Region': currentRegionID
     }
 }
 
@@ -65,10 +73,9 @@ let monthObj = {
 function showError(code, text) {
     if (code == 401)
         var res = confirm("საჭიროებს ავტორიზაციის გავლას!");
-        if (res == true) {
-            window.location.replace("logout.php");
-        }
-    else
+    if (res == true) {
+        window.location.replace("logout.php");
+    } else
         alert(text)
 }
 
@@ -207,32 +214,35 @@ function getCookie(cname) {
     return "";
 }
 
-function serialDataToObj(data){
-    var obj={};
+function saveCookie(key, value) {
+    document.cookie = key + "=" + value;
+}
+
+function serialDataToObj(data) {
+    var obj = {};
     var spData = data.split("&");
-    for(var key in spData)
-    {
+    for (var key in spData) {
         //console.log(spData[key]);
         obj[spData[key].split("=")[0]] = spData[key].split("=")[1];
     }
     return obj;
 }
 
-function blockSolverSelector(uID = 0){
-    if (uID > 0){
+function blockSolverSelector(uID = 0) {
+    if (uID > 0) {
         solverSelector.val(uID);
     }
     solverSelector.find('option').attr('disabled', true);
     solverSelector.attr('readonly', true);
 }
 
-function unBlockSolverSelector(){
+function unBlockSolverSelector() {
     solverSelector.find('option').removeAttr('disabled');
     solverSelector.removeAttr('readonly');
 }
 
-function blockOrgSelector(orgID = 0){
-    if (orgID > 0){
+function blockOrgSelector(orgID = 0) {
+    if (orgID > 0) {
         orgSelector.val(orgID);
         loadBranches(orgID, 0, 'filial_id');
     }
@@ -240,20 +250,20 @@ function blockOrgSelector(orgID = 0){
     orgSelector.attr('readonly', true);
 }
 
-function blockFilialSelector(filID = 0){
-    if (filID > 0){
+function blockFilialSelector(filID = 0) {
+    if (filID > 0) {
         filSelector.val(filID);
     }
     filSelector.find('option').attr('disabled', true);
     filSelector.attr('readonly', true);
 }
 
-function unBlockOrgSelector(){
+function unBlockOrgSelector() {
     orgSelector.find('option').removeAttr('disabled');
     orgSelector.removeAttr('readonly');
 }
 
-function unBlockFilialSelector(){
+function unBlockFilialSelector() {
     filSelector.find('option').removeAttr('disabled');
     filSelector.removeAttr('readonly');
 }
@@ -276,7 +286,7 @@ function getOrganizations(sel_ID) {
                 $('<option />').text(item.OrganizationName).attr('value', item.id).appendTo('#' + sel_ID);
             });
 
-            if($('#currusertype').data('ut') == 'im_owner'){
+            if ($('#currusertype').data('ut') == 'im_owner') {
                 blockOrgSelector($('#currusertype').data('org'));
                 blockFilialSelector($('#currusertype').data('fil'));
             }
@@ -328,7 +338,7 @@ function getCategory(sel_ID) {
             });
 
             waitForDropdowns++;
-            if (waitingItem != undefined){
+            if (waitingItem != undefined) {
                 fillAccidentForm(waitingItem);
             }
             if (waitForDropdowns == 2) pageIsReady();
@@ -360,4 +370,44 @@ function loadSubCategory(catID, subID, sel_ID) {
     }
 }
 
-function pageIsReady(){}
+function getRegions() {
+    if (viewSessionData.attr("data-userID") !== getCookie(USER_ID_KEY)) {
+        currentRegionID = 0
+        saveCookie(REGION_ID_KEY, 0)
+    }
+    saveCookie(USER_ID_KEY, viewSessionData.attr("data-userID"))
+
+    $.ajax({
+        url: 'webApi/getRegions.php?userID=' + viewSessionData.attr("data-userID"),
+        dataType: 'json',
+        headers: getHeaders(),
+        success: function (resp) {
+
+            if (resp.success) {
+                let sData = resp.data
+
+                sData.forEach(function (region) {
+                    $('<option />').text(region.name).attr('value', region.regionID).appendTo(viewSelectRegion);
+                })
+
+                viewSelectRegion.val(currentRegionID);
+            } else {
+                console.log(resp);
+                showError(resp.errorCode, resp.errorText);
+            }
+        }
+    });
+}
+
+viewSelectRegion.on('change', function (e) {
+    onRegionChange(viewSelectRegion.val());
+})
+
+function onRegionChange(regionID) {
+    currentRegionID = regionID;
+    saveCookie(REGION_ID_KEY, regionID);
+    location.reload();
+}
+
+function pageIsReady() {
+}
