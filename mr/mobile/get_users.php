@@ -9,15 +9,23 @@ require_once('connection.php');
 $sessionData = checkToken();
 
 $sql =
-    "SELECT u.* FROM user_to_region_map um
-LEFT JOIN 
-(SELECT a.`id`, a.`username`, a.`name`, a.`type`, a.`tel`, a.`adress`, IFNULL(b.username, 'x') as maker, a.`comment` 
-        FROM
-            `users` a LEFT JOIN `users` b on `a`.`maker` = `b`.`id`
-        WHERE a.active = 1
- ) u
- ON um.userID = u.id
- WHERE um.regionID = {$sessionData->regionID}";
+    "SELECT
+    a.`id`,
+    a.`username`,
+    a.`name`,
+    a.`type`,
+    a.`tel`,
+    a.`adress`,
+    IFNULL(b.username, 'x') AS maker,
+    a.`comment`
+FROM
+    `users` a
+LEFT JOIN `users` b ON
+    `a`.`maker` = `b`.`id`
+LEFT JOIN user_to_region_map um ON
+    um.userID = a.id
+WHERE
+    um.regionID = {$sessionData->regionID} AND a.active = 1 ";
 $arr = array();
 $result = $con->query($sql);
 
