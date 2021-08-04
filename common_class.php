@@ -1,5 +1,5 @@
 <?php
-
+/*
 class OrderHelper
 {
 
@@ -158,9 +158,9 @@ class OrderHelper
 
         return $isCompleted ;
     }
-}
+}*/
 
-class VersionControl {
+/*class VersionControl {
     public $con;
 
     function __construct($db_con)
@@ -172,8 +172,9 @@ class VersionControl {
         $sql = "UPDATE `versionflow` SET $field = $field + 1 ";
         mysqli_query($this->con, $sql);
     }
-}
+}*/
 
+/*
 class DataProvider {
     public $dbConn;
 
@@ -208,9 +209,10 @@ class DataProvider {
         }
         return $arr;
     }
-}
+}*/
 
+/*
 class DbKey {
     public static $CUSTOMER_MAP_TB = "`customer_to_region_map`";
     public static $USER_MAP_TB = "`user_to_region_map`";
-}
+}*/

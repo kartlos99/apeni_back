@@ -21,7 +21,7 @@ $barrels = $dataProvider->getBarrels();
             <div class="order-header">
                 <table class="table ">
                     <tr>
-                        <td>შეკვეთა</td>
+<!--                        <td>შეკვეთა</td>-->
                         <td class="client title-field"></td>
                         <td class="distributor title-field"></td>
                         <td class="order-status title-field"></td>

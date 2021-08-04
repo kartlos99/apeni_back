@@ -41,7 +41,7 @@ function getOrders() {
             if (resp.success) {
                 let oData = resp.data
 
-                let sordedData = oData.sort(function (a, b) {
+                let sortedData = oData.sort(function (a, b) {
                     if (a.sortValue < b.sortValue)
                         return 1;
                     else
@@ -58,20 +58,20 @@ function getOrders() {
                         return 1
                 })
 
-                sordedData.forEach(function (order) {
+                sortedData.forEach(function (order) {
                     let newOrder = orderUnitToClone.clone();
 
                     let isChek = false
                     if (order.items.find(it => it.chek == "1") != undefined)
                         isChek = true
 
-                    newOrder.find('td.client').text(order.client);
-                    newOrder.find('td.distributor').text(order.distr);
-                    newOrder.find('td.order-status').text(order.statusName);
+                    newOrder.find('td.client').text("ობიექტი: " + order.client);
+                    newOrder.find('td.distributor').text("დისტრ: " + order.distr);
+                    newOrder.find('td.order-status').text("სტატუსი: " + order.statusName);
 
                     if (order.sales.length > 0) {
                         newOrder.find('table.table-mitana').removeClass("hidden");
-                        newOrder.find('td.delivery').text(order.sales[0].distributor);
+                        newOrder.find('td.delivery').text("დისტრ: " + order.sales[0].distributor);
                     }
                     if (order.amount.length > 0) {
                         newOrder.find('table.table-mitana').removeClass("hidden");
@@ -85,22 +85,42 @@ function getOrders() {
                     if (order.comment != null) {
                         newOrder.find('div.order-comment').text(order.comment)
                     }
-                    if (order.orderStatus != "order_active")
+                    if (order.orderStatus !== "order_active")
                         newOrder.addClass('order-completed');
 
                     let rowContainer = newOrder.find('tbody.order-rows-container');
 
                     let beerIDs = order.items.map(it => it.beerID).filter(onlyUnique);
 
-                    for (bID of beerIDs) {
+                    order.sales.forEach(function (saleItem) {
+                        if ($.inArray(saleItem.beerID, beerIDs) === -1)
+                            beerIDs.push(saleItem.beerID)
+                    })
+
+                    for (let bID of beerIDs) {
                         let newOrderRow = orderRowToClone.clone();
 
-                        let oneBeerItems = order.items.filter(x => x.beerID == bID);
-                        if (oneBeerItems.length > 0) {
-                            newOrderRow.find('td.beer-name').text(oneBeerItems[0].dasaxeleba)
+                        let oneBeerItems = order.items.filter(x => x.beerID === bID);
+                        let oneBeerSales = order.sales.filter(x => x.beerID === bID);
+
+                        if (oneBeerItems.length > 0 || oneBeerSales.length > 0) {
+                            newOrderRow.find('td.beer-name').text(getBeerName(oneBeerItems, oneBeerSales))
+
                             oneBeerItems.forEach(function (bItem) {
-                                newOrderRow.find('td.' + bItem.canTypeID).text(bItem.count);
+                                let saleCount = oneBeerSales.filter(x => x.canTypeID === bItem.canTypeID).reduce((s, a) => s + parseInt(a.count), 0);
+                                let unitData = getOrderWithSaleView(bItem.count, saleCount);
+                                newOrderRow.find('td.' + bItem.canTypeID).append(unitData);
+
+                                oneBeerSales = oneBeerSales.filter(function (saleItem) {
+                                    return saleItem.canTypeID !== bItem.canTypeID
+                                });
                             });
+                            oneBeerSales.forEach(function (sItem) {
+                                let saleCount = oneBeerSales.filter(x => x.canTypeID === sItem.canTypeID).reduce((s, a) => s + parseInt(a.count), 0);
+                                let unitData = getOrderWithSaleView(0, saleCount);
+                                newOrderRow.find('td.' + sItem.canTypeID).append(unitData);
+                            });
+
                             rowContainer.append(newOrderRow);
                         }
                     }
@@ -116,8 +136,7 @@ function getOrders() {
                         rowContainer.append(newOrderRow);
                     }
 
-                    if (order.items.length > 0)
-                        ordersList.append(newOrder);
+                    ordersList.append(newOrder);
                 })
 
             } else {
@@ -126,4 +145,19 @@ function getOrders() {
             }
         }
     });
+}
+
+function getOrderWithSaleView(orderCount, saleCount) {
+    let holeField = $('<span />').text(orderCount).addClass("order-unit");
+    if (saleCount > 0)
+        $('<span />').text("/" + saleCount).addClass("sale-count").appendTo(holeField);
+    return holeField;
+}
+
+function getBeerName(orderItems, saleItems) {
+    if (orderItems.length > 0)
+        return orderItems[0].dasaxeleba;
+    if (saleItems.length > 0)
+        return saleItems[0].dasaxeleba;
+    return "_";
 }

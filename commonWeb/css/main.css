@@ -95,3 +95,11 @@ td.order-chek {
 .region-container {
     padding: 12px;
 }
+
+.sale-count {
+    color: #789ca9;
+}
+
+.order-unit {
+    font-weight: bold;
+}
