@@ -17,6 +17,7 @@ $sql =
     a.`tel`,
     a.`adress`,
     IFNULL(b.username, 'x') AS maker,
+    a.active AS userStatus,
     a.`comment`
 FROM
     `users` a
