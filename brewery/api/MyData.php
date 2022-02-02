@@ -1,5 +1,6 @@
 <?php
 
+use function Apeni\JWT\dieWithError;
 
 class MyData
 {
@@ -20,7 +21,8 @@ class MyData
             ORDER BY tankType, sortValue";
         $arr = $this->getDataAsArray($sql);
         foreach ($arr as $key => $item) {
-            $bData[$item[ID]] = $item;
+            // $bData[$item[ID]] = $item;
+            $bData[] = $item;
         }
         return $bData;
     }
@@ -40,7 +42,7 @@ class MyData
                 $arr[] = $rs;
             }
         } else {
-            \Apeni\JWT\dieWithError(COMMON_SQL_ERROR_CODE, mysqli_error($this->dbConn));
+            dieWithError(422, mysqli_error($this->dbConn));
         }
         return $arr;
     }

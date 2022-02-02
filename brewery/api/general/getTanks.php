@@ -11,8 +11,6 @@ checkToken();
 
 $myData = new MyData($dbLink);
 
-$response[DATA] = $myData->getTanks();
-
-echo json_encode($response);
+echo json_encode($myData->getTanks());
 
 mysqli_close($dbLink);
