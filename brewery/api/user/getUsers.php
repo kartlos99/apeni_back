@@ -17,8 +17,6 @@ $sql = "SELECT a.`id`, a.`username`, a.`name`, a.`type`, a.`tel`, a.`adress`, IF
             `users` a LEFT JOIN `users` b on `a`.`maker` = `b`.`id`
         WHERE a.active = 1" ;
 
-$response[DATA] = $myData->getDataAsArray($sql);
-
-echo json_encode($response);
+echo json_encode($myData->getDataAsArray($sql));
 
 mysqli_close($dbLink);

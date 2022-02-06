@@ -46,4 +46,22 @@ class MyData
         }
         return $arr;
     }
+
+    private function baseInsert($insertSql)
+    {
+        $result = mysqli_query($this->dbConn, $insertSql);
+        if (!$result)
+            dieWithError(422, mysqli_error($this->dbConn));
+        return [RECORD_ID_KEY => mysqli_insert_id($this->dbConn)];
+    }
+
+    public function insertBoiling($code, $startDate, $density, $amount, $tankID, $beerID, $comment, $modifyUserID)
+    {
+        $sql = "
+insert into boiling (code, startDate, density, amount, tankID, beerID, comment, modifyUserID) 
+VALUE ('$code', '$startDate', '$density', $amount, $tankID, $beerID, '$comment', $modifyUserID)";
+        return $this->baseInsert($sql);
+    }
+
+
 }

@@ -5,6 +5,7 @@ namespace Apeni\JWT;
 use DomainException;
 use Exception;
 use ExpiredException;
+use stdClass;
 use UnexpectedValueException;
 
 const KEY_ERROR_MESSAGE = "errorMessage";
@@ -18,7 +19,10 @@ function dieWithError($httpStatusCode = 422, $text = "un known error")
 function checkToken()
 {
     // temporary, while testing api
-    return [];
+    $fakePayload = new stdClass();
+    $fakePayload->{'username'} = "kartlos-test";
+    $fakePayload->{'userID'} = 1;
+    return $fakePayload;
 
     $token = getBearerToken();
 
