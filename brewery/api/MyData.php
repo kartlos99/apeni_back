@@ -11,6 +11,20 @@ class MyData
         $this->dbConn = $dbConn;
     }
 
+    function getFermentationDataByTankID($tankID) {
+        $sql = "SELECT * FROM `f_data`
+            WHERE `fID`= (SELECT ID FROM `fermentation`
+                        WHERE `tankID`=$tankID AND `active` = 1)
+            ORDER by `modifyDate` ";
+        return $this->getDataAsArray($sql);
+    }
+    function getFermentationDataByID($fID) {
+        $sql = "SELECT * FROM `f_data`
+            WHERE `fID`= $fID
+            ORDER by `modifyDate` ";
+        return $this->getDataAsArray($sql);
+    }
+
     function getTanks()
     {
         $bData = [];
