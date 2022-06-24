@@ -19,8 +19,12 @@ FROM
 LEFT JOIN $CUSTOMER_TB AS o
 ON
     g.obieqtis_id = o.id
+LEFT JOIN customer_to_region_map rmap
+ON o.id = rmap.customerID AND rmap.regionID = g.regionID
 WHERE
-	o.active = 1 AND g.`regionID` = {$sessionData->regionID}
+	o.active = 1 
+    AND g.`regionID` = {$sessionData->regionID}
+    AND rmap.active = 1
 GROUP BY dasaxeleba    
 ORDER BY passDays DESC
 ";
