@@ -69,8 +69,8 @@ if (mysqli_query($con, $sqlAddClient)) {
         $vc->updateVersionFor(PRICE_VCS);
 
         $sqlAddInitialSystemClear =
-            "INSERT INTO `gawmenda` (`obieqtis_id`, `distributor_id`, `tarigi`) " .
-            "VALUES ( '$clientID', '$sessionData->userID', '$timeOnServer')";
+            "INSERT INTO `gawmenda` (`regionID`, `obieqtis_id`, `distributor_id`, `tarigi`) " .
+            "VALUES ('$sessionData->regionID', '$clientID', '$sessionData->userID', '$timeOnServer')";
         mysqli_query($con, $sqlAddInitialSystemClear);
 
         $sqlInsertCustomerMap =
