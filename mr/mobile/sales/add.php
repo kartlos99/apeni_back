@@ -245,7 +245,7 @@ if (isset($postData->money) && count($postData->money) > 0) {
         $moneyItm = $postData->money[$i];
 
         $takeMoneyDate = $moneyItm->takeMoneyDate;
-        $amount = $moneyItm->amount;
+        $amount = round($moneyItm->amount, 2, PHP_ROUND_HALF_UP );
         $paymentType = $moneyItm->paymentType;
 
         if ($i > 0) $multiValue .= ",";

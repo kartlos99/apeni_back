@@ -103,3 +103,16 @@ td.order-chek {
 .order-unit {
     font-weight: bold;
 }
+
+.cash-money {
+    border-radius: 16px;
+    background-color: #9bce82;
+    padding: 6px;
+    margin-left: 6px;
+}
+.bank-money {
+    border-radius: 16px;
+    background-color: #8ba7ce;
+    padding: 6px;
+    margin-left: 6px;
+}

@@ -75,7 +75,14 @@ function getOrders() {
                     }
                     if (order.amount.length > 0) {
                         newOrder.find('table.table-mitana').removeClass("hidden");
-                        newOrder.find('td.money').text("აღებული: " + order.amount[0].money + "₾");
+                        let moneyCell = newOrder.find('td.money')
+                        moneyCell.append($('<span />').text("აღებული: ").addClass(""));
+                        order.amount.forEach(function (mItem) {
+                            if (mItem.paymentType === "1")
+                            moneyCell.append($('<span />').text(mItem.money + "₾ ხელზე").addClass("cash-money"));
+                            else
+                            moneyCell.append($('<span />').text(mItem.money + "₾ ბანკი").addClass("bank-money"));
+                        });
                     }
 
                     if (isChek) {

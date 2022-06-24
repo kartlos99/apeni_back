@@ -76,9 +76,9 @@ class OrderHelper
         $clientIDs = trim($clientIDs, ',');
 
         $sqlMoneyPerClient =
-            "SELECT `obieqtis_id`, `distributor_id`, SUM(`tanxa`) AS money FROM apenige2_mr3.moneyoutput 
+            "SELECT `obieqtis_id`, `distributor_id`, SUM(`tanxa`) AS money, paymentType FROM apenige2_mr3.moneyoutput 
                 WHERE date(`tarigi`) = '$date' AND `obieqtis_id` IN ($clientIDs)
-                GROUP BY `obieqtis_id` ";
+                GROUP BY `obieqtis_id`, paymentType ";
 
         $moneyArr = [];
         $resultMoney = mysqli_query($this->con, $sqlMoneyPerClient);
