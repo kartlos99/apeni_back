@@ -64,9 +64,7 @@ if($beerId == "0"){ // axali ludis chawera
         }
 	
         $response[DATA] = "$newBeer_id";
-        $vc = new VersionControl($con);
-        $vc->updateVersionFor(BEER_VCS);
-        $vc->updateVersionFor(PRICE_VCS);
+
     } else {
         dieWithError(mysqli_errno($con), mysqli_error($con));
     }
@@ -81,9 +79,12 @@ if($beerId == "0"){ // axali ludis chawera
     if(!mysqli_query($con, $sql)){
         dieWithError(mysqli_errno($con), mysqli_error($con));
     }else{
-        $response[DATA] = "$newBeer_id";
+        $response[DATA] = "";
     }       
 }
 
+$vc = new VersionControl($con);
+$vc->updateVersionFor(BEER_VCS);
+$vc->updateVersionFor(PRICE_VCS);
 
 echo json_encode($response);
