@@ -19,7 +19,7 @@ $intoResult = mysqli_query($con, $sqlGetInfo);
 $priceResult = mysqli_query($con, $sqlGetPrices);
 
 
-if ($intoResult && $priceResult) {
+if ($intoResult && $priceResult && mysqli_num_rows($intoResult) == 1) {
 
     $prices = [];
     while ($rs = mysqli_fetch_assoc($priceResult)) {
