@@ -10,11 +10,6 @@ $sessionData = checkToken();
 $date1 = $_GET['date1'];
 $date2 = $_GET['date2'];
 
-$filterByCustomer = "";
-
-if (isset($_GET['customerID']) && $_GET['customerID'] > 0)
-    $filterByCustomer = " AND o.id = " . $_GET['customerID'];
-
 $sql = "SELECT id, dasaxeleba FROM `customer` c
 WHERE
     c.`active`=1 AND c.id IN (
