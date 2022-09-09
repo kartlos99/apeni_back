@@ -10,6 +10,11 @@ $sessionData = checkToken();
 $date1 = $_GET['date1'];
 $date2 = $_GET['date2'];
 
+$filterByCustomer = "";
+
+if (isset($_GET['customerID']) && $_GET['customerID'] > 0)
+    $filterByCustomer = " AND o.id = " . $_GET['customerID'];
+
 $sql = "SELECT 
 s.clientID, o.dasaxeleba AS clientName,
 s.beerID, l.dasaxeleba AS beerName,
@@ -24,6 +29,7 @@ WHERE
 s.saleDate BETWEEN '$date1' AND '$date2' 
 AND o.active = 1
 AND regionID = {$sessionData->regionID}
+$filterByCustomer
 GROUP BY
 s.clientID, s.beerID
 ORDER BY liter DESC";

@@ -6,12 +6,17 @@ let strDate2 = dateformat(currDate);
 let dateInput1 = $('#date1');
 let dateInput2 = $('#date2');
 let summaryContainer = $('#summary');
+let clientSelector = $('#selectClient');
 
 $('#btnDone').on('click', function (e) {
-    clientID = $('#selectClient').val();
+    clientID = clientSelector.val();
     window.location.href = "../commonWeb/php/clientDataToExcel.php?clientID=" + clientID
         + "&startDate=" + dateInput1.val() + "&endDate=" + dateInput2.val()
         + "&regionID=" + currentRegionID;
+});
+
+clientSelector.on('change', function(e) {
+    getData(dateInput1.val(), dateInput2.val(), clientSelector.val())
 });
 
 $(document).ready(function () {
@@ -29,16 +34,16 @@ $(document).ready(function () {
 });
 
 $('#btnUpdateChart').on('click', function (b) {
-    getData(dateInput1.val(), dateInput2.val())
+    getData(dateInput1.val(), dateInput2.val(), clientSelector.val())
 })
 
 let obieqtebi = [];
 let beerIds = [];
 let beerObjects = [];
 
-function getData(date1, date2) {
+function getData(date1, date2, customerID = 0) {
     $.ajax({
-        url: 'webApi/getClients.php?date1=' + date1 + '&date2=' + date2,
+        url: 'webApi/getClients.php?date1=' + date1 + '&date2=' + date2 + '&customerID=' + customerID ,
         dataType: 'json',
         headers: getHeaders(),
         success: function (resp) {
