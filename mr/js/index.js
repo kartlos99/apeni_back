@@ -24,6 +24,7 @@ function getSales(year) {
                     let monthSalesContainer = newSaleMonth.find('tbody.beer-sale-items');
                     let monthTotalLiter = 0;
 
+                    if (sItem[1].sales != null) {
                     Object.values(sItem[1].sales).forEach(function (sRow) {
                         monthTotalLiter += parseInt(sRow.liter);
                         let newSaleRow = saleRowToClone.clone();
@@ -48,6 +49,7 @@ function getSales(year) {
                     newSaleMonth.find('div.panel-heading').text(unitTitle);
 
                     mainDiv.append(newSaleMonth);
+                    }
                 })
                 showChart1(sData, beerIDs)
             } else {
@@ -63,7 +65,7 @@ function getBeerDataByID(bID, fullData) {
     let oneBeerSaleRow = [];
     tveebi.forEach(function (tve, index) {
 
-        if (fullData[index + 1] != undefined) {
+        if (fullData[index + 1] != undefined && fullData[index + 1].sales != null) {
             let mBeer = fullData[index + 1].sales.filter(x => parseInt(x.beerID) == bID)
             if (mBeer.length == 1) {
                 oneBeerSaleRow.push(parseInt(mBeer[0].liter))
@@ -79,11 +81,13 @@ function getBeerDataByID(bID, fullData) {
 function getBeerNameAndColor(bID, data) {
     let b = undefined
     Object.values(data).forEach(function (rowMain) {
+        if (rowMain.sales != null) {
         rowMain.sales.forEach(function (item) {
             if (parseInt(item.beerID) == bID && b == undefined) {
                 b = item;
             }
         })
+        }
     })
     return b;
 }
