@@ -2,6 +2,7 @@ let currDate = new Date();
 let strDate1 = dateformat(currDate);
 currDate.setDate(currDate.getDate() + 1);
 let strDate2 = dateformat(currDate);
+let lastShownCustomerID = 0;
 
 let dateInput1 = $('#date1');
 let dateInput2 = $('#date2');
@@ -16,7 +17,8 @@ $('#btnDone').on('click', function (e) {
 });
 
 clientSelector.on('change', function(e) {
-    getData(dateInput1.val(), dateInput2.val(), clientSelector.val())
+    lastShownCustomerID = clientSelector.val();
+    getData(dateInput1.val(), dateInput2.val(), lastShownCustomerID);
 });
 
 $(document).ready(function () {
@@ -30,12 +32,14 @@ $(document).ready(function () {
     strDate1 = dateformat(currDate);
     dateInput1.val(strDate1);
 
-    getData(dateInput1.val(), dateInput2.val())
+    getData(dateInput1.val(), dateInput2.val());
+    updateCustomerList(dateInput1.val(), dateInput2.val());
 });
 
 $('#btnUpdateChart').on('click', function (b) {
-    getData(dateInput1.val(), dateInput2.val(), clientSelector.val())
-})
+    getData(dateInput1.val(), dateInput2.val(), lastShownCustomerID);
+    updateCustomerList(dateInput1.val(), dateInput2.val());
+});
 
 let obieqtebi = [];
 let beerIds = [];
@@ -106,6 +110,31 @@ function getData(date1, date2, customerID = 0) {
                 drawChart();
             } else {
                 showError(resp.errorCode, resp.errorText);
+            }
+        }
+    });
+}
+
+function updateCustomerList(date1, date2) {
+    $.ajax({
+        url: 'webApi/getActiveCustomers.php?date1=' + date1 + '&date2=' + date2 ,
+        dataType: 'json',
+        headers: getHeaders(),
+        success: function (resp) {
+
+            if (resp.success) {
+                clientSelector.empty();
+                clientSelector.append($("<option/>").text("ყველა ობიექტი").val(0))
+                resp.data.forEach( function(customer) {
+                    clientSelector.append($("<option/>").text(customer.dasaxeleba).val(customer.id));
+                })
+            }
+            clientSelector.val(lastShownCustomerID);
+
+            if (clientSelector.val() == null) {
+                clientSelector.val(0);
+                lastShownCustomerID = 0;
+                getData(dateInput1.val(), dateInput2.val(), lastShownCustomerID);
             }
         }
     });
