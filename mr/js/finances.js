@@ -11,9 +11,12 @@ let btnRefresh = $('#btnRefresh');
 
 let moneyTable = $("#tbMoney").find('tbody');
 
-clientSelector.on('change', function() {
+clientSelector.on('change', function () {
     lastShownCustomerID = clientSelector.val();
-    getData(dateInput1.val(), dateInput2.val(), lastShownCustomerID);
+    if (lastShownCustomerID > 0)
+        getDetailedData(dateInput1.val(), dateInput2.val(), lastShownCustomerID);
+    else
+        getData(dateInput1.val(), dateInput2.val());
 });
 
 $(document).ready(function () {
@@ -32,13 +35,49 @@ $(document).ready(function () {
 });
 
 btnRefresh.on('click', function (e) {
-    getData(dateInput1.val(), dateInput2.val());
+    if (lastShownCustomerID > 0)
+        getDetailedData(dateInput1.val(), dateInput2.val(), lastShownCustomerID);
+    else
+        getData(dateInput1.val(), dateInput2.val());
     updateCustomerList(dateInput1.val(), dateInput2.val());
 })
 
-function getData(date1, date2, customerID = 0) {
+function getDetailedData(date1, date2, customerID) {
     $.ajax({
-        url: 'webApi/getGroupedFinances.php?date1=' + date1 + '&date2=' + date2 ,
+        url: 'webApi/getDetailedFinances.php?date1=' + date1 + '&date2=' + date2 + '&customerID=' + customerID,
+        dataType: 'json',
+        headers: getHeaders(),
+        success: function (resp) {
+
+            if (resp.success) {
+                moneyTable.empty()
+                resp.data.forEach(function (financeDataItem) {
+                    moneyTable.append(detailRow(financeDataItem))
+                })
+                moneyTable.append(totalRow(resp.data))
+            } else {
+                showError(resp.errorCode, resp.errorText);
+            }
+        }
+    });
+}
+
+function detailRow(item) {
+    let tdDate = $('<td />').text(item.tarigi).addClass("cl-bold");
+    let tdCash = $('<td />').addClass("ricxvi");
+    let tdBank = $('<td />').addClass("ricxvi");
+    let tdDistributor = $('<td />').text(item.distributor);
+    if (parseInt(item.paymentType) === 1)
+        tdCash.text(item.amount);
+    if (parseInt(item.paymentType) === 2)
+        tdBank.text(item.amount);
+
+    return $('<tr></tr>').append(tdDate, tdDistributor, tdCash, tdBank);
+}
+
+function getData(date1, date2) {
+    $.ajax({
+        url: 'webApi/getGroupedFinances.php?date1=' + date1 + '&date2=' + date2,
         dataType: 'json',
         headers: getHeaders(),
         success: function (resp) {
@@ -88,7 +127,7 @@ function totalRow(data) {
 
 function updateCustomerList(date1, date2) {
     $.ajax({
-        url: 'webApi/getActiveCustomers.php?date1=' + date1 + '&date2=' + date2 ,
+        url: 'webApi/getFinanciallyActiveCustomers.php?date1=' + date1 + '&date2=' + date2,
         dataType: 'json',
         headers: getHeaders(),
         success: function (resp) {
@@ -96,7 +135,7 @@ function updateCustomerList(date1, date2) {
             if (resp.success) {
                 clientSelector.empty();
                 clientSelector.append($("<option/>").text("ყველა ობიექტი").val(0))
-                resp.data.forEach( function(customer) {
+                resp.data.forEach(function (customer) {
                     clientSelector.append($("<option/>").text(customer.dasaxeleba).val(customer.id));
                 })
             }
