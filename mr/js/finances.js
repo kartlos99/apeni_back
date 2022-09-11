@@ -12,11 +12,12 @@ let btnRefresh = $('#btnRefresh');
 let moneyTable = $("#tbMoney").find('tbody');
 
 clientSelector.on('change', function () {
-    lastShownCustomerID = clientSelector.val();
+    lastShownCustomerID = parseInt(clientSelector.val());
     if (lastShownCustomerID > 0)
         getDetailedData(dateInput1.val(), dateInput2.val(), lastShownCustomerID);
     else
         getData(dateInput1.val(), dateInput2.val());
+    updateFirstColumnTitle();
 });
 
 $(document).ready(function () {
@@ -40,7 +41,20 @@ btnRefresh.on('click', function (e) {
     else
         getData(dateInput1.val(), dateInput2.val());
     updateCustomerList(dateInput1.val(), dateInput2.val());
+    updateFirstColumnTitle();
 })
+
+function updateFirstColumnTitle() {
+    let viewTitle = $("#tbMoney").find('thead').find('th:first');
+    let viewTitle2 = $("#dTitle");
+    if (lastShownCustomerID === 0) {
+        viewTitle.text("ობიექტი")
+        viewTitle2.text("");
+    } else {
+        viewTitle.text("თარიღი")
+        viewTitle2.text("დისტრიბუტორი")
+    }
+}
 
 function getDetailedData(date1, date2, customerID) {
     $.ajax({

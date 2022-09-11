@@ -33,7 +33,7 @@ include_once '_header.php';
         <thead>
         <tr>
             <th>ობიექტი</th>
-            <th>დისტრიბუტორი</th>
+            <th id="dTitle">დისტრიბუტორი</th>
             <th>ხელზე ₾</th>
             <th>ბანკი ₾</th>
         </tr>
