@@ -8,7 +8,7 @@ let dateInput1 = $('#date1');
 let dateInput2 = $('#date2');
 let clientSelector = $('#selectClient');
 let btnRefresh = $('#btnRefresh');
-
+let iconUp = $('i.fa-level-up-alt');
 let moneyTable = $("#tbMoney").find('tbody');
 
 clientSelector.on('change', function () {
@@ -18,6 +18,11 @@ clientSelector.on('change', function () {
     else
         getData(dateInput1.val(), dateInput2.val());
     updateFirstColumnTitle();
+
+    if (lastShownCustomerID === 0)
+        iconUp.hide();
+    else
+        iconUp.show();
 });
 
 $(document).ready(function () {
@@ -33,6 +38,7 @@ $(document).ready(function () {
 
     getData(dateInput1.val(), dateInput2.val());
     updateCustomerList(dateInput1.val(), dateInput2.val());
+    iconUp.hide();
 });
 
 btnRefresh.on('click', function (e) {
@@ -175,3 +181,8 @@ function showDetail(customerID) {
     clientSelector.val(customerID);
     clientSelector.trigger('change');
 }
+
+iconUp.on('click', function () {
+    clientSelector.val(0);
+    clientSelector.trigger('change');
+})
