@@ -100,7 +100,14 @@ function detailRow(item) {
 }
 
 function dataToRow(item) {
-    let tdCustomer = $('<td />').text(item.dasaxeleba).addClass("cl-bold");
+    let icon = $('<i />')
+        .addClass("fas")
+        .addClass("btn")
+        .addClass("fa-external-link-alt")
+        .attr('onclick', "showDetail(" + item.id + ")");
+
+    let tdCustomer = $('<td />').text(item.dasaxeleba);
+    tdCustomer.append(icon);
     return makeFinanceRow(tdCustomer, item);
 }
 
@@ -162,4 +169,9 @@ function updateCustomerList(date1, date2) {
             }
         }
     });
+}
+
+function showDetail(customerID) {
+    clientSelector.val(customerID);
+    clientSelector.trigger('change');
 }
