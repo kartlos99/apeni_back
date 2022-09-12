@@ -16,7 +16,7 @@ LEFT JOIN customer c ON c.id = m.`obieqtis_id`
 
 WHERE date(`tarigi`) BETWEEN '$date1' AND '$date2' AND m.`regionID` = {$sessionData->regionID}
 GROUP BY `obieqtis_id`,`paymentType`
-ORDER by `obieqtis_id`,`paymentType`";
+ORDER by c.dasaxeleba,`paymentType`";
 
 $customers = [];
 $result = mysqli_query($con, $sql);

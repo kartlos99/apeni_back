@@ -17,6 +17,7 @@ include_once '_header.php';
         <tr>
             <td>
                 <label for="selectClient">აირჩიეთ ობიექტი</label>
+                <i class="fas fa-level-up-alt"></i>
             </td>
             <td>
                 <select id="selectClient" class="form-control">

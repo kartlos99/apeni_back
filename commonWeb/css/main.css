@@ -4,24 +4,24 @@ div.login-field {
 }
 
 .dark1 {
-	background: #c90;
+    background: #c90;
 }
 
 .dark2 {
-	background: #b80;
+    background: #b80;
 }
 
 .dark3 {
-	background: #a70;
+    background: #a70;
 }
 
 .btn {
-/*    padding: 14px 24px;*/
+    /*    padding: 14px 24px;*/
     border: 0 none;
-/*    margin: 10px;*/
-/*    font-weight: 700;*/
+    /*    margin: 10px;*/
+    /*    font-weight: 700;*/
     letter-spacing: 1px;
-/*    text-transform: uppercase;*/
+    /*    text-transform: uppercase;*/
 }
 
 .error-msg {
@@ -36,8 +36,8 @@ div.login-field {
 }
 
 .panel-heading {
-	font-size: medium;
-	font-weight: bold;
+    font-size: medium;
+    font-weight: bold;
 }
 
 div.order-unit {
@@ -81,15 +81,17 @@ td.order-chek {
 .client {
     width: 40%;
 }
+
 .distributor {
     width: 30%;
 }
+
 .order-status {
     width: 20%;
 }
 
 .table {
-    margin-bottom: 4px ;
+    margin-bottom: 4px;
 }
 
 .region-container {
@@ -110,6 +112,7 @@ td.order-chek {
     padding: 6px;
     margin-left: 6px;
 }
+
 .bank-money {
     border-radius: 16px;
     background-color: #8ba7ce;
@@ -118,13 +121,13 @@ td.order-chek {
 }
 
 .ricxvi {
-    font-family:verdana;
+    font-family: verdana;
     font-weight: bold;
     text-align: right;
 }
 
 .asDate {
-    font-family:verdana;
+    font-family: verdana;
 }
 
 .textToEnd {
@@ -132,7 +135,7 @@ td.order-chek {
 }
 
 .total-row {
-    border-bottom: #f86d43 solid 4px ;
+    border-bottom: #f86d43 solid 4px;
     font-weight: bolder;
     font-size: medium;
 }
@@ -140,6 +143,15 @@ td.order-chek {
 .cash-row {
     background: #edffdc;
 }
+
 .bank-row {
     background: #e3f5ff;
+}
+
+.fas {
+    color: #c2c2c2;
+}
+
+.fas:hover {
+    color: #166504;
 }
