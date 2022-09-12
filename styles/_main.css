@@ -68,3 +68,8 @@ h2 {
     font-family:verdana;
     font-weight: bold;
 }
+
+.total-row {
+    background: #9bb5f8;
+    font-weight: bolder;
+}

@@ -1,6 +1,7 @@
 <?php
 //namespace Apeni\JWT;
 session_start();
+$VERSION = "4.0.0";
 include_once '_webLoad.php';
 //$sessionData = checkToken();
 if (!isset($_SESSION['username'])) {
@@ -59,6 +60,11 @@ if ($pos !== false) {
     $thisPage = 'currentOrders';
 }
 
+$pos = strpos($_SERVER['PHP_SELF'], "finances.php");
+if ($pos !== false) {
+    $thisPage = 'finances';
+}
+
 if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
     header("Location: logout.php");
 
@@ -90,7 +96,11 @@ if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
             <li class="currentOrders">
                 <a href="currentOrders.php">შეკვეთები</a>
             </li>
-
+            <?php if ($userType == USERTYPE_ADMIN) : ?>
+                <li class="finances">
+                    <a href="finances.php">ფინანსები</a>
+                </li>
+            <?php endif; ?>
         </ul>
 
         <div class="region-container">
@@ -102,7 +112,7 @@ if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
             <!-- <li><a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a></li> -->
             <li><a href="logout.php" class="article">გასვლა</a></li>
         </ul>
-        <div class="onbuttom">v 3.0.1</div>
+        <div class="onbuttom">v <?= $VERSION ?></div>
     </nav>
     <!--sidebar-->
 
