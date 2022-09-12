@@ -116,3 +116,30 @@ td.order-chek {
     padding: 6px;
     margin-left: 6px;
 }
+
+.ricxvi {
+    font-family:verdana;
+    font-weight: bold;
+    text-align: right;
+}
+
+.asDate {
+    font-family:verdana;
+}
+
+.textToEnd {
+    text-align: right;
+}
+
+.total-row {
+    border-bottom: #f86d43 solid 4px ;
+    font-weight: bolder;
+    font-size: medium;
+}
+
+.cash-row {
+    background: #edffdc;
+}
+.bank-row {
+    background: #e3f5ff;
+}

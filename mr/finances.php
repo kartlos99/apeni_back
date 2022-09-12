@@ -33,9 +33,9 @@ include_once '_header.php';
         <thead>
         <tr>
             <th>ობიექტი</th>
-            <th id="dTitle">დისტრიბუტორი</th>
-            <th>ხელზე ₾</th>
-            <th>ბანკი ₾</th>
+            <th id="dTitle"></th>
+            <th class="textToEnd">ხელზე ₾</th>
+            <th class="textToEnd">ბანკი ₾</th>
         </tr>
         </thead>
         <tbody>

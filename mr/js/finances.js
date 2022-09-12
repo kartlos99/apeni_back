@@ -62,7 +62,6 @@ function getDetailedData(date1, date2, customerID) {
         dataType: 'json',
         headers: getHeaders(),
         success: function (resp) {
-
             if (resp.success) {
                 moneyTable.empty()
                 resp.data.forEach(function (financeDataItem) {
@@ -76,26 +75,12 @@ function getDetailedData(date1, date2, customerID) {
     });
 }
 
-function detailRow(item) {
-    let tdDate = $('<td />').text(item.tarigi).addClass("cl-bold");
-    let tdCash = $('<td />').addClass("ricxvi");
-    let tdBank = $('<td />').addClass("ricxvi");
-    let tdDistributor = $('<td />').text(item.distributor);
-    if (parseInt(item.paymentType) === 1)
-        tdCash.text(item.amount);
-    if (parseInt(item.paymentType) === 2)
-        tdBank.text(item.amount);
-
-    return $('<tr></tr>').append(tdDate, tdDistributor, tdCash, tdBank);
-}
-
 function getData(date1, date2) {
     $.ajax({
         url: 'webApi/getGroupedFinances.php?date1=' + date1 + '&date2=' + date2,
         dataType: 'json',
         headers: getHeaders(),
         success: function (resp) {
-
             if (resp.success) {
                 moneyTable.empty()
                 resp.data.forEach(function (financeDataItem) {
@@ -109,17 +94,32 @@ function getData(date1, date2) {
     });
 }
 
+function detailRow(item) {
+    let tdDate = $('<td />').text(item.tarigi).addClass("asDate");
+    return makeFinanceRow(tdDate, item);
+}
+
 function dataToRow(item) {
     let tdCustomer = $('<td />').text(item.dasaxeleba).addClass("cl-bold");
+    return makeFinanceRow(tdCustomer, item);
+}
+
+function makeFinanceRow(firstCell, item) {
     let tdCash = $('<td />').addClass("ricxvi");
     let tdBank = $('<td />').addClass("ricxvi");
     let tdDistributor = $('<td />').text(item.distributor);
-    if (parseInt(item.paymentType) === 1)
+    let rowClass = "";
+    if (parseInt(item.paymentType) === 1) {
         tdCash.text(item.amount);
-    if (parseInt(item.paymentType) === 2)
+        rowClass = "cash-row";
+    }
+    if (parseInt(item.paymentType) === 2) {
         tdBank.text(item.amount);
-
-    return $('<tr></tr>').append(tdCustomer, tdDistributor, tdCash, tdBank);
+        rowClass = "bank-row";
+    }
+    return $('<tr></tr>')
+        .addClass(rowClass)
+        .append(firstCell, tdDistributor, tdCash, tdBank);
 }
 
 function totalRow(data) {
@@ -131,9 +131,9 @@ function totalRow(data) {
         if (parseInt(item.paymentType) === 2)
             bank += parseFloat(item.amount);
     });
-    let tdCustomer = $('<td />').text("ჯამი").addClass("cl-bold");
-    let tdCash = $('<td />').text(cash.toFixed(2)).addClass("total-row");
-    let tdBank = $('<td />').text(bank.toFixed(2)).addClass("total-row");
+    let tdCustomer = $('<th />').text("ჯამი ₾");
+    let tdCash = $('<th />').text(cash.toFixed(2)).addClass("ricxvi");
+    let tdBank = $('<th />').text(bank.toFixed(2)).addClass("ricxvi");
     return $('<tr></tr>')
         .addClass("total-row")
         .append(tdCustomer, $('<td />'), tdCash, tdBank);
