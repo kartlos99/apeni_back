@@ -24,6 +24,8 @@ $vc = new VersionControl($con);
 
 
 if ($id > 0) {
+    $sql = "";
+
     if ($table == "mitana") {
         $sql = "SELECT remove_sale($id, $userID)";
     }
@@ -41,7 +43,8 @@ if ($id > 0) {
 //    }
 
     if ($table == "users") {
-        $sql = "UPDATE users SET active = 0 WHERE id = $id ";
+        // states: 0 - deleted, 2 - inActive
+        $sql = "UPDATE users SET users.active = 2 WHERE users.id = $id ";
         $vc->updateVersionFor(USER_VCS);
     }
 

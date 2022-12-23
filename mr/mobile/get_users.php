@@ -26,7 +26,7 @@ LEFT JOIN `users` b ON
 LEFT JOIN user_to_region_map um ON
     um.userID = a.id
 WHERE
-    um.regionID = {$sessionData->regionID} AND a.active = 1 ";
+    um.regionID = {$sessionData->regionID} AND a.active >= 1 ";
 $arr = array();
 $result = $con->query($sql);
 
