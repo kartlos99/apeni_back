@@ -8,7 +8,7 @@ header("Content-Type: application/json; charset=UTF-8");
 require_once('connection.php');
 checkToken();
 
-$sql = "SELECT * FROM ludi where `active`=1 order by id" ;
+$sql = "SELECT * FROM ludi where ludi.`active` >= 1 order by id" ;
 // $sql = "SELECT * FROM $CUSTOMER_TB where `active`=1 order by dasaxeleba" ;
 $arr = array();
 // $result = $con->query($sql);

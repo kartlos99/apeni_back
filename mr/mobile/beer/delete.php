@@ -19,20 +19,20 @@ $json = file_get_contents('php://input');
 // Converts it into a PHP object
 $postData = json_decode($json);
 
-$id   	= $postData->beerId;
+$id = $postData->beerId;
 
-if($id > 0){
-    
-    $sql = "UPDATE `ludi` SET `active` = 0 WHERE `ludi`.`id` = $id ";
-    
-    if(mysqli_query($con, $sql)){
+if ($id > 0) {
+
+    $sql = "UPDATE `ludi` SET `active` = 2 WHERE `ludi`.`id` = $id ";
+
+    if (mysqli_query($con, $sql)) {
         $response[DATA] = $id;
     } else {
-        dieWithError(mysqli_errno($con), "ERROR: Could not able to execute $sql" . mysqli_error($con) );
+        dieWithError(mysqli_errno($con), "ERROR: Could not able to execute $sql" . mysqli_error($con));
     }
-    
-}else{
-    dieWithError(999, "invaili beer id");
+
+} else {
+    dieWithError(999, "invalid beer id");
 }
 
 $vc = new VersionControl($con);
