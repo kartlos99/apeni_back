@@ -8,22 +8,21 @@ $barrels = $dataProvider->getBarrels();
 //echo $phesh;
 ?>
 
-<table style="width: 100%">
-    <tr>
-        <td>
-            <div id="dateDiv">
-                <label for="orderDate">აირჩიეთ თარიღი: </label>
-                <input id="orderDate" type="date">
-                <button id="btnLoadOrders" class="btn">ჩატვირთვა</button>
-            </div>
-        </td>
-        <td class="ricxvi">
-            <table id="beerSumTable" style="margin-left: 50px">
-
-            </table>
-        </td>
-    </tr>
-</table>
+    <table style="width: 100%">
+        <tr>
+            <td>
+                <div id="dateDiv">
+                    <label for="orderDate">აირჩიეთ თარიღი: </label>
+                    <input id="orderDate" type="date">
+                    <button id="btnLoadOrders" class="btn">ჩატვირთვა</button>
+                </div>
+            </td>
+            <td class="ricxvi">
+                <table id="beerSumTable" style="float: right">
+                </table>
+            </td>
+        </tr>
+    </table>
 
     <div class="order-list"></div>
 
@@ -32,7 +31,6 @@ $barrels = $dataProvider->getBarrels();
             <div class="order-header">
                 <table class="table ">
                     <tr>
-<!--                        <td>შეკვეთა</td>-->
                         <td class="client title-field"></td>
                         <td class="distributor title-field"></td>
                         <td class="order-status title-field"></td>

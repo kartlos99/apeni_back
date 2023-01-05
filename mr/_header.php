@@ -1,7 +1,7 @@
 <?php
 //namespace Apeni\JWT;
 session_start();
-$VERSION = "4.0.0";
+$VERSION = "4.1.0";
 include_once '_webLoad.php';
 //$sessionData = checkToken();
 if (!isset($_SESSION['username'])) {

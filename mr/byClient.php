@@ -38,7 +38,7 @@ $clients = $dataProvider->getClients();
             <button id="btnUpdateChart" class="btn">დიაგრამის განახლება</button>
         </td>
         <td>
-            <div id="summary"></div>
+            <div id="summary" style="float: right"></div>
         </td>
     </tr>
 </table>

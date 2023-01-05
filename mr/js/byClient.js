@@ -180,9 +180,13 @@ function drawChart() {
 
 function showSummaryAmount() {
     summaryContainer.empty();
+    let grandTotal = 0;
     beerObjects.forEach(function (beerObj) {
+        grandTotal += beerObj.summary;
         let itm = $('<li />').text(beerObj.name + ": " + beerObj.summary);
         summaryContainer.prepend(itm);
     })
-    summaryContainer.prepend($('<span />').text("ჯამური ლიტრაჟი"));
+    // let totalSpan = $('<span />').text("ჯამი: " + grandTotal).addClass("totalSpan");
+    summaryContainer.prepend($('<span />').text("ჯამური ლიტრაჟი: " + grandTotal));
+    // summaryContainer.find('span').te;
 }

@@ -17,6 +17,21 @@ class BeerRow {
         this.k50 = k50;
     }
 
+    getValueOrDash(fieldName) {
+        let value = this[fieldName];
+        if (parseInt(value) === 0)
+            return "-"
+        else
+            return value;
+    }
+
+    appendObject(beerRow) {
+        this.k10 = parseInt(this.k10) + parseInt(beerRow.k10);
+        this.k20 = parseInt(this.k20) + parseInt(beerRow.k20);
+        this.k30 = parseInt(this.k30) + parseInt(beerRow.k30);
+        this.k50 = parseInt(this.k50) + parseInt(beerRow.k50);
+    }
+
     getLiterSum() {
         return this.k10 * 10 + this.k20 * 20 + this.k30 * 30 + this.k50 * 50;
     }
@@ -212,16 +227,22 @@ function proceedOrderSum(beerRow) {
 function displayActiveOrderSum() {
     beerSumTable.empty();
     beerSumTable.append(getBeerSumHeadRow());
+    let grandTotal = new BeerRow("ჯამი:", 0, 0, 0, 0)
     beerMap.forEach(function (value, key, map) {
-        let tdBeer = $('<td />').text(key).addClass("sumTd");
-        let td10 = $('<td />').text(value.k10).addClass("sumTd");
-        let td20 = $('<td />').text(value.k20).addClass("sumTd");
-        let td30 = $('<td />').text(value.k30).addClass("sumTd");
-        let td50 = $('<td />').text(value.k50).addClass("sumTd");
-        let tdLiter = $('<td />').text(value.getLiterSum()).addClass("sumTd");
-        let tr = $('<tr />').append(tdBeer, td10, td20, td30, td50, tdLiter);
-        beerSumTable.append(tr);
-    })
+        grandTotal.appendObject(value);
+        beerSumTable.append(makeSumTableRow(value));
+    });
+    beerSumTable.append(makeSumTableRow(grandTotal));
+}
+
+function makeSumTableRow(beerRow) {
+    let tdBeer = $('<td />').text(beerRow.beer).addClass("sumTd");
+    let td10 = $('<td />').text(beerRow.getValueOrDash("k10")).addClass("sumTd");
+    let td20 = $('<td />').text(beerRow.getValueOrDash("k20")).addClass("sumTd");
+    let td30 = $('<td />').text(beerRow.getValueOrDash("k30")).addClass("sumTd");
+    let td50 = $('<td />').text(beerRow.getValueOrDash("k50")).addClass("sumTd");
+    let tdLiter = $('<td />').text(beerRow.getLiterSum()).addClass("sumTd");
+    return $('<tr />').append(tdBeer, td10, td20, td30, td50, tdLiter);
 }
 
 function getBeerSumHeadRow() {

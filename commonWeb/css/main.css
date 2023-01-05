@@ -158,7 +158,8 @@ td.order-chek {
 
 .sumTd {
     padding-bottom: 4px;
-    padding-left: 10px;
+    padding-left: 6px;
+    padding-right: 6px;
     text-align: end;
     font-weight: bold;
 }
@@ -167,4 +168,27 @@ td.order-chek {
     font-weight: normal;
     font-style: italic;
     color: #6583aa;
+}
+
+#beerSumTable tr:last-child {
+    background: #4b5d7a;
+    color: white;
+}
+
+#beerSumTable tr:last-child td {
+    padding-top: 2px;
+}
+
+#summary li {
+    padding-left: 4px;
+}
+#summary span {
+    background: #4b5d7a;
+    color: white;
+    font-weight: bold;
+    padding: 2px;
+}
+
+#summary {
+    border: #4b5d7a solid 2px;
 }
