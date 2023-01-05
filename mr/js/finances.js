@@ -30,11 +30,7 @@ $(document).ready(function () {
     getRegions();
 
     dateInput1.val(strDate1).attr('max', strDate1);
-
     dateInput2.val(strDate2).attr('max', strDate2);
-    // currDate.setDate(1);
-    // strDate1 = dateformat(currDate);
-    // dateInput1.val(strDate1);
 
     getData(dateInput1.val(), dateInput2.val());
     updateCustomerList(dateInput1.val(), dateInput2.val());
