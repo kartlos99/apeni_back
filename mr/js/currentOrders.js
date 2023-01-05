@@ -3,7 +3,24 @@ let orderRowToClone;
 let ordersList = $('div.order-list');
 let dateField = $("#orderDate");
 let doneBtn = $("#btnLoadOrders");
+let beerSumTable = $('#beerSumTable');
 let tarigi = "";
+
+let beerMap = new Map();
+
+class BeerRow {
+    constructor(beer, k10, k20, k30, k50) {
+        this.beer = beer;
+        this.k10 = k10;
+        this.k20 = k20;
+        this.k30 = k30;
+        this.k50 = k50;
+    }
+
+    getLiterSum() {
+        return this.k10 * 10 + this.k20 * 20 + this.k30 * 30 + this.k50 * 50;
+    }
+}
 
 $(document).ready(function () {
     console.log("ready!");
@@ -40,6 +57,7 @@ function getOrders() {
 
             if (resp.success) {
                 let oData = resp.data
+                beerMap = new Map();
 
                 let sortedData = oData.sort(function (a, b) {
                     if (a.sortValue < b.sortValue)
@@ -47,7 +65,7 @@ function getOrders() {
                     else
                         return -1
                 }).sort(function (a, b) {
-                    if (a.orderStatus == 'order_active')
+                    if (a.orderStatus === 'order_active')
                         return -1;
                     else
                         return 1
@@ -79,9 +97,9 @@ function getOrders() {
                         moneyCell.append($('<span />').text("აღებული: ").addClass(""));
                         order.amount.forEach(function (mItem) {
                             if (mItem.paymentType === "1")
-                            moneyCell.append($('<span />').text(mItem.money + "₾ ხელზე").addClass("cash-money"));
+                                moneyCell.append($('<span />').text(mItem.money + "₾ ხელზე").addClass("cash-money"));
                             else
-                            moneyCell.append($('<span />').text(mItem.money + "₾ ბანკი").addClass("bank-money"));
+                                moneyCell.append($('<span />').text(mItem.money + "₾ ბანკი").addClass("bank-money"));
                         });
                     }
 
@@ -94,6 +112,26 @@ function getOrders() {
                     }
                     if (order.orderStatus !== "order_active")
                         newOrder.addClass('order-completed');
+                    else {
+                        order.items.forEach(function (oItem) {
+                            switch (oItem.canTypeID) {
+                                case "1":
+                                    proceedOrderSum(new BeerRow(oItem.dasaxeleba, 0, 0, 0, oItem.count));
+                                    break;
+                                case "2":
+                                    proceedOrderSum(new BeerRow(oItem.dasaxeleba, 0, 0, oItem.count, 0));
+                                    break;
+                                case "3":
+                                    proceedOrderSum(new BeerRow(oItem.dasaxeleba, 0, oItem.count, 0, 0));
+                                    break;
+                                case "4":
+                                    proceedOrderSum(new BeerRow(oItem.dasaxeleba, oItem.count, 0, 0, 0));
+                                    break;
+                                default:
+                                    alert("unknown can type!");
+                            }
+                        })
+                    }
 
                     let rowContainer = newOrder.find('tbody.order-rows-container');
 
@@ -150,8 +188,50 @@ function getOrders() {
                 console.log(resp);
                 showError(resp.errorCode, resp.errorText);
             }
+            displayActiveOrderSum();
         }
     });
+}
+
+function proceedOrderSum(beerRow) {
+    if (beerMap.has(beerRow.beer)) {
+        let existedOne = beerMap.get(beerRow.beer)
+        let newOne = new BeerRow(
+            beerRow.beer,
+            parseInt(beerRow.k10) + parseInt(existedOne.k10),
+            parseInt(beerRow.k20) + parseInt(existedOne.k20),
+            parseInt(beerRow.k30) + parseInt(existedOne.k30),
+            parseInt(beerRow.k50) + parseInt(existedOne.k50)
+        )
+        beerMap.set(beerRow.beer, newOne);
+    } else {
+        beerMap.set(beerRow.beer, beerRow);
+    }
+}
+
+function displayActiveOrderSum() {
+    beerSumTable.empty();
+    beerSumTable.append(getBeerSumHeadRow());
+    beerMap.forEach(function (value, key, map) {
+        let tdBeer = $('<td />').text(key).addClass("sumTd");
+        let td10 = $('<td />').text(value.k10).addClass("sumTd");
+        let td20 = $('<td />').text(value.k20).addClass("sumTd");
+        let td30 = $('<td />').text(value.k30).addClass("sumTd");
+        let td50 = $('<td />').text(value.k50).addClass("sumTd");
+        let tdLiter = $('<td />').text(value.getLiterSum()).addClass("sumTd");
+        let tr = $('<tr />').append(tdBeer, td10, td20, td30, td50, tdLiter);
+        beerSumTable.append(tr);
+    })
+}
+
+function getBeerSumHeadRow() {
+    let tdBeer = $('<td />').text("ლუდი").addClass("sumTd sumTh");
+    let td10 = $('<td />').text("კ10").addClass("sumTd sumTh");
+    let td20 = $('<td />').text("კ20").addClass("sumTd sumTh");
+    let td30 = $('<td />').text("კ30").addClass("sumTd sumTh");
+    let td50 = $('<td />').text("კ50").addClass("sumTd sumTh");
+    let tdLiter = $('<td />').text("ლიტრი").addClass("sumTd sumTh");
+    return $('<tr />').append(tdBeer, td10, td20, td30, td50, tdLiter);
 }
 
 function getOrderWithSaleView(orderCount, saleCount) {

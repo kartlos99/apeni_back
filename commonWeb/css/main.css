@@ -155,3 +155,16 @@ td.order-chek {
 .fas:hover {
     color: #166504;
 }
+
+.sumTd {
+    padding-bottom: 4px;
+    padding-left: 10px;
+    text-align: end;
+    font-weight: bold;
+}
+
+.sumTh {
+    font-weight: normal;
+    font-style: italic;
+    color: #6583aa;
+}
