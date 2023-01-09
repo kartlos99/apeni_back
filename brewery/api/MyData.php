@@ -25,13 +25,13 @@ class MyData
         return $this->getDataAsArray($sql);
     }
 
-    function getTanks()
+    function getTanks(): array
     {
         $bData = [];
         $sql = "
             SELECT t.*, di.code FROM `tanks` t
             LEFT JOIN dictionary_items di ON tankType = di.id
-            WHERE active = 1
+            WHERE status > 0
             ORDER BY tankType, sortValue";
         $arr = $this->getDataAsArray($sql);
         foreach ($arr as $key => $item) {
