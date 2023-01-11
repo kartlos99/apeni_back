@@ -11,14 +11,17 @@ class MyData
         $this->dbConn = $dbConn;
     }
 
-    function getFermentationDataByTankID($tankID) {
+    function getFermentationDataByTankID($tankID): array
+    {
         $sql = "SELECT * FROM `f_data`
             WHERE `fID`= (SELECT ID FROM `fermentation`
                         WHERE `tankID`=$tankID AND `active` = 1)
             ORDER by `modifyDate` ";
         return $this->getDataAsArray($sql);
     }
-    function getFermentationDataByID($fID) {
+
+    function getFermentationDataByID($fID): array
+    {
         $sql = "SELECT * FROM `f_data`
             WHERE `fID`= $fID
             ORDER by `modifyDate` ";
@@ -53,7 +56,7 @@ class MyData
      * base data retrieving function
      * returns data as Array from DB according sql query
      */
-    function getDataAsArray($query)
+    function getDataAsArray($query): array
     {
         $result = mysqli_query($this->dbConn, $query);
         $arr = [];
@@ -72,7 +75,7 @@ class MyData
      * @return array
      * base function for data inserting
      */
-    private function baseInsert($insertSql)
+    private function baseInsert($insertSql): array
     {
         $result = mysqli_query($this->dbConn, $insertSql);
         if (!$result)
@@ -88,7 +91,7 @@ class MyData
         return $this->baseInsert($sql);
     }
 
-    function insertFermentation($code, $density, $comment, $startDate, $userID)
+    function insertFermentation($code, $density, $comment, $startDate, $userID): array
     {
         $sql = "INSERT INTO `fermentation`(
             `code`,
@@ -104,21 +107,23 @@ class MyData
         return $this->baseInsert($sql);
     }
 
-    function mapBoilingToFermentation($bID, $fID, $amount) {
+    function mapBoilingToFermentation($bID, $fID, $amount): array
+    {
         $sql = "INSERT INTO `b_to_f_map`(`bID`, `fID`, `amount`) VALUES ($bID, $fID, $amount)";
         return $this->baseInsert($sql);
     }
 
-    function insertFermentationData($sql) {
+    function insertFermentationData($sql): array
+    {
         return $this->baseInsert($sql);
     }
 
     /**
      * update
      */
-    function updateFermentationSealingDate($fID, $dateStr) {
-
-        if (is_null($dateStr)){
+    function updateFermentationSealingDate($fID, $dateStr): array
+    {
+        if (is_null($dateStr)) {
             $sql = "UPDATE `fermentation` SET `sealingDate` = null WHERE ID = $fID";
         } else {
             $sql = "UPDATE `fermentation` SET `sealingDate` = '$dateStr' WHERE ID = $fID";
