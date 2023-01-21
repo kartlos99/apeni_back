@@ -83,7 +83,7 @@ class MyData
         return [RECORD_ID_KEY => mysqli_insert_id($this->dbConn)];
     }
 
-    public function insertBoiling($code, $startDate, $density, $amount, $tankID, $beerID, $comment, $modifyUserID)
+    public function insertBoiling($code, $startDate, $density, $amount, $tankID, $beerID, $comment, $modifyUserID): array
     {
         $sql = "
             insert into boiling (code, startDate, density, amount, tankID, beerID, comment, modifyUserID) 
@@ -128,6 +128,57 @@ class MyData
         } else {
             $sql = "UPDATE `fermentation` SET `sealingDate` = '$dateStr' WHERE ID = $fID";
         }
+        return $this->baseInsert($sql);
+    }
+
+    /**
+     * tanks
+     */
+    public function insertTank($number, $title, $volume, $tankType, $comment, $status, $sortValue, $modifyUserID): array
+    {
+        $sql = "
+            INSERT INTO `tanks`(
+                `number`,
+                `title`,
+                `volume`,
+                `tankType`,
+                `comment`,
+                `status`,
+                `sortValue`,
+                `modifyUserID`
+            ) VALUE ('$number', '$title', '$volume', $tankType, '$comment', $status, '$sortValue', $modifyUserID)";
+        return $this->baseInsert($sql);
+    }
+
+    public function updateTank($tankID, $number, $title, $volume, $tankType, $comment, $status, $sortValue, $modifyUserID): array
+    {
+        $sql = "
+            UPDATE
+                `tanks`
+            SET
+                `number` = '$number',
+                `title` = '$title',
+                `volume` = '$volume',
+                `tankType` = $tankType,
+                `comment` = '$comment',
+                `status` = $status,
+                `sortValue` = '$sortValue',
+                `modifyUserID` = $modifyUserID
+            WHERE
+                `tanks`.ID = $tankID ";
+        return $this->baseInsert($sql);
+    }
+
+    public function deactivateTank($tankID, $modifyUserID): array
+    {
+        $sql = "
+            UPDATE
+                `tanks`
+            SET
+                `status` = 2,
+                `modifyUserID` = $modifyUserID
+            WHERE
+                `tanks`.ID = $tankID ";
         return $this->baseInsert($sql);
     }
 }
