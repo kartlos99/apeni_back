@@ -16,7 +16,7 @@ $postData = json_decode($json);
 
 $dbManager = new BoilerDataManager();
 
-$beerID = $postData->beerID;
+$beerID = $_GET["beerID"];
 
 $defaultNextID = $dbManager->nextBoilingID();
 
