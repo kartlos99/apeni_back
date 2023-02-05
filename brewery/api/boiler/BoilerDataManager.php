@@ -204,7 +204,11 @@ class BoilerDataManager extends BaseDataManager
             WHERE `beerID` = $beerID
             ORDER BY startDate DESC
             LIMIT 1";
-        return $this->getDataAsArray($sql)[0];
+        $resultData = $this->getDataAsArray($sql);
+        if (count($resultData) > 0)
+            return $resultData[0];
+        else
+            return [];
     }
 
     public function getWaterData($boilingID): array

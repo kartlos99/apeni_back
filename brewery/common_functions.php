@@ -10,7 +10,7 @@ use UnexpectedValueException;
 
 const KEY_ERROR_MESSAGE = "errorMessage";
 
-function dieWithError($httpStatusCode = 422, $text = "un known error")
+function dieWithError($httpStatusCode = CUSTOM_HTTP_ERROR_CODE, $text = "un known error")
 {
     http_response_code($httpStatusCode);
     die(json_encode([KEY_ERROR_MESSAGE => $text]));
