@@ -8,12 +8,12 @@ class BeerDataManager extends BaseDataManager
     ): array
     {
         if (empty($sortValue))
-            $sortValue = "(SELECT AUTO_INCREMENT FROM information_schema.tables WHERE TABLE_NAME = 'permission' AND table_schema = 'test')";
+            $sortValue = "(SELECT AUTO_INCREMENT FROM information_schema.tables WHERE TABLE_NAME = 'beers' AND table_schema = 'brewery')";
         else
             $sortValue = "'" . $sortValue . "'";
 
         $sql = "
-            INSERT INTO `beer`(
+            INSERT INTO `beers`(
                 `name`,
                 `price`,
                 `status`,
@@ -21,7 +21,7 @@ class BeerDataManager extends BaseDataManager
                 `sortValue`
             )
             VALUES(
-            '$name', '$price', '$status' '$color', $sortValue
+            '$name', '$price', '$status', '$color', $sortValue
         )";
 
         return $this->baseInsert($sql);
@@ -37,7 +37,7 @@ class BeerDataManager extends BaseDataManager
                     `color`,
                     `sortValue`
                 FROM
-                    `beer`
+                    `beers`
                 WHERE
                     `status` > 0";
         return $this->getDataAsArray($sql);
@@ -46,7 +46,7 @@ class BeerDataManager extends BaseDataManager
     public function updateBeer($beerID, $name, $price, $status, $color, $sortValue): array
     {
         $sql = "UPDATE
-                    `beer`
+                    `beers`
                 SET
                     `name` = '$name',
                     `price` = '$price',
