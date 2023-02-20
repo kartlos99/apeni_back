@@ -9,11 +9,15 @@ use stdClass;
 use UnexpectedValueException;
 
 const KEY_ERROR_MESSAGE = "errorMessage";
+const KEY_ERROR_CODE = "errorCode";
 
-function dieWithError($httpStatusCode = CUSTOM_HTTP_ERROR_CODE, $text = "un known error")
+function dieWithError($httpStatusCode = CUSTOM_HTTP_ERROR_CODE, $text = "un known error", $errorCode = null)
 {
     http_response_code($httpStatusCode);
-    die(json_encode([KEY_ERROR_MESSAGE => $text]));
+    die(json_encode([
+        KEY_ERROR_MESSAGE => $text,
+        KEY_ERROR_CODE => $errorCode
+    ]));
 }
 
 function checkToken()
