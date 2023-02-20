@@ -14,6 +14,16 @@ $tankID = $_GET["tankID"];
 
 $myData = new MyData($dbLink);
 
-echo json_encode($myData->getFermentationDataByTankID($tankID));
+$fermentationResult = $myData->getCurrentFermentationDataOnTank($tankID);
+$activeFermentationCount = count($fermentationResult);
+
+if ($activeFermentationCount == 1) {
+    $fermentation = $fermentationResult[0];
+    $fermentation["data"] = $myData->getFermentationDataByTankID($tankID);
+    echo json_encode($fermentation);
+} else {
+    $errorCode = $activeFermentationCount == 0 ? ERROR_CODE_EMPTY_RESULT : ERROR_CODE_MULTI_RESULT;
+    dieWithError(CUSTOM_HTTP_ERROR_CODE, "found " . $activeFermentationCount . " active process on the tank", $errorCode);
+}
 
 mysqli_close($dbLink);

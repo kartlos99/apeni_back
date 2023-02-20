@@ -20,6 +20,14 @@ class MyData
         return $this->getDataAsArray($sql);
     }
 
+    public function getCurrentFermentationDataOnTank($tankID): array
+    {
+        $sql = "SELECT * FROM `fermentation`
+                WHERE `tankID`=$tankID AND `active` = 1
+            ORDER by `modifyDate` ";
+        return $this->getDataAsArray($sql);
+    }
+
     function getFermentationDataByID($fID): array
     {
         $sql = "SELECT * FROM `f_data`
