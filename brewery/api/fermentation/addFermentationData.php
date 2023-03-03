@@ -22,21 +22,26 @@ if (empty($measurementDate))
 if ($postData->isSealing)
     $myData->updateFermentationSealingDate($postData->fermentationID, $measurementDate);
 
-$sql = "INSERT INTO `f_data` 
+$resp = [RECORD_ID_KEY => 0];
+if (count($postData->data) > 0) {
+    $sql = "INSERT INTO `f_data` 
             (`fID`, `dataType`, `value`, `measurementDate`, `comment`, `modifyDate`, `modifyUserID`) 
             VALUES 
             ";
 
-$multiValue = "";
-foreach ($postData->data as $item) {
-    $fID = $postData->fermentationID;
-    $dataType = $item->type;
-    $value = $item->value;
-    $userID = $sessionData->userID;
-    $multiValue .= "($fID, $dataType, $value, '$measurementDate', null, CURRENT_TIMESTAMP, $userID),";
-}
-$values = trim($multiValue,',');
+    $multiValue = "";
+    foreach ($postData->data as $item) {
+        $fID = $postData->fermentationID;
+        $dataType = $item->type;
+        $value = $item->value;
+        $userID = $sessionData->userID;
+        $multiValue .= "($fID, $dataType, $value, '$measurementDate', null, CURRENT_TIMESTAMP, $userID),";
+    }
+    $values = trim($multiValue, ',');
 
-echo json_encode($myData->insertFermentationData($sql . $values));
+    $resp = $myData->insertFermentationData($sql . $values);
+}
+
+echo json_encode($resp);
 
 mysqli_close($dbLink);

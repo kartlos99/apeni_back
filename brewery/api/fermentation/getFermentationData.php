@@ -19,7 +19,8 @@ $activeFermentationCount = count($fermentationResult);
 
 if ($activeFermentationCount == 1) {
     $fermentation = $fermentationResult[0];
-    $fermentation["data"] = $myData->getFermentationDataByTankID($tankID);
+    $fermentation["data"] = $myData->getFermentationDataByID($fermentation["ID"]);
+    $fermentation["brews"] = $myData->getBrewsInFermentation($fermentation["ID"]);
     echo json_encode($fermentation);
 } else {
     $errorCode = $activeFermentationCount == 0 ? ERROR_CODE_EMPTY_RESULT : ERROR_CODE_MULTI_RESULT;

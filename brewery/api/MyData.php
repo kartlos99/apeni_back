@@ -32,7 +32,16 @@ class MyData
     {
         $sql = "SELECT * FROM `f_data`
             WHERE `fID`= $fID
-            ORDER by `modifyDate` ";
+            ORDER by `measurementDate` ";
+        return $this->getDataAsArray($sql);
+    }
+
+    public function getBrewsInFermentation($fermentationID): array
+    {
+        $sql = "SELECT b.ID, b.code, b.startDate, b.density, b.beerID, b.amountToVirlpool AS boiledAmount, map.amount AS transferAmount FROM `b_to_f_map` map
+            LEFT JOIN boiling b
+            ON b.ID = map.`bID`
+            WHERE `fID` = $fermentationID ";
         return $this->getDataAsArray($sql);
     }
 
