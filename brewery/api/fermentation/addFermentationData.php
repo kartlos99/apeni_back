@@ -40,6 +40,7 @@ if (count($postData->data) > 0) {
     $values = trim($multiValue, ',');
 
     $resp = $myData->insertFermentationData($sql . $values);
+    $myData->updateFermentationItem($postData->fermentationID);
 }
 
 echo json_encode($resp);

@@ -135,6 +135,16 @@ class MyData
         return $this->baseInsert($sql);
     }
 
+    function updateFermentationItem($fID)
+    {
+        $sql = "UPDATE `fermentation` SET 
+                `density` = (SELECT `value` FROM `f_data` WHERE `fID` = $fID AND dataType = 8 ORDER BY `measurementDate` DESC LIMIT 1),
+                `ph` = (SELECT `value` FROM `f_data` WHERE `fID` = $fID AND dataType = 6 ORDER BY `measurementDate` DESC LIMIT 1),
+                `pressure` = (SELECT `value` FROM `f_data` WHERE `fID` = $fID AND dataType = 7 ORDER BY `measurementDate` DESC LIMIT 1)
+                WHERE `ID` = $fID";
+        return $this->baseInsert($sql);
+    }
+
     /**
      * update
      */
@@ -197,5 +207,20 @@ class MyData
             WHERE
                 `tanks`.ID = $tankID ";
         return $this->baseInsert($sql);
+    }
+
+    public function getFermentationTanks(): array
+    {
+        $sql = "SELECT t.* FROM `tanks` t LEFT JOIN dictionary_items di ON di.id = t.`tankType` " .
+            "WHERE di.code = 'ttFermentation' AND t.status > 0 ORDER BY t.sortValue";
+        return $this->getDataAsArray($sql);
+    }
+
+    public function getAllActiveFermentation(): array
+    {
+        $sql = "SELECT f.*, (SELECT SUM(`amount`) FROM `b_to_f_map` WHERE fID = f.ID GROUP BY `fID` LIMIT 1) AS amount 
+                FROM fermentation f
+                WHERE f.active = 1";
+        return $this->getDataAsArray($sql);
     }
 }
