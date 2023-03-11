@@ -21,7 +21,7 @@ if (empty($startDate))
 
 $fermentationStartResult = $myData->insertFermentation(
     $postData->code,
-    $postData->density,
+    $postData->density,1,1,1,
     $postData->comment,
     $startDate,
     $sessionData->userID

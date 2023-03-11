@@ -2,9 +2,11 @@
 
 class BoilerDataManager extends BaseDataManager
 {
-    public function hi($sql): array
+    public function addBoilingToFermentationMap($bID, $fID, $amount): array
     {
-        return ["kart" => "diako"];
+        $sql = "INSERT INTO `b_to_f_map`(`bID`, `fID`, `amount`)
+                VALUES($bID, $fID, $amount)";
+        return $this->baseInsert($sql);
     }
 
     public function insertBoiling(

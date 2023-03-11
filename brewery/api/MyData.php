@@ -108,11 +108,13 @@ class MyData
         return $this->baseInsert($sql);
     }
 
-    function insertFermentation($code, $density, $comment, $startDate, $userID): array
+    function insertFermentation($code, $density, $yeastID, $tankID, $beerID, $comment, $startDate, $userID): array
     {
         $sql = "INSERT INTO `fermentation`(
             `code`,
             `density`,
+            `yeastAddDate`,
+            `yeastID`,
             `tankID`,
             `beerID`,
             `active`,
@@ -120,7 +122,7 @@ class MyData
             `startDate`,
             `modifyUserID`
         )
-        VALUES('$code', '$density', 1, 1, 1, '$comment', '$startDate', $userID)";
+        VALUES('$code', '$density', '$startDate', $yeastID, $tankID, $beerID, 1, '$comment', '$startDate', $userID)";
         return $this->baseInsert($sql);
     }
 
