@@ -9,6 +9,32 @@ class BoilerDataManager extends BaseDataManager
         return $this->baseInsert($sql);
     }
 
+    public function removeYeastFromFermentation($yeastID)
+    {
+        $sql = "UPDATE
+            `fermentation`
+        SET
+            `yeastRemoveDate` = CURRENT_TIMESTAMP
+        WHERE
+            `yeastID` = $yeastID AND `active` = 1";
+
+        $this->baseInsert($sql);
+    }
+
+    function inputYeastIntoFermentation($yeastID, $fermentationID)
+    {
+        $sql = "UPDATE
+            `fermentation`
+        SET
+            `yeastAddDate` = CURRENT_TIMESTAMP,
+            `yeastRemoveDate` = null,
+            `yeastID` = $yeastID
+        WHERE
+            `ID` = $fermentationID";
+
+        $this->baseInsert($sql);
+    }
+
     public function insertBoiling(
         $code, $startDate, $density, $amount, $tankID, $beerID, $boilingTime, $amountToVirlpool, $yeast, $comment, $modifyUserID
     ): array

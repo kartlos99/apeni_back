@@ -16,7 +16,7 @@ $postData = json_decode($json);
 $dbManager = new YeastDataManager();
 
 echo json_encode(
-    $dbManager->insertYeast(
+    $dbManager->createYeast(
         $postData->name,
         $sessionData->userID
     )

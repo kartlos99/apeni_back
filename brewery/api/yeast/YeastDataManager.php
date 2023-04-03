@@ -3,7 +3,7 @@
 class YeastDataManager extends BaseDataManager
 {
 
-    public function insertYeast(
+    public function createYeast(
         $name, $userID
     ): array
     {

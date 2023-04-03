@@ -20,9 +20,17 @@ $myData = new MyData($dbLink);
 
 if (count($postData->distributionInTanks) > 0) {
     foreach ($postData->distributionInTanks as $distributionItem) {
-        if (isset($distributionItem->fermentationTankInfo->fermentation))
+        if (isset($distributionItem->fermentationTankInfo->fermentation)) {
             $fermentationID = $distributionItem->fermentationTankInfo->fermentation->ID;
-        else {
+            if (
+                isset($distributionItem->fermentationTankInfo->fermentation->yeastID)
+                && $distributionItem->fermentationTankInfo->fermentation->yeastID != $distributionItem->yeastID
+            ) {
+                $dbManager->removeYeastFromFermentation($distributionItem->yeastID);
+                $dbManager->inputYeastIntoFermentation($distributionItem->yeastID, $fermentationID);
+            }
+        } else {
+            $dbManager->removeYeastFromFermentation($distributionItem->yeastID);
             $insertResult = $myData->insertFermentation(
                 "ferm-" . $postData->code,
                 $postData->density,
