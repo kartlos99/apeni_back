@@ -318,4 +318,13 @@ class BoilerDataManager extends BaseDataManager
                 order by `type`";
         return $this->getDataAsArray($sql);
     }
+
+    public function getIncompleteBoilings(): array
+    {
+        $query = "SELECT * FROM `boiling` b
+                    LEFT JOIN v_boiling_distribution_sum dist_sum
+                    ON b.id = dist_sum.boilingID
+                    WHERE abs(b.`amountToVirlpool` - dist_sum.distributedAmount) > 10";
+        return parent::getDataAsArray($query);
+    }
 }
