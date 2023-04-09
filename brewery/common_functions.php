@@ -20,6 +20,10 @@ function dieWithError($httpStatusCode = CUSTOM_HTTP_ERROR_CODE, $text = "un know
     ]));
 }
 
+function dieWithDefaultHttpError($text = "un known error", $errorCode = null) {
+    dieWithError(CUSTOM_HTTP_ERROR_CODE, $text, $errorCode);
+}
+
 function checkToken()
 {
     // temporary, while testing api

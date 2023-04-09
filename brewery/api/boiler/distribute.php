@@ -20,11 +20,11 @@ $myData = new MyData($dbLink);
 
 if (count($postData->distributionInTanks) > 0) {
     foreach ($postData->distributionInTanks as $distributionItem) {
-        if (isset($distributionItem->fermentationTankInfo->fermentation)) {
-            $fermentationID = $distributionItem->fermentationTankInfo->fermentation->ID;
+        if ($distributionItem->distribution->fermentationID > 0) {
+            $fermentationID = $distributionItem->distribution->fermentationID;
             if (
-                isset($distributionItem->fermentationTankInfo->fermentation->yeastID)
-                && $distributionItem->fermentationTankInfo->fermentation->yeastID != $distributionItem->yeastID
+                $distributionItem->distribution->yeastID > 0 &&
+                $distributionItem->distribution->yeastID != $distributionItem->yeastID
             ) {
                 $dbManager->removeYeastFromFermentation($distributionItem->yeastID);
                 $dbManager->inputYeastIntoFermentation($distributionItem->yeastID, $fermentationID);
@@ -35,7 +35,7 @@ if (count($postData->distributionInTanks) > 0) {
                 "ferm-" . $postData->code,
                 $postData->density,
                 $distributionItem->yeastID,
-                $distributionItem->fermentationTankInfo->ID,
+                $distributionItem->distribution->tankID,
                 $postData->beerID,
                 null,
                 $timeOnServer,
@@ -43,7 +43,8 @@ if (count($postData->distributionInTanks) > 0) {
             );
             $fermentationID = $insertResult[RECORD_ID_KEY];
         }
-        $dbManager->addBoilingToFermentationMap($postData->ID, $fermentationID, $distributionItem->amount);
+        if ($distributionItem->distribution->mapID == 0)
+            $dbManager->addBoilingToFermentationMap($postData->ID, $fermentationID, $distributionItem->distribution->amount);
     }
 }
 

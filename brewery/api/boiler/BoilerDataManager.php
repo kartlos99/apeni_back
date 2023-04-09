@@ -239,6 +239,16 @@ class BoilerDataManager extends BaseDataManager
             return [];
     }
 
+    public function getBoilingByID($boilingID): array
+    {
+        $sql = "SELECT * FROM `boiling` WHERE `ID` = $boilingID";
+        $resultData = $this->getDataAsArray($sql);
+        if (count($resultData) > 0)
+            return $resultData[0];
+        else
+            return [];
+    }
+
     public function getWaterData($boilingID): array
     {
         $sql = "SELECT
@@ -316,6 +326,22 @@ class BoilerDataManager extends BaseDataManager
             WHERE
                 `boilingID` = $boilingID 
                 order by `type`";
+        return $this->getDataAsArray($sql);
+    }
+
+    public function getDistributionData($boilingID): array
+    {
+        $sql = "SELECT 
+                   bfmap.`ID` AS mapID, 
+                   bfmap.`amount`, 
+                   f.ID AS fermentationID,
+                   f.code, 
+                   f.yeastID, 
+                   f.tankID, 
+                   f.comment
+                FROM `b_to_f_map` bfmap
+                LEFT JOIN fermentation f ON f.ID = bfmap.`fID`
+                WHERE bfmap.`bID` = $boilingID";
         return $this->getDataAsArray($sql);
     }
 
