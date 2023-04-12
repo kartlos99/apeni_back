@@ -45,6 +45,18 @@ class MyData
         return $this->getDataAsArray($sql);
     }
 
+    public function getAmountToFilter($fermentationID): int
+    {
+        $sql = "SELECT SUM(`amount`) AS amount FROM `pour_in_filtration_map` 
+                WHERE fermentationID = $fermentationID
+                GROUP BY `fermentationID`";
+        $result = $this->getDataAsArray($sql);
+        if (empty($result))
+            return 0;
+        else
+        return $result[0]["amount"];
+    }
+
     function getTanks(): array
     {
         $bData = [];
@@ -137,7 +149,7 @@ class MyData
         return $this->baseInsert($sql);
     }
 
-    function updateFermentationItem($fID)
+    function updateFermentationItem($fID): array
     {
         $sql = "UPDATE `fermentation` SET 
                 `density` = (SELECT `value` FROM `f_data` WHERE `fID` = $fID AND dataType = 8 ORDER BY `measurementDate` DESC LIMIT 1),
@@ -220,7 +232,10 @@ class MyData
 
     public function getAllActiveFermentation(): array
     {
-        $sql = "SELECT f.*, (SELECT SUM(`amount`) FROM `b_to_f_map` WHERE fID = f.ID GROUP BY `fID` LIMIT 1) AS amount 
+        $sql = "SELECT
+                    f.*,
+                    (SELECT SUM(`amount`) FROM `b_to_f_map` WHERE fID = f.ID GROUP BY `fID` LIMIT 1) -
+                    ifnull((SELECT SUM(`amount`) FROM `pour_in_filtration_map` WHERE fermentationID = f.ID GROUP BY `fermentationID` LIMIT 1), 0) AS amount
                 FROM fermentation f
                 WHERE f.active = 1";
         return $this->getDataAsArray($sql);
