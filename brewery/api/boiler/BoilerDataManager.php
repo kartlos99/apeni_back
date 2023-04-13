@@ -33,6 +33,14 @@ class BoilerDataManager extends BaseDataManager
             `ID` = $fermentationID";
 
         $this->baseInsert($sql);
+        $this->updateYeastCode($yeastID, $fermentationID);
+    }
+
+    function updateYeastCode($yeastID, $fermentationID) {
+        $sql = "UPDATE `yeast` 
+                SET `code` = concat(`code`, '/', (SELECT code FROM fermentation WHERE ID = $fermentationID))
+                WHERE ID = $yeastID";
+        $this->baseInsert($sql);
     }
 
     public function insertBoiling(

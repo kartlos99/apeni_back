@@ -54,7 +54,7 @@ class MyData
         if (empty($result))
             return 0;
         else
-        return $result[0]["amount"];
+            return $result[0]["amount"];
     }
 
     function getTanks(): array
@@ -240,4 +240,42 @@ class MyData
                 WHERE f.active = 1";
         return $this->getDataAsArray($sql);
     }
+
+    function emptyingFermentation(
+        $tankID,
+        $fermentationID,
+        $emptyingDate,
+        $amount,
+        $comment,
+        $modifyUserID
+    ): array
+    {
+        $sql = "
+            INSERT INTO `emptying`(
+                `tankID`,
+                `fermentationID`,
+                `emptyingDate`,
+                `amount`,
+                `comment`,
+                `modifyUserID`
+            )
+            VALUES(
+                $tankID,
+                $fermentationID,
+                '$emptyingDate',
+                $amount,
+                '$comment',
+                $modifyUserID) ";
+
+        $result = $this->baseInsert($sql);
+
+        if ($result) {
+            // set fermentation status to INACTIVE
+            $sqlCloseFermentation = "UPDATE `fermentation` SET `active` = 2 WHERE ID = $fermentationID";
+            $this->baseInsert($sqlCloseFermentation);
+        }
+
+        return $result;
+    }
+
 }

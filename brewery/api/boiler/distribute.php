@@ -25,6 +25,8 @@ if (count($postData->distributionInTanks) > 0) {
             if (
                 $distributionItem->distribution->yeastID > 0 &&
                 $distributionItem->distribution->yeastID != $distributionItem->yeastID
+                || ($distributionItem->distribution->yeastID == $distributionItem->yeastID
+                    && !$distributionItem->distribution->containsYeast)
             ) {
                 $dbManager->removeYeastFromFermentation($distributionItem->yeastID);
                 $dbManager->inputYeastIntoFermentation($distributionItem->yeastID, $fermentationID);
@@ -32,7 +34,7 @@ if (count($postData->distributionInTanks) > 0) {
         } else {
             $dbManager->removeYeastFromFermentation($distributionItem->yeastID);
             $insertResult = $myData->insertFermentation(
-                "ferm-" . $postData->code,
+                "F." . $postData->code . ".T" . $distributionItem->distribution->tankID,
                 $postData->density,
                 $distributionItem->yeastID,
                 $distributionItem->distribution->tankID,
@@ -42,6 +44,7 @@ if (count($postData->distributionInTanks) > 0) {
                 $userID
             );
             $fermentationID = $insertResult[RECORD_ID_KEY];
+            $dbManager->updateYeastCode($distributionItem->yeastID, $fermentationID);
         }
         if ($distributionItem->distribution->mapID == 0)
             $dbManager->addBoilingToFermentationMap($postData->ID, $fermentationID, $distributionItem->distribution->amount);
