@@ -57,6 +57,19 @@ class MyData
             return $result[0]["amount"];
     }
 
+    public function getAmountToBarrel($fermentationID): int
+    {
+        $sql = "SELECT sum(b.volume * s.count) AS amount FROM sales s
+                LEFT JOIN barrel b ON s.barrelID = b.ID
+                WHERE `producedBeerID` MOD 2 = 0 AND s.beerOriginID = $fermentationID
+                GROUP BY s.beerOriginID";
+        $result = $this->getDataAsArray($sql);
+        if (empty($result))
+            return 0;
+        else
+            return $result[0]["amount"];
+    }
+
     function getTanks(): array
     {
         $bData = [];
@@ -73,9 +86,15 @@ class MyData
         return $bData;
     }
 
-    function getClients()
+    function getClients(): array
     {
-        $sql = "SELECT id, dasaxeleba FROM `obieqtebi` WHERE `active`=1 ORDER BY dasaxeleba";
+        $sql = "SELECT * FROM `client` WHERE `status` > 0";
+        return $this->getDataAsArray($sql);
+    }
+
+    function getBarrels(): array
+    {
+        $sql = "SELECT * FROM `barrel` ORDER BY `sortValue`";
         return $this->getDataAsArray($sql);
     }
 
@@ -235,7 +254,13 @@ class MyData
         $sql = "SELECT
                     f.*,
                     (SELECT SUM(`amount`) FROM `b_to_f_map` WHERE fID = f.ID GROUP BY `fID` LIMIT 1) -
-                    ifnull((SELECT SUM(`amount`) FROM `pour_in_filtration_map` WHERE fermentationID = f.ID GROUP BY `fermentationID` LIMIT 1), 0) AS amount
+                    ifnull((SELECT SUM(`amount`) FROM `pour_in_filtration_map` WHERE fermentationID = f.ID GROUP BY `fermentationID` LIMIT 1), 0) -
+                    ifnull((SELECT sum(b.volume * s.count) AS amount FROM sales s
+                        LEFT JOIN barrel b ON s.barrelID = b.ID
+                        WHERE `producedBeerID` MOD 2 = 0 AND s.beerOriginID = f.ID
+                        GROUP BY s.beerOriginID
+                        limit 1), 0)
+                       AS amount
                 FROM fermentation f
                 WHERE f.active = 1";
         return $this->getDataAsArray($sql);
@@ -264,7 +289,7 @@ class MyData
                 $fermentationID,
                 '$emptyingDate',
                 $amount,
-                '$comment',
+                $comment,
                 $modifyUserID) ";
 
         $result = $this->baseInsert($sql);
@@ -278,4 +303,19 @@ class MyData
         return $result;
     }
 
+    public function getProducedBeer(): array
+    {
+        $sql = "SELECT (b.ID * 2) + valueInt - 1 AS producedBeerID, b.id AS beerID, name, valueText AS beerType, b.`status`, b.color, valueInt AS unfiltered FROM beers b
+                JOIN
+                (
+                    SELECT valueInt, valueText, di.id FROM `dictionary_items` di
+                    LEFT JOIN dictionary d ON d.id = di.`dictionaryID`
+                    WHERE d.code = 'beerType'
+                    ORDER by sortID
+                ) bt
+                WHERE b.status > 0
+                ORDER BY outBeerID";
+
+        return $this->getDataAsArray($sql);
+    }
 }

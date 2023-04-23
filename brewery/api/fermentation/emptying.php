@@ -15,7 +15,7 @@ $postData = json_decode($json);
 
 $myData = new MyData($dbLink);
 
-$comment = $postData->comment ?? 'null';
+$comment = isset($postData->comment) ? "'$postData->comment'" : 'null';
 
 $resp = $myData->emptyingFermentation(
     0,

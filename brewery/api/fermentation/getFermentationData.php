@@ -1,4 +1,5 @@
 <?php
+
 namespace Apeni\JWT;
 
 use MyData;
@@ -9,7 +10,11 @@ header("Content-Type: application/json; charset=UTF-8");
 require_once('../load.php');
 checkToken();
 
-$tankID = $_GET["tankID"];
+$tankID = 0;
+if (isset($_GET["tankID"]) && $_GET["tankID"] > 0)
+    $tankID = $_GET["tankID"];
+else
+    dieWithDefaultHttpError("no tank id is set!", 505);
 //$fermentationID = $_GET["fermentationID"];
 
 $myData = new MyData($dbLink);
@@ -20,7 +25,8 @@ $activeFermentationCount = count($fermentationResult);
 if ($activeFermentationCount == 1) {
     $fermentation = $fermentationResult[0];
     $fermentation["data"] = $myData->getFermentationDataByID($fermentation["ID"]);
-    $fermentation["amountToFilter"] = $myData->getAmountToFilter($fermentation["ID"]);
+    $fermentation["pouredVolume"] =
+        $myData->getAmountToFilter($fermentation["ID"]) + $myData->getAmountToBarrel($fermentation["ID"]);
     $fermentation["brews"] = $myData->getBrewsInFermentation($fermentation["ID"]);
     echo json_encode($fermentation);
 } else {
