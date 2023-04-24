@@ -55,4 +55,8 @@ class BaseDataManager
     {
         return mysqli_query($this->dbConn, $deleteSql);
     }
+
+    protected function dieWithDataError($text = "un known error", $errorCode = null) {
+        dieWithError(CUSTOM_HTTP_ERROR_CODE, $text, $errorCode);
+    }
 }

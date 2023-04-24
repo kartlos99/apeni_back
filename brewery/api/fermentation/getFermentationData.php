@@ -26,7 +26,7 @@ if ($activeFermentationCount == 1) {
     $fermentation = $fermentationResult[0];
     $fermentation["data"] = $myData->getFermentationDataByID($fermentation["ID"]);
     $fermentation["pouredVolume"] =
-        $myData->getAmountToFilter($fermentation["ID"]) + $myData->getAmountToBarrel($fermentation["ID"]);
+        $myData->getAmountToFilter($fermentation["ID"]) + $myData->pouredFromFermentationToBarrels($fermentation["ID"]);
     $fermentation["brews"] = $myData->getBrewsInFermentation($fermentation["ID"]);
     echo json_encode($fermentation);
 } else {

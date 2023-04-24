@@ -67,9 +67,11 @@ class FilterDataManager extends BaseDataManager
                 ORDER BY
                     `modifyDate`";
         $result = $this->getDataAsArray($sql);
-        if (count($result) > 0)
+        if (count($result) > 0) {
+            if (count($result) > 1)
+                $this->dieWithDataError("found " . count($result) . " active process on the tank", ERROR_CODE_MULTI_RESULT);
             return $result[0];
-        else
+        } else
             return [];
     }
 
@@ -82,9 +84,25 @@ class FilterDataManager extends BaseDataManager
 
     public function getAllActiveFiltration(): array
     {
-        $sql = "SELECT f.*, (SELECT SUM(receivedAmount) FROM `pour_in_filtration_map` WHERE `filtrationID` = f.ID GROUP BY `filtrationID` LIMIT 1) AS amount 
+        $sql = "SELECT f.*, 
+                (SELECT SUM(receivedAmount) FROM `pour_in_filtration_map` WHERE `filtrationID` = f.ID GROUP BY `filtrationID` LIMIT 1) -
+                (SELECT sum(b.volume * s.count) AS amount FROM sales s
+                LEFT JOIN barrel b ON s.barrelID = b.ID
+                WHERE `producedBeerID` MOD 2 = 1 AND s.beerOriginID = f.ID
+                GROUP BY s.beerOriginID)
+                    AS amount 
                 FROM filtration f
                 WHERE f.status = 1";
         return $this->getDataAsArray($sql);
+    }
+
+    public function getFlowsIn($filtrationID): int
+    {
+        $sql = "SELECT SUM(receivedAmount) AS amount FROM `pour_in_filtration_map` WHERE `filtrationID` = $filtrationID GROUP BY `filtrationID` ";
+        $result = $this->getDataAsArray($sql);
+        if (empty($result))
+            return 0;
+        else
+            return $result[0]["amount"];
     }
 }

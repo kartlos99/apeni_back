@@ -57,11 +57,21 @@ class MyData
             return $result[0]["amount"];
     }
 
-    public function getAmountToBarrel($fermentationID): int
+    function pouredFromFermentationToBarrels($fermentationID): int
+    {
+        return $this->getAmountToBarrel($fermentationID, 0);
+    }
+
+    function pouredFromFiltrationToBarrels($filtrationID): int
+    {
+        return $this->getAmountToBarrel($filtrationID, 1);
+    }
+
+    function getAmountToBarrel($beerOriginID, $beerType): int
     {
         $sql = "SELECT sum(b.volume * s.count) AS amount FROM sales s
                 LEFT JOIN barrel b ON s.barrelID = b.ID
-                WHERE `producedBeerID` MOD 2 = 0 AND s.beerOriginID = $fermentationID
+                WHERE `producedBeerID` MOD 2 = $beerType AND s.beerOriginID = $beerOriginID
                 GROUP BY s.beerOriginID";
         $result = $this->getDataAsArray($sql);
         if (empty($result))
