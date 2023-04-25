@@ -18,7 +18,7 @@ $myData = new MyData($dbLink);
 $comment = isset($postData->comment) ? "'$postData->comment'" : 'null';
 
 $resp = $myData->emptyingFermentation(
-    0,
+    $postData->tankID,
     $postData->fermentationID,
     $postData->date,
     $postData->amount,

@@ -85,11 +85,11 @@ class FilterDataManager extends BaseDataManager
     public function getAllActiveFiltration(): array
     {
         $sql = "SELECT f.*, 
-                (SELECT SUM(receivedAmount) FROM `pour_in_filtration_map` WHERE `filtrationID` = f.ID GROUP BY `filtrationID` LIMIT 1) -
-                (SELECT sum(b.volume * s.count) AS amount FROM sales s
+                ifnull((SELECT SUM(receivedAmount) FROM `pour_in_filtration_map` WHERE `filtrationID` = f.ID GROUP BY `filtrationID` LIMIT 1), 0)-
+                ifnull((SELECT sum(b.volume * s.count) AS amount FROM sales s
                 LEFT JOIN barrel b ON s.barrelID = b.ID
                 WHERE `producedBeerID` MOD 2 = 1 AND s.beerOriginID = f.ID
-                GROUP BY s.beerOriginID)
+                GROUP BY s.beerOriginID), 0)
                     AS amount 
                 FROM filtration f
                 WHERE f.status = 1";
