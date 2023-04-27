@@ -263,7 +263,7 @@ class MyData
     {
         $sql = "SELECT
                     f.*,
-                    (SELECT SUM(`amount`) FROM `b_to_f_map` WHERE fID = f.ID GROUP BY `fID` LIMIT 1) -
+                    ifnull((SELECT SUM(`amount`) FROM `b_to_f_map` WHERE fID = f.ID GROUP BY `fID` LIMIT 1), 0) -
                     ifnull((SELECT SUM(`amount`) FROM `pour_in_filtration_map` WHERE fermentationID = f.ID GROUP BY `fermentationID` LIMIT 1), 0) -
                     ifnull((SELECT sum(b.volume * s.count) AS amount FROM sales s
                         LEFT JOIN barrel b ON s.barrelID = b.ID
