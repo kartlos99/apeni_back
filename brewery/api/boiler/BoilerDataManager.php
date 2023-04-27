@@ -229,7 +229,7 @@ class BoilerDataManager extends BaseDataManager
 
     public function nextBoilingID()
     {
-        $sql = "SELECT MAX(`id`)+1 as nextID FROM `boiling` ";
+        $sql = "SELECT ifnull(MAX(`id`), 0) + 1 as nextID FROM `boiling` ";
         $data = $this->getDataAsArray($sql);
         return $data[0]["nextID"];
     }
