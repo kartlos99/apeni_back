@@ -106,4 +106,40 @@ class FilterDataManager extends BaseDataManager
         else
             return $result[0]["amount"];
     }
+
+    function emptyingFilterTank(
+        $tankID,
+        $filtrationID,
+        $emptyingDate,
+        $amount,
+        $comment,
+        $modifyUserID
+    ): array
+    {
+        $sql = "INSERT INTO `filtration_tank_empting`(
+                    `tankID`,
+                    `filtrationID`,
+                    `emptyingDate`,
+                    `amount`,
+                    `comment`,
+                    `modifyUserID`
+                )
+                VALUES (
+                    $tankID,
+                    $filtrationID,
+                    '$emptyingDate',
+                    $amount,
+                    $comment,
+                    $modifyUserID
+                )";
+
+        $result = $this->baseInsert($sql);
+
+        if ($result) {
+            $sqlUpdate = "UPDATE `filtration` SET `status` = 2 WHERE `ID`= $filtrationID";
+            $this->baseInsert($sqlUpdate);
+        }
+
+        return $result;
+    }
 }
