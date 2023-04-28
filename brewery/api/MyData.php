@@ -181,9 +181,9 @@ class MyData
     function updateFermentationItem($fID): array
     {
         $sql = "UPDATE `fermentation` SET 
-                `density` = (SELECT `value` FROM `f_data` WHERE `fID` = $fID AND dataType = 8 ORDER BY `measurementDate` DESC LIMIT 1),
-                `ph` = (SELECT `value` FROM `f_data` WHERE `fID` = $fID AND dataType = 6 ORDER BY `measurementDate` DESC LIMIT 1),
-                `pressure` = (SELECT `value` FROM `f_data` WHERE `fID` = $fID AND dataType = 7 ORDER BY `measurementDate` DESC LIMIT 1)
+                `density` = (SELECT `value` FROM `f_data` WHERE `fID` = $fID AND dataType = 8 ORDER BY `measurementDate` DESC, `ID` DESC LIMIT 1),
+                `ph` = (SELECT `value` FROM `f_data` WHERE `fID` = $fID AND dataType = 6 ORDER BY `measurementDate` DESC, `ID` DESC LIMIT 1),
+                `pressure` = (SELECT `value` FROM `f_data` WHERE `fID` = $fID AND dataType = 7 ORDER BY `measurementDate` DESC, `ID` DESC LIMIT 1)
                 WHERE `ID` = $fID";
         return $this->baseInsert($sql);
     }
