@@ -2,7 +2,7 @@
 namespace Apeni\JWT;
 //use function Apeni\JWT\checkToken;
 
-use MyData;
+use UserDataManager;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -10,13 +10,8 @@ header("Content-Type: application/json; charset=UTF-8");
 require_once('../load.php');
 checkToken();
 
-$myData = new MyData($dbLink);
+$dbManager = new UserDataManager();
 
-$sql = "SELECT a.`id`, a.`username`, a.`name`, a.`type`, a.`tel`, a.`adress`, IFNULL(b.username, 'x') as maker, a.`comment` 
-        FROM
-            `users` a LEFT JOIN `users` b on `a`.`maker` = `b`.`id`
-        WHERE a.active = 1" ;
+echo json_encode($dbManager->getUsers());
 
-echo json_encode($myData->getDataAsArray($sql));
-
-mysqli_close($dbLink);
+$dbManager->closeConnection();

@@ -14,6 +14,7 @@ require_once($rootPath . '/brewery/api/beer/BeerDataManager.php');
 require_once($rootPath . '/brewery/api/yeast/YeastDataManager.php');
 require_once($rootPath . '/brewery/api/pouring/PourDataManager.php');
 require_once($rootPath . '/brewery/api/distribution/DistributionDataManager.php');
+require_once($rootPath . '/brewery/api/user/UserDataManager.php');
 
 require_once($rootPath . '/jwt/JWT.php');
 require_once($rootPath . '/jwt/extension.php');
