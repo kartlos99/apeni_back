@@ -313,6 +313,16 @@ class MyData
         return $result;
     }
 
+    function terminateYeast($yeastID, $userID)
+    {
+        $sql = "UPDATE `yeast` SET 
+                `status` = 2,
+                `modifyDate` = CURRENT_TIMESTAMP,
+                `modifyUserID` = $userID
+                WHERE ID = $yeastID";
+        $this->baseInsert($sql);
+    }
+
     public function getProducedBeer(): array
     {
         $sql = "SELECT (b.ID * 2) + valueInt - 1 AS producedBeerID, b.id AS beerID, name, valueText AS beerType, b.`status`, b.color, valueInt AS unfiltered FROM beers b
