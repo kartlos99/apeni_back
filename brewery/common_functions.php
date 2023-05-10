@@ -27,10 +27,12 @@ function dieWithDefaultHttpError($text = "un known error", $errorCode = null) {
 function checkToken()
 {
     // temporary, while testing api
+/*
     $fakePayload = new stdClass();
     $fakePayload->{'username'} = "kartlos-test";
     $fakePayload->{'userID'} = 1;
     return $fakePayload;
+*/
 
     $token = getBearerToken();
 

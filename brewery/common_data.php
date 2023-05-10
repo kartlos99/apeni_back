@@ -17,3 +17,5 @@ const ERROR_CODE_MISSED_PARAM = 1505;
 
 const ERROR_CODE_RECORD_NOT_FOUNDED = 1404;
 const ERROR_TEXT_RECORD_NOT_FOUNDED = "record not founded!";
+
+const ERROR_TEXT_CANT_IDENTIFY_USER = "can't identify user!";

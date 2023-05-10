@@ -355,10 +355,27 @@ class BoilerDataManager extends BaseDataManager
 
     public function getIncompleteBoilings(): array
     {
-        $query = "SELECT * FROM `boiling` b
-                    LEFT JOIN v_boiling_distribution_sum dist_sum
-                    ON b.id = dist_sum.boilingID
-                    WHERE abs(b.`amountToVirlpool` - dist_sum.distributedAmount) > 10";
+        $query = "SELECT
+                    `ID`,
+                    `code`,
+                    `startDate`,
+                    `density`,
+                    `amount`,
+                    `tankID`,
+                    `beerID`,
+                    `boilingTime`,
+                    `amountToVirlpool`,
+                    `yeast`,
+                    `comment`,
+                    IFNULL(dist_sum.distributedAmount, 0) AS distributedAmount
+                FROM
+                    `boiling` b
+                LEFT JOIN v_boiling_distribution_sum dist_sum ON
+                    b.id = dist_sum.boilingID
+                WHERE
+                    ABS(
+                        b.`amountToVirlpool` - IFNULL(dist_sum.distributedAmount, 0)
+                    ) > 10";
         return parent::getDataAsArray($query);
     }
 }

@@ -10,4 +10,15 @@ class UserDataManager extends BaseDataManager
                     `status` > 0";
         return $this->getDataAsArray($sql);
     }
+
+    public function identifyUser($userName, $password): array
+    {
+        $sql = "SELECT
+                    id, username, name, type
+                FROM
+                    `users`
+                WHERE
+                    `status` = 1 AND username = '$userName' AND pass = '$password'";
+        return $this->getDataAsArray($sql);
+    }
 }
