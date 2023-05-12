@@ -44,7 +44,7 @@ if (isset($_POST['submit'])) {
             $payload = [
                 'iat' => time(),
                 'iss' => 'localhost',
-                'exp' => time() + 60 * 60,
+                'exp' => time() + 12 * 60 * 60,
                 'userID' => $userData['id'],
                 'userType' => $userData['type'],
                 'username' => $userData['username']
