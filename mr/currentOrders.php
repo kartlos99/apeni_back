@@ -18,6 +18,7 @@ $barrels = $dataProvider->getBarrels();
                 </div>
             </td>
             <td class="ricxvi">
+                <h4>აქტიური შეკვთების ჯამი</h4>
                 <table id="beerSumTable" style="float: right">
                 </table>
             </td>

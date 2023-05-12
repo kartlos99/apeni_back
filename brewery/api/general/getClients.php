@@ -1,8 +1,7 @@
 <?php
 namespace Apeni\JWT;
-//use function Apeni\JWT\checkToken;
 
-use UserDataManager;
+use MyData;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -10,8 +9,8 @@ header("Content-Type: application/json; charset=UTF-8");
 require_once('../load.php');
 checkToken();
 
-$dbManager = new UserDataManager();
+$myData = new MyData($dbLink);
 
-echo json_encode($dbManager->getUsers());
+echo json_encode($myData->getClients());
 
-$dbManager->closeConnection();
+mysqli_close($dbLink);
