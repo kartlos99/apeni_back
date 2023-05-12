@@ -1,7 +1,5 @@
 let currDate = new Date();
-let strDate1 = dateformat(currDate);
-currDate.setDate(currDate.getDate() + 1);
-let strDate2 = dateformat(currDate);
+let strDate = dateformat(currDate);
 let lastShownCustomerID = 0;
 
 let dateInput1 = $('#date1');
@@ -25,8 +23,8 @@ $(document).ready(function () {
     console.log("ready!");
     getRegions();
 
-    dateInput1.val(strDate1).attr('max', strDate1);
-    dateInput2.val(strDate2).attr('max', strDate2);
+    dateInput1.val(strDate).attr('max', strDate);
+    dateInput2.val(strDate).attr('max', strDate);
 
     getData(dateInput1.val(), dateInput2.val());
     updateCustomerList(dateInput1.val(), dateInput2.val());
