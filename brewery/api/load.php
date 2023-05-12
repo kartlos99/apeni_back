@@ -1,8 +1,10 @@
 <?php
 
 require_once('/xampp/htdocs/app_config/brewery_db.php');
+//require_once('/home/apenige2/app_config/brewery_db.php');
 
 $rootPath = "/xampp/htdocs/apeni.localhost.com";
+//$rootPath = "/home/apenige2/public_html";
 
 require_once($rootPath . '/brewery/common_data.php');
 require_once($rootPath . '/brewery/common_functions.php');
