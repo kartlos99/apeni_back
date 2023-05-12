@@ -46,8 +46,10 @@ if (count($postData->distributionInTanks) > 0) {
             $fermentationID = $insertResult[RECORD_ID_KEY];
             $dbManager->updateYeastCode($distributionItem->yeastID, $fermentationID);
         }
-        if ($distributionItem->distribution->mapID == 0)
+        if ($distributionItem->distribution->mapID == 0) {
             $dbManager->addBoilingToFermentationMap($postData->ID, $fermentationID, $distributionItem->distribution->amount);
+            $dbManager->updateFermentationAverageDensity($fermentationID);
+        }
     }
 }
 

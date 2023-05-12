@@ -9,6 +9,18 @@ class BoilerDataManager extends BaseDataManager
         return $this->baseInsert($sql);
     }
 
+    function updateFermentationAverageDensity($fermentationID) {
+        $sql = "UPDATE `fermentation` SET 
+                `density` = (
+                    SELECT SUM( m.amount * b.density) /  sum( m.amount) AS avgDensity FROM `b_to_f_map` m
+                    LEFT JOIN boiling b on m.`bID` = b.ID
+                    WHERE m.fid = $fermentationID
+                )
+                WHERE `ID` = $fermentationID";
+
+        $this->baseInsert($sql);
+    }
+
     public function removeYeastFromFermentation($yeastID)
     {
         $sql = "UPDATE
