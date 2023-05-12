@@ -8,6 +8,9 @@ if (!isset($_SESSION['username'])) {
     header("Location: $url");
 }
 
+function formatAmount($value, $inEmptyCase = "-") {
+    return round($value, 2) == 0 ? $inEmptyCase : round($value, 2);
+}
 
 function makeRow($columns, $teg)
 {
@@ -46,15 +49,17 @@ if (isset($_GET["clientID"])) {
             lt,
             pr,
             c.pay, 
+            c.cash, 
+            c.bank, 
             k_out,
             (
-                SELECT round(sum(pr-pay), 2) FROM `client_actions` sc
+                SELECT round(sum(pr-pay), 2) FROM `client_actions_v2` sc
                 WHERE sc.tarigi <= c.tarigi AND clientID = $clientID
             ) AS `bal`,
             c.id,
             c.comment,
             c.username
-            FROM `client_actions` AS c
+            FROM `client_actions_v2` AS c
         WHERE 
             clientID = $clientID AND Date(c.tarigi) >= '$startDate' AND Date(c.tarigi) <= '$endDate'
             AND c.regionID = $regionID
@@ -62,7 +67,7 @@ if (isset($_GET["clientID"])) {
 
         $result = mysqli_query($con, $sql);
         if (mysqli_num_rows($result) > 0) {
-            $tHead = ["თარიღი", "რაოდენობა(კასრი)", "კასრის ტიპი", "ლუდი", "ლიტრი", "ღირებ.", "გადახდა", "კასრი დაბრუნ.", "ბალანსი", "კომენტარი", "დისტრიბუტორი"];
+            $tHead = ["თარიღი", "რაოდენობა(კასრი)", "კასრის ტიპი", "ლუდი", "ლიტრი", "ღირებ.", "გადახდა", "ხელზე", "ბანკი", "კასრი დაბრუნ.", "ბალანსი", "კომენტარი", "დისტრიბუტორი"];
             $output .= makeRow($tHead, "th");
             while ($row = mysqli_fetch_array($result)) {
                 $output .= makeRow([
@@ -71,8 +76,10 @@ if (isset($_GET["clientID"])) {
                     $row["kasri"] == null ? '' : $row["kasri"],
                     $row["dasaxeleba"],
                     $row["lt"] == 0 ? '' : $row["lt"],
-                    round($row["pr"], 2) == 0 ? '-' : round($row["pr"], 2),
-                    round($row["pay"], 2) == 0 ? '-' : round($row["pay"], 2),
+                    formatAmount($row["pr"]),
+                    formatAmount($row["pay"]),
+                    formatAmount($row["cash"]),
+                    formatAmount($row["bank"]),
                     $row["k_out"],
                     $row["bal"],
                     $row["comment"] == null ? '' : $row["comment"],
@@ -96,11 +103,13 @@ if (isset($_GET["clientID"])) {
             lt,
             pr,
             c.pay, 
+            c.cash, 
+            c.bank, 
             k_out,
             c.id,
             c.comment,
             c.username
-            FROM `client_actions` AS c, customer AS o
+            FROM `client_actions_v2` AS c, customer AS o
         WHERE 
             c.clientID = o.id AND Date(c.tarigi) >= '$startDate' AND Date(c.tarigi) <= '$endDate'
             AND c.regionID = $regionID
@@ -108,7 +117,7 @@ if (isset($_GET["clientID"])) {
 
         $result = mysqli_query($con, $sql);
         if (mysqli_num_rows($result) > 0) {
-            $tHead = ["თარიღი", "ობიექტი", "რაოდენობა(კასრი)", "კასრის ტიპი", "ლუდი", "ლიტრი", "ღირებ.", "გადახდა", "კასრი დაბრუნ.", "კომენტარი", "დისტრიბუტორი"];
+            $tHead = ["თარიღი", "ობიექტი", "რაოდენობა(კასრი)", "კასრის ტიპი", "ლუდი", "ლიტრი", "ღირებ.", "გადახდა", "ხელზე", "ბანკი", "კასრი დაბრუნ.", "კომენტარი", "დისტრიბუტორი"];
             $output .= makeRow($tHead, "th");
             while ($row = mysqli_fetch_array($result)) {
                 $output .= makeRow([
@@ -118,8 +127,10 @@ if (isset($_GET["clientID"])) {
                     $row["kasri"] == null ? '' : $row["kasri"],
                     $row["dasaxeleba"],
                     $row["lt"] == 0 ? '' : $row["lt"],
-                    round($row["pr"], 2) == 0 ? '-' : round($row["pr"], 2),
-                    round($row["pay"], 2) == 0 ? '-' : round($row["pay"], 2),
+                    formatAmount($row["pr"]),
+                    formatAmount($row["pay"]),
+                    formatAmount($row["cash"]),
+                    formatAmount($row["bank"]),
                     $row["k_out"],
                     $row["comment"],
                     $row["username"]
