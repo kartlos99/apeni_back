@@ -178,6 +178,45 @@ class MyData
         return $this->baseInsert($sql);
     }
 
+    function addYeastData(
+        $yeastID,
+        $value,
+        $measurementDate,
+        $comment,
+        $modifyUserID
+    ): array
+    {
+        $sql = "INSERT INTO `yeast_data`(
+                    `yeastID`,
+                    `value`,
+                    `measurementDate`,
+                    `comment`,
+                    `modifyUserID`
+                )
+                VALUES(
+                    $yeastID,
+                    $value,
+                    '$measurementDate',
+                    '$comment',
+                    $modifyUserID
+                )";
+
+        return $this->baseInsert($sql);
+    }
+
+    function getYeastIdFromFermentation($fermentationID): array
+    {
+        $sql = "SELECT `yeastID` FROM `fermentation` 
+                WHERE ID = $fermentationID
+                    AND ifnull( `yeastAddDate`, '') <> ''
+                    AND ifnull( `yeastRemoveDate`, '') = ''";
+        $result = $this->getDataAsArray($sql);
+        if (empty($result))
+            return [];
+        else
+            return $result[0];
+    }
+
     function updateFermentationItem($fID): array
     {
         $sql = "UPDATE `fermentation` SET 

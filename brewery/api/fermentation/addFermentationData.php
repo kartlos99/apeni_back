@@ -43,6 +43,19 @@ if (count($postData->data) > 0) {
     $myData->updateFermentationItem($postData->fermentationID);
 }
 
+if (isset($postData->yeastPH)) {
+    $yeast = $myData->getYeastIdFromFermentation($postData->fermentationID);
+    if (empty($yeast)) return;
+
+    $myData->addYeastData(
+        $yeast['yeastID'],
+        $postData->yeastPH,
+        $measurementDate,
+        "",
+        $sessionData->userID
+    );
+}
+
 echo json_encode($resp);
 
 mysqli_close($dbLink);
