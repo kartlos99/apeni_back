@@ -148,7 +148,7 @@ class OrderHelper
         return $orders;
     }
 
-    function checkOrderCompletion($orderID)
+    function checkOrderCompletion($orderID): bool
     {
         $isCompleted = true;
 
@@ -177,6 +177,17 @@ class OrderHelper
         }
 
         return $isCompleted;
+    }
+
+    function getActiveOrderIDForClient($clientID, $regionID): int {
+        $getOrderSql = "
+            SELECT ifnull(max(o.ID), 0) AS orderID FROM `orders` o
+            LEFT JOIN dictionary_items di ON di.id = o.orderStatusID
+            WHERE di.code = 'order_active' AND o.`regionID` = $regionID AND o.`clientID` = $clientID";
+
+        $result = mysqli_query($this->con, $getOrderSql);
+
+        return mysqli_fetch_assoc($result)['orderID'];
     }
 }
 

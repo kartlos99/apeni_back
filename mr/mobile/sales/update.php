@@ -90,7 +90,9 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
 
         if (mysqli_query($con, $updateSql)) {
             $response[DATA] = "sale-updated";
-            $orderHelper->checkOrderCompletion($saleItem->orderID);
+            $orderID = $orderHelper->getActiveOrderIDForClient($postData->clientID, $sessionData->regionID);
+            if ($orderID > 0)
+                $orderHelper->checkOrderCompletion($orderID);
         } else {
             $response[SUCCESS] = false;
             $response[ERROR_TEXT] = mysqli_error($con);
