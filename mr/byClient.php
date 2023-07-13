@@ -36,6 +36,7 @@ $clients = $dataProvider->getClients();
         <td>
             <button id="btnDone" class="btn">ჩამოტვირთვა</button>
             <button id="btnUpdateChart" class="btn">დიაგრამის განახლება</button>
+            <button id="btnExportDebt" class="btn">დავალიანების ექსპ.</button>
         </td>
         <td>
             <div id="summary"></div>

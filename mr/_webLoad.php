@@ -8,4 +8,4 @@ require_once('/xampp/htdocs/apeni.localhost.com/mr/common_func.php');
 
 require_once('/xampp/htdocs/apeni.localhost.com/mr/common_class.php');
 
-$folder = "/apeni.localhost.com/mr";
+$folder = "/mr";
