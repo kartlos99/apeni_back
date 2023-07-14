@@ -155,3 +155,10 @@ td.order-chek {
 .fas:hover {
     color: #166504;
 }
+
+.storeHouseTitle {
+    width: auto;
+    color: #005555;
+    margin-top: 14px;
+    text-align: center;
+}
