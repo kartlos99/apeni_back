@@ -88,3 +88,7 @@ function makeFullRow(item) {
 
     return $('<tr></tr>').append(tdName, td10, td20, td30, td50);
 }
+
+$(document).ready(function () {
+    getRegions();
+})
