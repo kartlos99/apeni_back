@@ -14,6 +14,10 @@ $('#btnDone').on('click', function (e) {
         + "&regionID=" + currentRegionID;
 });
 
+$('#btnExportDebt').on('click', function () {
+    window.location.href = "../mr/webApi/client/getDebtList.php";
+});
+
 clientSelector.on('change', function(e) {
     lastShownCustomerID = clientSelector.val();
     getData(dateInput1.val(), dateInput2.val(), lastShownCustomerID);

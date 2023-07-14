@@ -33,14 +33,7 @@ if (empty($postData->comment)) {
     $saleComment = "NULL";
 }
 
-$getOrderSql = "
-SELECT ifnull(max(o.ID), 0) AS orderID FROM `orders` o
-LEFT JOIN dictionary_items di ON di.id = o.orderStatusID
-WHERE di.code = 'order_active' AND o.`regionID` = {$sessionData->regionID} AND o.`clientID` = " . $postData->clientID;
-
-$result = mysqli_query($con, $getOrderSql);
-// obieqtze bolo aqtiuri Sekvetis ID
-$orderID = mysqli_fetch_assoc($result)['orderID'];
+$orderID = $orderHelper->getActiveOrderIDForClient($postData->clientID, $sessionData->regionID);
 
 // check for valid barrels values : except 'zugdidi' id=64
 if (isset($postData->barrels) && $postData->clientID != 64) {

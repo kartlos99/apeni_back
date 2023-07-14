@@ -1,7 +1,7 @@
 <?php
 //namespace Apeni\JWT;
 session_start();
-$VERSION = "4.1.0";
+$VERSION = "4.2.0";
 include_once '_webLoad.php';
 //$sessionData = checkToken();
 if (!isset($_SESSION['username'])) {
@@ -10,7 +10,7 @@ if (!isset($_SESSION['username'])) {
     header("Location: $url");
 }
 //print_r($_SESSION);
-$userType = isset($_SESSION['usertype']) ? $_SESSION['usertype'] : 0;
+$userType = $_SESSION['usertype'] ?? 0;
 
 ?>
 
@@ -70,6 +70,11 @@ if ($pos !== false) {
     $thisPage = 'cleaning';
 }
 
+$pos = strpos($_SERVER['PHP_SELF'], "storeHouse.php");
+if ($pos !== false) {
+    $thisPage = 'storeHouse';
+}
+
 if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
     header("Location: logout.php");
 
@@ -104,6 +109,11 @@ if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
             <?php if ($userType == USERTYPE_ADMIN) : ?>
                 <li class="finances">
                     <a href="finances.php">ფინანსები</a>
+                </li>
+            <?php endif; ?>
+            <?php if ($userType == USERTYPE_ADMIN || $userType == USERTYPE_MANAGER) : ?>
+                <li class="storeHouse">
+                    <a href="storeHouse.php">საწყობი</a>
                 </li>
             <?php endif; ?>
             <li class="cleaning">

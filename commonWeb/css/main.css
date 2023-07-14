@@ -192,3 +192,10 @@ td.order-chek {
 #summary {
     border: #4b5d7a solid 2px;
 }
+
+.storeHouseTitle {
+    width: auto;
+    color: #005555;
+    margin-top: 14px;
+    text-align: center;
+}
