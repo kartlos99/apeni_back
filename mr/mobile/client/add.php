@@ -11,6 +11,7 @@ header("Content-Type: application/json; charset=UTF-8");
 require_once('../connection.php');
 $sessionData = checkToken();
 
+
 // Takes raw data from the request
 $json = file_get_contents('php://input');
 
@@ -30,7 +31,8 @@ $sqlAddClient = "INSERT INTO $CUSTOMER_TB (
     `sakpiri`,
     `active`,
     `reg_date`,
-    `chek`
+    `chek`,
+    `modifyUserID`
 )
     VALUES(
     '$client->dasaxeleba',
@@ -41,8 +43,9 @@ $sqlAddClient = "INSERT INTO $CUSTOMER_TB (
     '$client->sakpiri',
     '1',
     '$timeOnServer',
-    '$client->chek'
-    )";
+    '$client->chek', "
+    . $sessionData->userID
+    . ")";
 
 if (mysqli_query($con, $sqlAddClient)) {
     $clientID = mysqli_insert_id($con);

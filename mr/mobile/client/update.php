@@ -6,7 +6,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-checkToken();
+$sessionData = checkToken();
 // Takes raw data from the request
 $json = file_get_contents('php://input');
 
@@ -30,6 +30,8 @@ $sqlUpdateClient = "UPDATE $CUSTOMER_TB SET " .
     "`active` = '1'," .
     "`reg_date` = '$timeOnServer'," .
     "`chek` = '$client->chek'" .
+    "`modifyDate` = CURRENT_TIMESTAMP," .
+    "`modifyUserID` = " . $sessionData->userID .
     "WHERE id = $client->id ";
 
 if (mysqli_query($con, $sqlUpdateClient)) {
