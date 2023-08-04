@@ -1,6 +1,11 @@
 <?php
+
 namespace Apeni\JWT;
+
 use VersionControl;
+use ChangesReporter;
+
+require_once "../../ChangesReporter.php";
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -29,14 +34,15 @@ $sqlUpdateClient = "UPDATE $CUSTOMER_TB SET " .
     "`sakpiri` = '$client->sakpiri'," .
     "`active` = '1'," .
     "`reg_date` = '$timeOnServer'," .
-    "`chek` = '$client->chek'" .
+    "`chek` = '$client->chek'," .
     "`modifyDate` = CURRENT_TIMESTAMP," .
     "`modifyUserID` = " . $sessionData->userID .
-    "WHERE id = $client->id ";
+    " WHERE id = $client->id ";
+
 
 if (mysqli_query($con, $sqlUpdateClient)) {
 
-    for ($i = 0; $i < count($prices); $i++){
+    for ($i = 0; $i < count($prices); $i++) {
         $priceItem = $prices[$i];
 
         $beerID = $priceItem->beer_id;
@@ -44,11 +50,11 @@ if (mysqli_query($con, $sqlUpdateClient)) {
         $clientID = $priceItem->obj_id;
 
         $sqlUpdatePrice =
-            "UPDATE fasebi ".
-            "SET `fasi` = $price, `tarigi` = '$timeOnServer' ".
+            "UPDATE fasebi " .
+            "SET `fasi` = $price, `tarigi` = '$timeOnServer' " .
             "WHERE `obj_id`= $clientID AND `beer_id` = $beerID";
 
-        if(!mysqli_query($con, $sqlUpdatePrice)){
+        if (!mysqli_query($con, $sqlUpdatePrice)) {
             $response[SUCCESS] = false;
             $response[ERROR_TEXT] = mysqli_error($con);
             $response[ERROR_CODE] = mysqli_errno($con);
@@ -61,6 +67,11 @@ if (mysqli_query($con, $sqlUpdateClient)) {
     $vc = new VersionControl($con);
     $vc->updateVersionFor(CLIENT_VCS);
     $vc->updateVersionFor(PRICE_VCS);
+
+    $reporter = new ChangesReporter($sessionData->userID);
+    $logID = $reporter->checkForReport($CUSTOMER_TB, $client->id);
+    $response[LOG_RECORD_ID_KEY] = $logID;
+    $reporter->closeConnection();
 
 } else {
     $response[SUCCESS] = false;
