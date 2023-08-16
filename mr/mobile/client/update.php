@@ -24,6 +24,8 @@ $client = $postData->obieqti;
 
 $prices = $postData->prices;
 
+$reporter = new ChangesReporter($sessionData->userID);
+$reporter->checkRecord($CUSTOMER_TB, $client->id);
 
 $sqlUpdateClient = "UPDATE $CUSTOMER_TB SET " .
     "`dasaxeleba` = '$client->dasaxeleba'," .
@@ -68,10 +70,7 @@ if (mysqli_query($con, $sqlUpdateClient)) {
     $vc->updateVersionFor(CLIENT_VCS);
     $vc->updateVersionFor(PRICE_VCS);
 
-    $reporter = new ChangesReporter($sessionData->userID);
-    $logID = $reporter->checkForReport($CUSTOMER_TB, $client->id);
-    $response[LOG_RECORD_ID_KEY] = $logID;
-    $reporter->closeConnection();
+    $response[LOG_RECORD_ID_KEY] = $reporter->logAsNeed();
 
 } else {
     $response[SUCCESS] = false;
@@ -79,6 +78,7 @@ if (mysqli_query($con, $sqlUpdateClient)) {
     $response[ERROR_CODE] = mysqli_errno($con);
 }
 
+$reporter->closeConnection();
 
 echo json_encode($response);
 

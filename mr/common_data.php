@@ -71,3 +71,4 @@ const ER_TEXT_DEBT_ON_CLIENT = "ობიექტზე არსებობ�
 
 $CUSTOMER_TB = "`customer`";
 //$CUSTOMER_MAP_TB = "`customer_to_region_map`";
+$BARREL_OUTPUT_TB = "`barrel_output`";

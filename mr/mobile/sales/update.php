@@ -1,11 +1,13 @@
 <?php
 
 namespace Apeni\JWT;
-// ---------- gadascem dRes, gibrunebs shekveTebs ----------
 
 use OrderHelper;
 use DataProvider;
 use QueryHelper;
+use ChangesReporter;
+
+require_once "../../ChangesReporter.php";
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -120,7 +122,7 @@ if (isset($postData->barrels) && count($postData->barrels) > 0) {
     if ($barrelItem->ID > 0) {
 
         $barrelsUpdateSql = "
-        UPDATE `barrel_output` SET
+        UPDATE $BARREL_OUTPUT_TB SET
             `outputDate` = '$barrelItem->outputDate',
             `canTypeID` = '$barrelItem->canTypeID',
             `count` = '$barrelItem->count',
@@ -130,13 +132,18 @@ if (isset($postData->barrels) && count($postData->barrels) > 0) {
         WHERE 
             `ID` = $barrelItem->ID";
 
+        $reporter = new ChangesReporter($sessionData->userID);
+        $reporter->checkRecord($BARREL_OUTPUT_TB, $barrelItem->ID);
+
         if (mysqli_query($con, $barrelsUpdateSql)) {
             $response[DATA] = "barrel-updated";
+            $response[LOG_RECORD_ID_KEY] = $reporter->logAsNeed();
         } else {
             $response[SUCCESS] = false;
             $response[ERROR_TEXT] = mysqli_errno($con) . " $barrelsUpdateSql " . mysqli_error($con);
             $response[ERROR_CODE] = ER_CODE_BARREL_OUTPUT;
         }
+        $reporter->closeConnection();
     }
 }
 

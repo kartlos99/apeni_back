@@ -6,6 +6,9 @@ class ChangesReporter extends BaseDbManager
 {
 
     private $userID;
+    private $passedDays = 0;
+    private $tableName;
+    private $recordID;
 
     public function __construct($userID)
     {
@@ -13,26 +16,36 @@ class ChangesReporter extends BaseDbManager
         $this->userID = $userID;
     }
 
-    function checkForReport($tableName, $recordID): int
+    function checkRecord($tableName, $recordID)
     {
+        $this->tableName = trim($tableName, '`');
+        $this->recordID = $recordID;
         $FIELD_NAME = "passedDays";
+
         $sqlGetPassedDays = "SELECT DATEDIFF( CURRENT_DATE, date(`modifyDate`)) AS $FIELD_NAME " .
             "FROM $tableName " .
             "WHERE ID = $recordID";
 
         $result = $this->getDataAsArray($sqlGetPassedDays);
-        $passedDays = $this->getSingleValue($result, $FIELD_NAME);
-        if (is_null($passedDays) && $passedDays > 0) {
-            return -1;
-        } else {
-            return $this->logChange(trim($tableName, '`'), $recordID);
+        $gap = $this->getSingleValue($result, $FIELD_NAME);
+        if (!is_null($gap)) {
+            $this->passedDays = $gap;
         }
     }
 
-    function logChange($tableName, $recordID): int
+    function logAsNeed(): int
+    {
+        if ($this->passedDays > 0) {
+            return $this->logChange();
+        } else {
+            return -1;
+        }
+    }
+
+    private function logChange(): int
     {
         $sql = "INSERT INTO `changeslog` (`tableName`, `editedRecordID`, `modifyUsedID`)" .
-            "VALUES ('$tableName', '$recordID', '$this->userID')";
+            "VALUES ('$this->tableName', '$this->recordID', '$this->userID')";
 
         return $this->baseInsert($sql)[RECORD_ID_KEY];
     }
