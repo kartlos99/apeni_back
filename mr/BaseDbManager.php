@@ -25,7 +25,7 @@ class BaseDbManager
                 $resultArray[] = $rs;
             }
         } else {
-            $this->dieWithError(BASE_ERROR_CODE, mysqli_error($this->dbConn));
+            $this->dieWithError(BASE_ERROR_CODE, $this->sqlErrorWithCode());
         }
         return $resultArray;
     }
@@ -49,6 +49,14 @@ class BaseDbManager
         $response[ERROR_TEXT] = $text;
         $response[ERROR_CODE] = $code;
         die(json_encode($response));
+    }
+
+    private function sqlErrorWithCode() {
+        $fullError = [
+            "SQL_ERROR_CODE" => mysqli_errno($this->dbConn),
+            "SQL_ERROR_TEXT" => mysqli_error($this->dbConn),
+        ];
+        return json_encode($fullError);
     }
 
     function getSingleValue($resultArray, $fieldName)
