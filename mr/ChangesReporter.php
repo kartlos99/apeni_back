@@ -44,7 +44,7 @@ class ChangesReporter extends BaseDbManager
 
     private function logChange(): int
     {
-        $sql = "INSERT INTO `changeslog` (`tableName`, `editedRecordID`, `modifyUsedID`)" .
+        $sql = "INSERT INTO `changeslog` (`tableName`, `editedRecordID`, `modifyUserID`)" .
             "VALUES ('$this->tableName', '$this->recordID', '$this->userID')";
 
         return $this->baseInsert($sql)[RECORD_ID_KEY];

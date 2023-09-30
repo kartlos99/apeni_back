@@ -30,6 +30,20 @@ class BaseDbManager
         return $resultArray;
     }
 
+    function getDataAsArrayOfString($sqlQuery): array
+    {
+        $result = mysqli_query($this->dbConn, $sqlQuery);
+        $resultArray = [];
+        if ($result) {
+            while ($rs = mysqli_fetch_assoc($result)) {
+                $resultArray[] = json_encode($rs);
+            }
+        } else {
+            $this->dieWithError(BASE_ERROR_CODE, $this->sqlErrorWithCode());
+        }
+        return $resultArray;
+    }
+
     protected function baseInsert($insertSql): array
     {
         $result = mysqli_query($this->dbConn, $insertSql);
