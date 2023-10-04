@@ -51,7 +51,7 @@ class HistoryManager extends \BaseDbManager
         $fields = [
             "`id`", "dasaxeleba", "adress", "tel", "comment", "sk", "sakpiri", "active", "reg_date", "chek", "modifyDate", "modifyUserID"
         ];
-        return $this->getDataAsArrayOfString($this->formHistorySql($recordID, "customer", "customer_history", $fields));
+        return $this->getDataAsArray($this->formHistorySql($recordID, "customer", "customer_history", $fields));
     }
 
     private function getBarrelOutputHistory($recordID): array
@@ -59,7 +59,7 @@ class HistoryManager extends \BaseDbManager
         $fields = [
             "id", "regionID", "outputDate", "clientID", "distributorID", "canTypeID", "count", "comment", "modifyDate", "modifyUserID"
         ];
-        return $this->getDataAsArrayOfString($this->formHistorySql($recordID, "barrel_output", "barrel_history", $fields));
+        return $this->getDataAsArray($this->formHistorySql($recordID, "barrel_output", "barrel_history", $fields));
     }
 
     private function getMoneyOutputHistory($recordID): array

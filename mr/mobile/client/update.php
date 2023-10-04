@@ -35,7 +35,6 @@ $sqlUpdateClient = "UPDATE $CUSTOMER_TB SET " .
     "`sk` = '$client->sk'," .
     "`sakpiri` = '$client->sakpiri'," .
     "`active` = '1'," .
-    "`reg_date` = '$timeOnServer'," .
     "`chek` = '$client->chek'," .
     "`modifyDate` = CURRENT_TIMESTAMP," .
     "`modifyUserID` = " . $sessionData->userID .
