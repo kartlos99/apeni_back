@@ -49,7 +49,9 @@ class HistoryManager extends \BaseDbManager
     private function getCustomerHistory($recordID): array
     {
         $fields = [
-            "`id`", "dasaxeleba", "adress", "tel", "comment", "sk", "sakpiri", "active", "reg_date", "chek", "modifyDate", "modifyUserID"
+            "`id`", "dasaxeleba", "adress", "tel", "comment", "sk", "sakpiri", "active", "reg_date",
+            "if(chek = 0, '-', 'დიახ') as isChecked",
+            "modifyDate", "modifyUserID"
         ];
         return $this->getDataAsArray($this->formHistorySql($recordID, "customer", "customer_history", $fields));
     }
