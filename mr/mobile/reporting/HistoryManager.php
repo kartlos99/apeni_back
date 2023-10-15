@@ -53,7 +53,10 @@ class HistoryManager extends \BaseDbManager
             "if(chek = 0, '-', 'დიახ') as isChecked",
             "modifyDate", "modifyUserID"
         ];
-        return $this->getDataAsArray($this->formHistorySql($recordID, "customer", "customer_history", $fields));
+        return [
+            HISTORY_KEY => $this->getDataAsArray($this->formHistorySql($recordID, "customer", "customer_history", $fields)),
+            USERS_MAP_KEY => $this->getDistributorsNames()
+        ];
     }
 
     private function getBarrelOutputHistory($recordID): array
@@ -61,7 +64,12 @@ class HistoryManager extends \BaseDbManager
         $fields = [
             "id", "regionID", "outputDate", "clientID", "distributorID", "canTypeID", "count", "comment", "modifyDate", "modifyUserID"
         ];
-        return $this->getDataAsArray($this->formHistorySql($recordID, "barrel_output", "barrel_history", $fields));
+        return [
+            HISTORY_KEY => $this->getDataAsArray($this->formHistorySql($recordID, "barrel_output", "barrel_history", $fields)),
+            USERS_MAP_KEY => $this->getDistributorsNames(),
+            CUSTOMERS_MAP_KEY => $this->getCustomerNames(),
+            BARRELS_MAP_KEY => $this->getBarrelNames()
+        ] ;
     }
 
     private function getMoneyOutputHistory($recordID): array
@@ -98,5 +106,16 @@ class HistoryManager extends \BaseDbManager
         return $this->getDataAsArray($this->formHistorySql($recordID, "orders", "orders_history", $fields));
     }
 
-
+    private function getCustomerNames(): array {
+        return $this->getDataAsIdNameMap("SELECT id, dasaxeleba AS name FROM `customer`");
+    }
+    private function getBarrelNames(): array {
+        return $this->getDataAsIdNameMap("SELECT id, dasaxeleba AS name FROM `kasri`");
+    }
+    private function getBeerNames(): array {
+        return $this->getDataAsIdNameMap("SELECT id, dasaxeleba AS name FROM `ludi`");
+    }
+    private function getDistributorsNames(): array {
+        return $this->getDataAsIdNameMap("SELECT id, username as name FROM `users`");
+    }
 }

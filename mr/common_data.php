@@ -74,3 +74,9 @@ $CUSTOMER_TB = "customer";
 $BARREL_OUTPUT_TB = "barrel_output";
 $MONEY_OUTPUT_TB = "moneyoutput";
 $ORDERS_TB = "orders";
+
+const HISTORY_KEY = "history";
+const USERS_MAP_KEY = "users";
+const CUSTOMERS_MAP_KEY = "customers";
+const BARRELS_MAP_KEY = "barrels";
+const BEERS_MAP_KEY = "beers";

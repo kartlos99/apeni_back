@@ -16,6 +16,16 @@ class BaseDbManager
         mysqli_close($this->dbConn);
     }
 
+    function getDataAsIdNameMap($sqlQuery): array
+    {
+        $result = $this->getDataAsArray($sqlQuery);
+        $resultArray = [];
+        foreach ($result as $row) {
+            $resultArray[$row['id']] = $row['name'];
+        }
+        return $resultArray;
+    }
+
     function getDataAsArray($sqlQuery): array
     {
         $result = mysqli_query($this->dbConn, $sqlQuery);
@@ -65,7 +75,8 @@ class BaseDbManager
         die(json_encode($response));
     }
 
-    private function sqlErrorWithCode() {
+    private function sqlErrorWithCode()
+    {
         $fullError = [
             "SQL_ERROR_CODE" => mysqli_errno($this->dbConn),
             "SQL_ERROR_TEXT" => mysqli_error($this->dbConn),
