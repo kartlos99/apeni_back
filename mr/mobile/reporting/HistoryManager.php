@@ -78,15 +78,19 @@ class HistoryManager extends \BaseDbManager
             "id",
             "regionID",
             "tarigi",
-            "obieqtis_id",
-            "distributor_id",
+            "obieqtis_id AS clientID",
+            "distributor_id AS distributorID",
             "tanxa",
-            "paymentType",
+            "if(paymentType = 1, 'ხელზე', 'ბანკი') as paymentType",
             "comment",
             "modifyDate",
             "modifyUserID"
         ];
-        return $this->getDataAsArray($this->formHistorySql($recordID, "moneyoutput", "money_history", $fields));
+        return [
+            HISTORY_KEY => $this->getDataAsArray($this->formHistorySql($recordID, "moneyoutput", "money_history", $fields)),
+            USERS_MAP_KEY => $this->getDistributorsNames(),
+            CUSTOMERS_MAP_KEY => $this->getCustomerNames(),
+        ];
     }
 
     private function getOrderHistory($recordID): array

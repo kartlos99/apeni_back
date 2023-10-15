@@ -166,13 +166,18 @@ if (isset($postData->money) && count($postData->money) > 0) {
     WHERE
         `ID` = $id";
 
+    $reporter = new ChangesReporter($sessionData->userID);
+    $reporter->checkRecord($MONEY_OUTPUT_TB, $moneyItm->ID);
+
     if (mysqli_query($con, $moneyUpdateSql)) {
         $response[DATA] = "money-updated";
+        $response[LOG_RECORD_ID_KEY] = $reporter->logAsNeed();
     } else {
         $response[SUCCESS] = false;
         $response[ERROR_TEXT] = mysqli_error($con);
         $response[ERROR_CODE] = mysqli_errno($con);
     }
+    $reporter->closeConnection();
 }
 
 echo json_encode($response);
