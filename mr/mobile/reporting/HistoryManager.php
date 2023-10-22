@@ -19,6 +19,7 @@ class HistoryManager extends \BaseDbManager
         global $CUSTOMER_TB;
         global $BARREL_OUTPUT_TB;
         global $MONEY_OUTPUT_TB;
+        global $SALES_TB;
         global $ORDERS_TB;
 
         switch ($table) {
@@ -28,6 +29,8 @@ class HistoryManager extends \BaseDbManager
                 return $this->getBarrelOutputHistory($recordID);
             case $MONEY_OUTPUT_TB:
                 return $this->getMoneyOutputHistory($recordID);
+            case $SALES_TB:
+                return $this->getSalesHistory($recordID);
             case $ORDERS_TB:
                 return $this->getOrderHistory($recordID);
             default:
@@ -90,6 +93,34 @@ class HistoryManager extends \BaseDbManager
             HISTORY_KEY => $this->getDataAsArray($this->formHistorySql($recordID, "moneyoutput", "money_history", $fields)),
             USERS_MAP_KEY => $this->getDistributorsNames(),
             CUSTOMERS_MAP_KEY => $this->getCustomerNames(),
+        ];
+    }
+
+    private function getSalesHistory($recordID): array
+    {
+        $fields = [
+            "id",
+            "regionID",
+            "saleDate",
+            "clientID",
+            "distributorID",
+            "beerID",
+            "if(chek = 0, '-', 'დიახ') as isChecked",
+            "unitPrice",
+            "canTypeID",
+            "count",
+            "orderID",
+            "comment",
+            "modifyDate",
+            "modifyUserID"
+        ];
+        global $SALES_TB;
+        return [
+            HISTORY_KEY => $this->getDataAsArray($this->formHistorySql($recordID, $SALES_TB, "{$SALES_TB}_history", $fields)),
+            USERS_MAP_KEY => $this->getDistributorsNames(),
+            CUSTOMERS_MAP_KEY => $this->getCustomerNames(),
+            BEERS_MAP_KEY => $this->getBeerNames(),
+            BARRELS_MAP_KEY => $this->getBarrelNames()
         ];
     }
 

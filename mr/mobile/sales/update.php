@@ -77,7 +77,7 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
         $count = $saleItem->count;
 
         $updateSql = "
-        UPDATE `sales` SET 
+        UPDATE `$SALES_TB` SET 
             `saleDate` = '$saleDate',
             `beerID` = $beerID,
             `unitPrice` = '$price',
@@ -90,8 +90,12 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
             `ID` = $saleItem->ID
         ";
 
+        $reporter = new ChangesReporter($sessionData->userID);
+        $reporter->checkRecord($SALES_TB, $saleItem->ID);
+
         if (mysqli_query($con, $updateSql)) {
             $response[DATA] = "sale-updated";
+            $response[LOG_RECORD_ID_KEY] = $reporter->logAsNeed();
             $orderID = $orderHelper->getActiveOrderIDForClient($postData->clientID, $sessionData->regionID);
             if ($orderID > 0)
                 $orderHelper->checkOrderCompletion($orderID);
@@ -100,7 +104,7 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
             $response[ERROR_TEXT] = mysqli_error($con);
             $response[ERROR_CODE] = mysqli_errno($con);
         }
-
+        $reporter->closeConnection();
     }
 }
 

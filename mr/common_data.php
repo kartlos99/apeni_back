@@ -73,6 +73,7 @@ $CUSTOMER_TB = "customer";
 //$CUSTOMER_MAP_TB = "`customer_to_region_map`";
 $BARREL_OUTPUT_TB = "barrel_output";
 $MONEY_OUTPUT_TB = "moneyoutput";
+$SALES_TB = "sales";
 $ORDERS_TB = "orders";
 
 const HISTORY_KEY = "history";

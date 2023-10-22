@@ -18,12 +18,14 @@ SELECT cl.*, users.username AS modifyUsername,
 CASE
     WHEN `tableName` = 'barrel_output' THEN concat_ws('$infoSeparator', date(bo.outputDate), (SELECT dasaxeleba from customer WHERE id = bo.clientID), bo.count, ifnull(bo.comment, ''))
     WHEN `tableName` = 'moneyoutput' THEN concat_ws('$infoSeparator', date(m.tarigi), (SELECT dasaxeleba from customer WHERE id = m.obieqtis_id), m.tanxa)
+    WHEN `tableName` = '$SALES_TB' THEN concat_ws('$infoSeparator', date(s.saleDate), (SELECT dasaxeleba from customer WHERE id = s.clientID), (select username from users where id = s.distributorID))
     WHEN `tableName` = 'customer' THEN concat_ws('$infoSeparator', date(c.reg_date), c.dasaxeleba, ifnull(c.comment, ''))
     ELSE 'unknown operation'
 END AS shortInfo
 FROM `changeslog` cl
 LEFT JOIN barrel_output bo ON cl.`editedRecordID` = bo.ID
 LEFT JOIN moneyoutput m ON cl.`editedRecordID` = m.ID
+LEFT JOIN $SALES_TB s ON cl.`editedRecordID` = s.ID
 LEFT JOIN customer c ON cl.`editedRecordID` = c.id
 
 LEFT JOIN users ON users.id = cl.`modifyUserID`
@@ -45,6 +47,11 @@ foreach ($arr as $key => $item) {
         $shortInfoMap["ოპ.თარიღი"] = $shortInfoList[0];
         $shortInfoMap["ობიექტი"] = $shortInfoList[1];
         $shortInfoMap["თანხა"] = $shortInfoList[2];
+    }
+    if ($item['tableName'] == $SALES_TB) {
+        $shortInfoMap["თარიღი"] = $shortInfoList[0];
+        $shortInfoMap["ობიექტი"] = $shortInfoList[1];
+        $shortInfoMap["დისტრიბუტორი"] = $shortInfoList[2];
     }
     if ($item['tableName'] == $CUSTOMER_TB) {
         $shortInfoMap["რეგისტრაცია"] = $shortInfoList[0];
