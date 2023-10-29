@@ -6,6 +6,9 @@ let dateInput1 = $('#date1');
 let dateInput2 = $('#date2');
 let summaryContainer = $('#summary');
 let clientSelector = $('#selectClient');
+let view = {
+    debtTable: $("#tbDebt").find('tbody')
+}
 
 $('#btnDone').on('click', function (e) {
     clientID = clientSelector.val();
@@ -15,10 +18,10 @@ $('#btnDone').on('click', function (e) {
 });
 
 $('#btnExportDebt').on('click', function () {
-    window.location.href = "../mr/webApi/client/getDebtList.php";
+    window.location.href = "../mr/webApi/client/getDebtList.php?forExport=true";
 });
 
-clientSelector.on('change', function(e) {
+clientSelector.on('change', function (e) {
     lastShownCustomerID = clientSelector.val();
     getData(dateInput1.val(), dateInput2.val(), lastShownCustomerID);
 });
@@ -32,6 +35,8 @@ $(document).ready(function () {
 
     getData(dateInput1.val(), dateInput2.val());
     updateCustomerList(dateInput1.val(), dateInput2.val());
+
+    getDebtList();
 });
 
 $('#btnUpdateChart').on('click', function (b) {
@@ -45,7 +50,7 @@ let beerObjects = [];
 
 function getData(date1, date2, customerID = 0) {
     $.ajax({
-        url: 'webApi/getClients.php?date1=' + date1 + '&date2=' + date2 + '&customerID=' + customerID ,
+        url: 'webApi/getClients.php?date1=' + date1 + '&date2=' + date2 + '&customerID=' + customerID,
         dataType: 'json',
         headers: getHeaders(),
         success: function (resp) {
@@ -115,7 +120,7 @@ function getData(date1, date2, customerID = 0) {
 
 function updateCustomerList(date1, date2) {
     $.ajax({
-        url: 'webApi/getActiveCustomers.php?date1=' + date1 + '&date2=' + date2 ,
+        url: 'webApi/getActiveCustomers.php?date1=' + date1 + '&date2=' + date2,
         dataType: 'json',
         headers: getHeaders(),
         success: function (resp) {
@@ -123,7 +128,7 @@ function updateCustomerList(date1, date2) {
             if (resp.success) {
                 clientSelector.empty();
                 clientSelector.append($("<option/>").text("ყველა ობიექტი").val(0))
-                resp.data.forEach( function(customer) {
+                resp.data.forEach(function (customer) {
                     clientSelector.append($("<option/>").text(customer.dasaxeleba).val(customer.id));
                 })
             }
@@ -145,7 +150,7 @@ function drawChart() {
             type: 'bar'
         },
         tooltip: {
-            formatter: function() {
+            formatter: function () {
                 return '<b>' + this.x + '</b></br>'
                     + this.series.name + ': <b>' + this.y
                     + '</b></br>სულ: <b>' + this.total + '</b>';
@@ -191,4 +196,47 @@ function showSummaryAmount() {
     // let totalSpan = $('<span />').text("ჯამი: " + grandTotal).addClass("totalSpan");
     summaryContainer.prepend($('<span />').text("ჯამური ლიტრაჟი: " + grandTotal));
     // summaryContainer.find('span').te;
+}
+
+function getDebtList() {
+    $.ajax({
+        url: 'webApi/client/getDebtList.php',
+        dataType: 'json',
+        headers: getHeaders(),
+        success: function (resp) {
+            console.log(resp)
+            if (resp.success) {
+                showDebtInfo(resp.data);
+            } else {
+                showError(resp.errorCode, resp.errorText);
+            }
+        }
+    });
+}
+
+function showDebtInfo(fData) {
+    view.debtTable.empty();
+    fData.forEach(function (item) {
+        view.debtTable.append(dataToRow(item))
+    });
+}
+
+function dataToRow(item) {
+    let tdCustomer = $('<td />').text(item.clientName);
+    let tdMoney = formatMoney(item.moneyBalance);
+    let td10 = $('<td />').text(item['10იანი']).addClass("ricxvi");
+    let td20 = $('<td />').text(item['20იანი']).addClass("ricxvi");
+    let td30 = $('<td />').text(item['30იანი']).addClass("ricxvi");
+    let td50 = $('<td />').text(item['50იანი']).addClass("ricxvi");
+    return $('<tr />').append(tdCustomer, tdMoney, td10, td20, td30, td50);
+}
+
+function formatMoney(f) {
+    // let td = $('<td />').addClass("ricxvi");
+    let rr = f.split('.');
+    let frictionSpan = $('<span />').text('.' + rr[1]).addClass("friction");
+    return $('<td />').addClass("ricxvi")
+        .append(rr[0])
+        .append(frictionSpan)
+        .append(' ₾')
 }

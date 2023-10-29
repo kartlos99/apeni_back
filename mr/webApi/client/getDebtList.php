@@ -1,5 +1,4 @@
 <?php
-
 namespace Apeni\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -42,10 +41,17 @@ if ($moneyDebtResult) {
     echo json_encode($response);
 }
 
-$columns = ["clientID", "clientName", "moneyBalance", "50იანი", "30იანი", "20იანი", "10იანი"];
-$exporter = new Exporter();
-$exporter->exportData($columns, $arr, "clientsDebt_" . $dateOnServer);
+$forExport = $_GET['forExport'] ?? false;
 
+if ($forExport) {
+    $columns = ["clientID", "clientName", "moneyBalance", "50იანი", "30იანი", "20იანი", "10იანი"];
+    $exporter = new Exporter();
+    $exporter->exportData($columns, $arr, "clientsDebt_" . $dateOnServer);
+} else {
+    echo json_encode($response);
+}
+
+mysqli_close($con);
 function getBarrelsBalanceList($dbConn, $clientID = 0): array
 {
     $sqlQuery = "CALL getBarrelBalanceByID($clientID, 0);";

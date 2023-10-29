@@ -126,6 +126,12 @@ td.order-chek {
     text-align: right;
 }
 
+.friction {
+    font-size: small;
+    color: #7a7a7a;
+    font-weight: normal;
+}
+
 .asDate {
     font-family: verdana;
 }
