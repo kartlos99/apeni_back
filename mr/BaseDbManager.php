@@ -7,7 +7,7 @@ class BaseDbManager
 
     public function __construct()
     {
-        $this->dbConn = mysqli_connect(HOST, DB_user, DB_pass, DB_name) or die('db_connection_error!..');
+        $this->dbConn = mysqli_connect(HOST, DB_user, DB_pass, DB_name) or die('db_connection_error!.. class:BaseDbManager');
         mysqli_set_charset($this->dbConn, "utf8");
     }
 

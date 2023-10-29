@@ -5,7 +5,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-//$sessionData = checkToken();
+$sessionData = checkToken();
 require_once('../../BaseDbManager.php');
 require_once('../../common_data.php');
 

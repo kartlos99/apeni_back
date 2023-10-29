@@ -8,6 +8,7 @@ use Apeni\JWT\HistoryManager;
 
 require_once('../connection.php');
 require_once "HistoryManager.php";
+$sessionData = checkToken();
 
 //$sessionData = checkToken();
 
