@@ -198,6 +198,8 @@ function showSummaryAmount() {
     // summaryContainer.find('span').te;
 }
 
+let debtList = [];
+
 function getDebtList() {
     $.ajax({
         url: 'webApi/client/getDebtList.php',
@@ -206,12 +208,14 @@ function getDebtList() {
         success: function (resp) {
             console.log(resp)
             if (resp.success) {
-                showDebtInfo(resp.data);
+                debtList = resp.data;
+                showDebtInfo(debtList);
             } else {
                 showError(resp.errorCode, resp.errorText);
             }
         }
     });
+
 }
 
 function showDebtInfo(fData) {
@@ -219,15 +223,27 @@ function showDebtInfo(fData) {
     fData.forEach(function (item) {
         view.debtTable.append(dataToRow(item))
     });
+    view.debtTable.append(totalRow(calculateSum(fData)));
+}
+
+function totalRow(total) {
+    return makeDebtRow("ჯამი", total.amount.toFixed(2), total.barrel_10, total.barrel_20, total.barrel_30, total.barrel_50, true);
 }
 
 function dataToRow(item) {
-    let tdCustomer = $('<td />').text(item.clientName);
-    let tdMoney = formatMoney(item.moneyBalance);
-    let td10 = $('<td />').text(item['10იანი']).addClass("ricxvi");
-    let td20 = $('<td />').text(item['20იანი']).addClass("ricxvi");
-    let td30 = $('<td />').text(item['30იანი']).addClass("ricxvi");
-    let td50 = $('<td />').text(item['50იანი']).addClass("ricxvi");
+    return makeDebtRow(item.clientName, item.moneyBalance, item['10იანი'], item['20იანი'], item['30იანი'], item['50იანი'], false);
+}
+
+function makeDebtRow (name, amount, b1, b2, b3, b5, isTotal ) {
+    let tdCustomer = $('<td />').text(name);
+    if (isTotal) {
+        tdCustomer.addClass("total-row")
+    }
+    let tdMoney = formatMoney(amount);
+    let td10 = $('<td />').text(b1).addClass("ricxvi");
+    let td20 = $('<td />').text(b2).addClass("ricxvi");
+    let td30 = $('<td />').text(b3).addClass("ricxvi");
+    let td50 = $('<td />').text(b5).addClass("ricxvi");
     return $('<tr />').append(tdCustomer, tdMoney, td10, td20, td30, td50);
 }
 
@@ -239,4 +255,84 @@ function formatMoney(f) {
         .append(rr[0])
         .append(frictionSpan)
         .append(' ₾')
+}
+
+const KEY_BARREL_10 = '10იანი';
+const KEY_BARREL_20 = '20იანი';
+const KEY_BARREL_30 = '30იანი';
+const KEY_BARREL_50 = '50იანი';
+
+function calculateSum(array) {
+    let debtSum = {
+        amount: 0.0,
+        barrel_10: 0,
+        barrel_20: 0,
+        barrel_30: 0,
+        barrel_50: 0
+    }
+
+    array.forEach(element => {
+        debtSum.amount += parseFloat(element.moneyBalance);
+        debtSum.barrel_10 += parseInt(element[KEY_BARREL_10]);
+        debtSum.barrel_20 += parseInt(element[KEY_BARREL_20]);
+        debtSum.barrel_30 += parseInt(element[KEY_BARREL_30]);
+        debtSum.barrel_50 += parseInt(element[KEY_BARREL_50]);
+    });
+    return debtSum;
+}
+
+// sort functions
+function compareByName(a, b) {
+    return a.clientName.localeCompare(b.clientName);
+}
+function compareByAmount(a, b) {
+    return parseFloat(b.moneyBalance) - parseFloat(a.moneyBalance);
+}
+function compareByB10(a, b) {
+    return parseInt(b[KEY_BARREL_10]) - parseFloat(a[KEY_BARREL_10]);
+}
+function compareByB20(a, b) {
+    return parseInt(b[KEY_BARREL_20]) - parseFloat(a[KEY_BARREL_20]);
+}
+function compareByB30(a, b) {
+    return parseInt(b[KEY_BARREL_30]) - parseFloat(a[KEY_BARREL_30]);
+}
+function compareByB50(a, b) {
+    return parseInt(b[KEY_BARREL_50]) - parseFloat(a[KEY_BARREL_50]);
+}
+
+$('#debtTitleName').on('click', function () {
+    debtList.sort(compareByName);
+    showDebtInfo(debtList);
+    selectThis($(this));
+});
+$('#debtTitleAmount').on('click', function () {
+    debtList.sort(compareByAmount);
+    showDebtInfo(debtList);
+    selectThis($(this));
+});
+$('#debtTitleBarrel10').on('click', function () {
+    debtList.sort(compareByB10);
+    showDebtInfo(debtList);
+    selectThis($(this));
+});
+$('#debtTitleBarrel20').on('click', function () {
+    debtList.sort(compareByB20);
+    showDebtInfo(debtList);
+    selectThis($(this));
+});
+$('#debtTitleBarrel30').on('click', function () {
+    debtList.sort(compareByB30);
+    showDebtInfo(debtList);
+    selectThis($(this));
+});
+$('#debtTitleBarrel50').on('click', function () {
+    debtList.sort(compareByB50);
+    showDebtInfo(debtList);
+    selectThis($(this));
+});
+
+function selectThis(titleEl) {
+    $('#debt-table,th').removeClass("selected-title");
+    titleEl.addClass("selected-title");
 }

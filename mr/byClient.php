@@ -18,6 +18,7 @@ $clients = $dataProvider->getClients();
     <!-- Tab panes -->
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="salesContainer">
+            <br>
             <table class="table">
                 <tr>
                     <td>
@@ -60,17 +61,18 @@ $clients = $dataProvider->getClients();
             </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="debtContainer">
+            <br>
             <button id="btnExportDebt" class="btn">ექსპორტი</button>
-
-            <table id="tbDebt" class="table table-section">
+            <br>
+            <table id="tbDebt" class="table table-section debt-table">
                 <thead>
                 <tr>
-                    <th>ობიექტი</th>
-                    <th class="textToEnd">თანხა</th>
-                    <th class="textToEnd">10-იანი</th>
-                    <th class="textToEnd">20-იანი</th>
-                    <th class="textToEnd">30-იანი</th>
-                    <th class="textToEnd">50-იანი</th>
+                    <th id="debtTitleName">ობიექტი</th>
+                    <th id="debtTitleAmount" class="textToEnd">თანხა</th>
+                    <th id="debtTitleBarrel10" class="textToEnd">10-იანი</th>
+                    <th id="debtTitleBarrel20" class="textToEnd">20-იანი</th>
+                    <th id="debtTitleBarrel30" class="textToEnd">30-იანი</th>
+                    <th id="debtTitleBarrel50" class="textToEnd">50-იანი</th>
                 </tr>
                 </thead>
                 <tbody>

@@ -132,6 +132,18 @@ td.order-chek {
     font-weight: normal;
 }
 
+.debt-table th {
+    background-color: #cccccc;
+    cursor: pointer;
+    border: 2px solid #FFFFFF ;
+}
+
+.selected-title {
+    background-color: #c8e4dc !important;
+    font-weight: normal;
+    cursor: auto !important;
+}
+
 .asDate {
     font-family: verdana;
 }
