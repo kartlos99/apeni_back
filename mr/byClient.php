@@ -62,7 +62,26 @@ $clients = $dataProvider->getClients();
         </div>
         <div role="tabpanel" class="tab-pane" id="debtContainer">
             <br>
-            <button id="btnExportDebt" class="btn">ექსპორტი</button>
+            <table width="100%">
+                <tr>
+                    <td>
+                        <div class="input-group">
+                            <input id="debtSearchInput" type="text" placeholder="ფილტრი" class="form-control" aria-label="ფილტრი">
+                            <div class="input-group-btn">
+                                <button id="debtSearchClearBtn" class="btn" type="button">X</button>
+                                <button id="debtSearchBtn" class="btn" type="button">ძებნა</button>
+                            </div>
+                        </div>
+                    </td>
+                    <td></td>
+                    <td>
+                        <div style="float: right">
+                            <button id="btnExportDebt" class="btn">ექსპორტი</button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
             <br>
             <table id="tbDebt" class="table table-section debt-table">
                 <thead>
@@ -81,7 +100,6 @@ $clients = $dataProvider->getClients();
 
         </div>
     </div>
-
 
 
 <?php include_once '_footer.php'; ?>

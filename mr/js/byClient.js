@@ -7,7 +7,10 @@ let dateInput2 = $('#date2');
 let summaryContainer = $('#summary');
 let clientSelector = $('#selectClient');
 let view = {
-    debtTable: $("#tbDebt").find('tbody')
+    debtTable: $("#tbDebt").find('tbody'),
+    debtSearchInput: $("#debtSearchInput"),
+    debtSearchClearBtn: $("#debtSearchClearBtn"),
+    debtSearchBtn: $("#debtSearchBtn")
 }
 
 $('#btnDone').on('click', function (e) {
@@ -199,6 +202,7 @@ function showSummaryAmount() {
 }
 
 let debtList = [];
+let debtQuery = "";
 
 function getDebtList() {
     $.ajax({
@@ -219,11 +223,12 @@ function getDebtList() {
 }
 
 function showDebtInfo(fData) {
+    let nList = fData.filter(ob => ob.clientName.includes(debtQuery) || ob.moneyBalance.includes(debtQuery));
     view.debtTable.empty();
-    fData.forEach(function (item) {
+    nList.forEach(function (item) {
         view.debtTable.append(dataToRow(item))
     });
-    view.debtTable.append(totalRow(calculateSum(fData)));
+    view.debtTable.append(totalRow(calculateSum(nList)));
 }
 
 function totalRow(total) {
@@ -236,15 +241,16 @@ function dataToRow(item) {
 
 function makeDebtRow (name, amount, b1, b2, b3, b5, isTotal ) {
     let tdCustomer = $('<td />').text(name);
-    if (isTotal) {
-        tdCustomer.addClass("total-row")
-    }
     let tdMoney = formatMoney(amount);
     let td10 = $('<td />').text(b1).addClass("ricxvi");
     let td20 = $('<td />').text(b2).addClass("ricxvi");
     let td30 = $('<td />').text(b3).addClass("ricxvi");
     let td50 = $('<td />').text(b5).addClass("ricxvi");
-    return $('<tr />').append(tdCustomer, tdMoney, td10, td20, td30, td50);
+    let tr = $('<tr />').append(tdCustomer, tdMoney, td10, td20, td30, td50);
+    if (isTotal) {
+        tr.find('td').addClass("total-row")
+    }
+    return tr;
 }
 
 function formatMoney(f) {
@@ -336,3 +342,22 @@ function selectThis(titleEl) {
     $('#debt-table,th').removeClass("selected-title");
     titleEl.addClass("selected-title");
 }
+
+function filterDebtList(query) {
+    console.log(query);
+    debtQuery = query;
+    showDebtInfo(debtList);
+}
+
+view.debtSearchInput.on('keyup', function () {
+    filterDebtList(view.debtSearchInput.val())
+});
+
+view.debtSearchBtn.on('click', function () {
+    filterDebtList(view.debtSearchInput.val())
+})
+
+view.debtSearchClearBtn.on('click', function () {
+    view.debtSearchInput.val("");
+    filterDebtList("");
+})
