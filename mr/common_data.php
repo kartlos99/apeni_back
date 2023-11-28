@@ -81,3 +81,8 @@ const USERS_MAP_KEY = "users";
 const CUSTOMERS_MAP_KEY = "customers";
 const BARRELS_MAP_KEY = "barrels";
 const BEERS_MAP_KEY = "beers";
+
+const BOTTLE_STATUS_DELETE_FULL = 0;
+const BOTTLE_STATUS_ACTIVE = 1;
+const BOTTLE_STATUS_INACTIVE = 2;
+const BOTTLE_STATUS_DELETE_FROM_USAGE = 3;
