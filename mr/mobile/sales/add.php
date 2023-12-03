@@ -13,12 +13,9 @@ header("Content-Type: application/json; charset=UTF-8");
 require_once('../connection.php');
 $sessionData = checkToken();
 
-// Takes raw data from the request
-$json = file_get_contents('php://input');
+$postData = json_decode(file_get_contents('php://input'));
 
-// Converts it into a PHP object
-$postData = json_decode($json);
-
+global $con;
 $orderHelper = new OrderHelper($con);
 $dataProvider = new DataProvider($con);
 $queryHelper = new QueryHelper();
@@ -85,23 +82,7 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
     if ($orderID == 0) {
         // if no order make it
         $shouldChangeStatus = false;
-
-        $sql_insert_order = "
-    INSERT INTO `orders`(`regionID`, `orderDate`, `orderStatusID`, `distributorID`, `clientID`, `comment`, `modifyDate`, `modifyUserID`) 
-    VALUES (
-    '$sessionData->regionID',
-    '$dateOnServer',
-    " . ORDER_STATUS_AUTO_CREATED . ",
-    $postData->distributorID,
-    $postData->clientID,
-    $saleComment,
-    '$timeOnServer',
-    $postData->modifyUserID
-    )";
-
-        if (mysqli_query($con, $sql_insert_order)) {
-            $orderID = mysqli_insert_id($con);
-        }
+        $orderID = createAutoOrder();
     }
 
     $multiValue = "";
@@ -119,7 +100,7 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
             $multiValue .= ",";
         }
         $multiValue .= "('$sessionData->regionID', '$saleDate', '$postData->clientID', '$postData->distributorID', '$beerID', '$price',
-        '$canTypeID', '$count', '$orderID', $saleComment, '$timeOnServer', '$postData->modifyUserID')";
+        '$canTypeID', '$count', '$orderID', $saleComment, '$postData->modifyUserID')";
     }
 
     $salesInsertSql = "
@@ -134,7 +115,6 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
         `count`,
         `orderID`,
         `comment`,
-        `modifyDate`,
         `modifyUserID`
     )
     VALUES " . $multiValue;
@@ -148,11 +128,11 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
 
             $multiValue = "";
             for ($i = 0; $i < count($postData->sales); $i++) {
-                $saleItem = $postData->sales[$i];
+                $bottleSaleItem = $postData->sales[$i];
 
-                $outputDate = $saleItem->saleDate;
-                $canTypeID = $saleItem->canTypeID;
-                $count = $saleItem->count;
+                $outputDate = $bottleSaleItem->saleDate;
+                $canTypeID = $bottleSaleItem->canTypeID;
+                $count = $bottleSaleItem->count;
 
                 if ($i > 0) {
                     $multiValue .= ",";
@@ -190,6 +170,49 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
     }
 }
 
+if (isset($postData->bottleSales) && count($postData->bottleSales) > 0) {
+
+    if ($orderID == 0) {
+        // if no order make it
+        $shouldChangeStatus = false;
+        $orderID = createAutoOrder();
+    }
+
+    $multiValue = "";
+    for ($i = 0; $i < count($postData->bottleSales); $i++) {
+        $bottleSaleItem = $postData->bottleSales[$i];
+
+        if ($i > 0) {
+            $multiValue .= ",";
+        }
+        $multiValue .= "(
+        '$sessionData->regionID', 
+        '$postData->saleDate', 
+        '$postData->clientID', 
+        '$postData->distributorID', 
+        '$bottleSaleItem->bottleID', 
+        '$bottleSaleItem->price', 
+        '$bottleSaleItem->count', 
+        '$orderID', 
+        $saleComment, 
+        '$sessionData->userID'
+        )";
+    }
+    $insertBottleSaleSql = "
+        INSERT INTO `bottle_sales`
+        (`regionID`, `saleDate`, `clientID`, `distributorID`, `bottleID`, `price`, `count`, `orderID`, `comment`, `modifyUserID`) 
+        VALUES $multiValue";
+
+    if (mysqli_query($con, $insertBottleSaleSql)) {
+        $response[DATA] = "sale-done";
+        if ($shouldChangeStatus)
+            $orderHelper->checkOrderCompletion($orderID);
+    } else {
+        $response[SUCCESS] = false;
+        $response[ERROR_TEXT] = mysqli_errno($con) . " " . mysqli_error($con);
+        $response[ERROR_CODE] = ER_CODE_ADD_SALES;
+    }
+}
 
 if (isset($postData->barrels)) {
 
@@ -238,7 +261,7 @@ if (isset($postData->money) && count($postData->money) > 0) {
         $moneyItm = $postData->money[$i];
 
         $takeMoneyDate = $moneyItm->takeMoneyDate;
-        $amount = round($moneyItm->amount, 2, PHP_ROUND_HALF_UP );
+        $amount = round($moneyItm->amount, 2, PHP_ROUND_HALF_UP);
         $paymentType = $moneyItm->paymentType;
 
         if ($i > 0) $multiValue .= ",";
@@ -276,7 +299,7 @@ echo json_encode($response);
 // $response[DATA] = $sql;
 // die(json_encode($response));
 
-function getBalanceMap($dbConn, $clientID = 0)
+function getBalanceMap($dbConn, $clientID = 0): array
 {
     $sqlQuery = "CALL getBarrelBalanceByID($clientID, 0);";
     $mMap = [];
@@ -289,7 +312,7 @@ function getBalanceMap($dbConn, $clientID = 0)
     return $mMap;
 }
 
-function getFullBarrelsBalanceInStore($dbConn, $regionID)
+function getFullBarrelsBalanceInStore($dbConn, $regionID): array
 {
     $sql = "call getFullBarrelsBalanceInStore(0, 0, $regionID);";
     $fArr = [];
@@ -300,4 +323,34 @@ function getFullBarrelsBalanceInStore($dbConn, $regionID)
     $result->close();
     $dbConn->next_result();
     return $fArr;
+}
+
+function createAutoOrder(): int {
+
+    global $sessionData;
+    global $dateOnServer;
+    global $timeOnServer;
+    global $postData;
+    global $saleComment;
+    global $con;
+
+    $sql_insert_order = "
+    INSERT INTO `orders`(`regionID`, `orderDate`, `orderStatusID`, `distributorID`, `clientID`, `comment`, `modifyDate`, `modifyUserID`) 
+    VALUES (
+    '$sessionData->regionID',
+    '$dateOnServer',
+    " . ORDER_STATUS_AUTO_CREATED . ",
+    $postData->distributorID,
+    $postData->clientID,
+    $saleComment,
+    '$timeOnServer',
+    $postData->modifyUserID
+    )";
+
+    if (mysqli_query($con, $sql_insert_order)) {
+        return mysqli_insert_id($con);
+    } else {
+        dieWithError(COMMON_ERROR_CODE, ER_TEXT_AUTO_ORDER_CREATION);
+    }
+    return 0;
 }

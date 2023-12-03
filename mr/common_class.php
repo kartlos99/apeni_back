@@ -150,7 +150,8 @@ class OrderHelper
 
     function checkOrderCompletion($orderID): bool
     {
-        $isCompleted = true;
+        $isCompletedForBarrels = true;
+        $isCompletedForBottles = true;
 
         $sqlGetDifference =
             "SELECT o.`beerID`, o.`canTypeID`, o.`count`, (o.count - ifnull(s.saleCount, 0)) AS difference FROM apenige2_mr3.order_items o
@@ -165,10 +166,24 @@ class OrderHelper
         $result = mysqli_query($this->con, $sqlGetDifference);
         while ($rs = mysqli_fetch_assoc($result)) {
             if ($rs['difference'] > 0)
-                $isCompleted = false;
+                $isCompletedForBarrels = false;
         }
 
-        if ($isCompleted) {
+        $checkBottleDiffSql = "SELECT oib.bottleID, (oib.count - ifnull(bs1.saleCount , 0)) AS difference FROM order_items_bottle oib
+            LEFT JOIN (
+                SELECT bs.bottleID, SUM(bs.count) AS saleCount FROM bottle_sales bs
+                WHERE orderID = 14254
+                GROUP BY bs.bottleID
+                ) bs1
+            ON oib.bottleID = bs1.bottleID
+            WHERE oib.orderID = 14254";
+        $bottleCheckResult = mysqli_query($this->con, $checkBottleDiffSql);
+        while ($rs = mysqli_fetch_assoc($bottleCheckResult)) {
+            if ($rs['difference'] > 0)
+                $isCompletedForBottles = false;
+        }
+
+        if ($isCompletedForBarrels && $isCompletedForBottles) {
             $updateOrderSql =
                 "UPDATE `orders` SET `orderStatusID` = " . ORDER_STATUS_COMPLETED .
                 " WHERE ID = " . $orderID;
@@ -176,7 +191,7 @@ class OrderHelper
             mysqli_query($this->con, $updateOrderSql);
         }
 
-        return $isCompleted;
+        return $isCompletedForBarrels && $isCompletedForBottles;
     }
 
     function getActiveOrderIDForClient($clientID, $regionID): int {
