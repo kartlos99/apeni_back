@@ -1,34 +1,40 @@
 <?php
 
 namespace Apeni\JWT;
+
 use DataProvider;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
+require_once('../../BaseDbManager.php');
 checkToken();
-$clientID = $_GET["clientID"];
-$dataProvider = new DataProvider($con);
 
-$sqlGetInfo = "SELECT * FROM `customer` WHERE `id` = $clientID";
+const BEER_PRICES_KEY = 'prices';
+const BOTTLE_PRICES_KEY = 'bottlePrices';
+
+const GET_KEY_CLIENT_ID = 'clientID';
+
+$clientID = $_GET[GET_KEY_CLIENT_ID] ?? dieWithError(ERROR_CODE_MISSED_PARAM, "need clientID!");
+
+$sqlCustomerInfo = "SELECT * FROM `customer` WHERE `id` = $clientID";
 $sqlGetPrices = "SELECT * FROM `fasebi` WHERE `obj_id` = $clientID";
+$sqlBottlePrices = "SELECT * FROM `bottle_prices` WHERE `clientID` = $clientID";
 
+$dbManager = new \BaseDbManager();
 
-$intoResult = mysqli_query($con, $sqlGetInfo);
-$priceResult = mysqli_query($con, $sqlGetPrices);
+$customers = $dbManager->getDataAsArray($sqlCustomerInfo);
 
+if (count($customers) == 1) {
+    $customer = $customers[0];
+    $beerPrice = $dbManager->getDataAsArray($sqlGetPrices);
+    $bottlePrice = $dbManager->getDataAsArray($sqlBottlePrices);
 
-if ($intoResult && $priceResult && mysqli_num_rows($intoResult) == 1) {
+    $customer[BEER_PRICES_KEY] = $beerPrice;
+    $customer[BOTTLE_PRICES_KEY] = $bottlePrice;
 
-    $prices = [];
-    while ($rs = mysqli_fetch_assoc($priceResult)) {
-        $prices[] = $rs;
-    }
-
-    $dataArr = mysqli_fetch_assoc($intoResult);
-    $dataArr['prices'] = $prices;
-    $response[DATA] = $dataArr;
+    $response[DATA] = $customer;
 } else {
     $response[SUCCESS] = false;
     $response[ERROR_TEXT] = "can't get customer data!";
@@ -37,4 +43,4 @@ if ($intoResult && $priceResult && mysqli_num_rows($intoResult) == 1) {
 
 echo json_encode($response);
 
-mysqli_close($con);
+$dbManager->closeConnection();

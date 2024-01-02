@@ -67,6 +67,7 @@ const ER_TEXT_CANT_CHECK_DEBT = "ვერ მოხერხდა დავა
 const ER_CODE_DEBT_ON_CLIENT = 3002;
 const ER_TEXT_DEBT_ON_CLIENT = "ობიექტზე არსებობს დავალიანება!";
 
+const ERROR_CODE_MISSED_PARAM = 1505;
 
 //  ****************  DB const values  *******************
 
