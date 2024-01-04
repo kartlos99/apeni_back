@@ -128,11 +128,11 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
 
             $multiValue = "";
             for ($i = 0; $i < count($postData->sales); $i++) {
-                $bottleSaleItem = $postData->sales[$i];
+                $saleItem = $postData->sales[$i];
 
-                $outputDate = $bottleSaleItem->saleDate;
-                $canTypeID = $bottleSaleItem->canTypeID;
-                $count = $bottleSaleItem->count;
+                $outputDate = $saleItem->saleDate;
+                $canTypeID = $saleItem->canTypeID;
+                $count = $saleItem->count;
 
                 if ($i > 0) {
                     $multiValue .= ",";
@@ -187,7 +187,7 @@ if (isset($postData->bottleSales) && count($postData->bottleSales) > 0) {
         }
         $multiValue .= "(
         '$sessionData->regionID', 
-        '$postData->saleDate', 
+        '$postData->operationDate', 
         '$postData->clientID', 
         '$postData->distributorID', 
         '$bottleSaleItem->bottleID', 
