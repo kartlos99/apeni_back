@@ -9,16 +9,26 @@ header("Content-Type: application/json; charset=UTF-8");
 require_once('connection.php');
 checkToken();
 
+const OPERATION_SALE_BY_BARREL = "mitana";
+const OPERATION_SALE_BY_BOTTLE = "mitana_bottle";
+const OPERATION_BARREL_OUT = "kout";
+const OPERATION_MONEY_OUT = "mout";
+
 $json = file_get_contents('php://input');
 $postData = json_decode($json);
 
 $tableIdentifier = $postData->table;
 $id = $postData->id;
 
-$respModel = ["mitana" => null, "kout" => null, "mout" => null];
+$respModel = [
+    OPERATION_SALE_BY_BARREL => null,
+    OPERATION_SALE_BY_BOTTLE => null,
+    OPERATION_BARREL_OUT => null,
+    OPERATION_MONEY_OUT => null
+];
 
 if ($id != 0) {
-    if ($tableIdentifier == "mitana") {
+    if ($tableIdentifier == OPERATION_SALE_BY_BARREL) {
         $sql = "
         SELECT
             `ID`,
@@ -37,7 +47,15 @@ if ($id != 0) {
             id = $id";
     }
 
-    if ($tableIdentifier == "kout") {
+    if ($tableIdentifier == OPERATION_SALE_BY_BOTTLE) {
+        $sql = "SELECT `ID`, `saleDate`, `clientID`, `distributorID`, `bottleID`, `price`, `count`, `orderID`, `comment` 
+        FROM 
+             `bottle_sales`
+        WHERE 
+              ID = $id";
+    }
+
+    if ($tableIdentifier == OPERATION_BARREL_OUT) {
         $sql = "
         SELECT
             `ID`,
@@ -53,7 +71,7 @@ if ($id != 0) {
             id = $id";
     }
 
-    if ($tableIdentifier == "mout")
+    if ($tableIdentifier == OPERATION_MONEY_OUT)
         $sql = "
         SELECT
             `id` as ID,

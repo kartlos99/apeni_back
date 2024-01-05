@@ -108,6 +108,43 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
     }
 }
 
+if (isset($postData->bottleSales) && count($postData->bottleSales) > 0) {
+    $bottleSalesItem = $postData->bottleSales[0];
+
+    $response[DATA] = $bottleSalesItem->id;
+
+    $saleDate = $postData->operationDate;
+    $bottleID = $bottleSalesItem->bottleID;
+    $price = $bottleSalesItem->price;
+    $count = $bottleSalesItem->count;
+
+    $updateBottleSaleSql = "
+        UPDATE
+            `bottle_sales`
+        SET
+            `saleDate` = '$saleDate',
+            `bottleID` = '$bottleID',
+            `price` = '$price',
+            `count` = $count,
+            `comment` = $saleComment,
+            `modifyDate` = '$timeOnServer',
+            `modifyUserID` = $postData->modifyUserID
+WHERE
+    id = $bottleSalesItem->iddty ";
+
+    if (mysqli_query($con, $updateBottleSaleSql)) {
+        $response[DATA] = "sale-updated";
+//        $response[LOG_RECORD_ID_KEY] = $reporter->logAsNeed();
+        $orderID = $orderHelper->getActiveOrderIDForClient($postData->clientID, $sessionData->regionID);
+        if ($orderID > 0)
+            $orderHelper->checkOrderCompletion($orderID);
+    } else {
+        $response[SUCCESS] = false;
+        $response[ERROR_TEXT] = mysqli_error($con);
+        $response[ERROR_CODE] = mysqli_errno($con);
+    }
+}
+
 if (isset($postData->barrels) && count($postData->barrels) > 0) {
     $barrelItem = $postData->barrels[0];
 
