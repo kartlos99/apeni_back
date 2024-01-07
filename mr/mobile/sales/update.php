@@ -130,7 +130,7 @@ if (isset($postData->bottleSales) && count($postData->bottleSales) > 0) {
             `modifyDate` = '$timeOnServer',
             `modifyUserID` = $postData->modifyUserID
 WHERE
-    id = $bottleSalesItem->iddty ";
+    id = $bottleSalesItem->id ";
 
     if (mysqli_query($con, $updateBottleSaleSql)) {
         $response[DATA] = "sale-updated";
