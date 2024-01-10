@@ -29,6 +29,12 @@ class OrderHelper
             $orderItems[] = $rs;
         }
 
+        $sqlBottleOrderItems = "SELECT `id`, `orderID`, `bottleID`, `count` FROM `order_items_bottle` WHERE `orderID` IN ($orderIDs)";
+        $bottleOrderItems = [];
+        $result = mysqli_query($this->con, $sqlBottleOrderItems);
+        while ($rs = mysqli_fetch_assoc($result)) {
+            $bottleOrderItems[] = $rs;
+        }
 
         $sql =
             "SELECT `orderID`, `beerID`, `chek`,`canTypeID`, sum(`count`) AS `count`, u.username AS distributor, l.dasaxeleba FROM apenige2_mr3.sales s 
@@ -45,6 +51,14 @@ class OrderHelper
                 $sales[] = $rs;
             }
 
+        $sqlBottleSales = "SELECT orderID, bottleID, SUM(`count`) AS `count` FROM bottle_sales 
+                WHERE `orderID` IN ($orderIDs)
+                GROUP BY `orderID`, bottleID";
+        $bottleSales = [];
+        $result = mysqli_query($this->con, $sqlBottleSales);
+        while ($rs = mysqli_fetch_assoc($result)) {
+            $bottleSales[] = $rs;
+        }
 
         foreach ($orders as $index => $order) {
             $oItems = [];
@@ -53,15 +67,29 @@ class OrderHelper
                     $oItems[] = $item;
                 }
             }
+            $oItemsBottle = [];
+            foreach ($bottleOrderItems as $item) {
+                if ($order['ID'] == $item['orderID']) {
+                    $oItemsBottle[] = $item;
+                }
+            }
             $oSales = [];
             foreach ($sales as $item) {
                 if ($order['ID'] == $item['orderID']) {
                     $oSales[] = $item;
                 }
             }
+            $oBottleSales = [];
+            foreach ($bottleSales as $item) {
+                if ($order['ID'] == $item['orderID']) {
+                    $oBottleSales[] = $item;
+                }
+            }
 
             $orders[$index]['items'] = $oItems;
+            $orders[$index]['bottleItems'] = $oItemsBottle;
             $orders[$index]['sales'] = $oSales;
+            $orders[$index]['bottleSales'] = $oBottleSales;
         }
 
         return $orders;
@@ -142,6 +170,7 @@ class OrderHelper
         }
 
         foreach ($orders as $index => $order) {
+//            20200612 ze asxabs
             $orders[$index]['availableRegions'] = $rMap[$order['clientID']];
         }
 
@@ -172,11 +201,11 @@ class OrderHelper
         $checkBottleDiffSql = "SELECT oib.bottleID, (oib.count - ifnull(bs1.saleCount , 0)) AS difference FROM order_items_bottle oib
             LEFT JOIN (
                 SELECT bs.bottleID, SUM(bs.count) AS saleCount FROM bottle_sales bs
-                WHERE orderID = 14254
+                WHERE orderID = $orderID
                 GROUP BY bs.bottleID
                 ) bs1
             ON oib.bottleID = bs1.bottleID
-            WHERE oib.orderID = 14254";
+            WHERE oib.orderID = $orderID";
         $bottleCheckResult = mysqli_query($this->con, $checkBottleDiffSql);
         while ($rs = mysqli_fetch_assoc($bottleCheckResult)) {
             if ($rs['difference'] > 0)

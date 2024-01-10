@@ -78,7 +78,6 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
         }
     }
 
-
     if ($orderID == 0) {
         // if no order make it
         $shouldChangeStatus = false;
@@ -94,7 +93,6 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
         $price = $saleItem->price;
         $canTypeID = $saleItem->canTypeID;
         $count = $saleItem->count;
-//        $orderID = $saleItem->orderID;
 
         if ($i > 0) {
             $multiValue .= ",";

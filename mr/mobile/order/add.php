@@ -50,12 +50,11 @@ if (mysqli_query($con, $sql_insert_order)) {
             $canTypeID = $orderItem->canTypeID;
             $count = $orderItem->count;
             $check = $orderItem->check ? 1 : 0;
-            $modifyUserID = $orderItem->modifyUserID;
 
             if ($i > 0) {
                 $multiValue .= ",";
             }
-            $multiValue .= "('$orderID', '$beerID', '$canTypeID', '$count', $check, '$timeOnServer', '$modifyUserID')";
+            $multiValue .= "('$orderID', '$beerID', '$canTypeID', '$count', $check, '$timeOnServer', '$sessionData->userID')";
         }
 
         $sql_insert_items = "
@@ -70,6 +69,7 @@ if (mysqli_query($con, $sql_insert_order)) {
         }
     }
     if (count($postData->bottleItems) > 0) {
+//        record bottle order items
         $multiValue = "";
         for ($i = 0; $i < count($postData->bottleItems); $i++) {
             $orderItem = $postData->bottleItems[$i];
