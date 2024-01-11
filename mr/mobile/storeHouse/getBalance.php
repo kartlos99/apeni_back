@@ -10,7 +10,7 @@ $sessionData = checkToken();
 
 const EMPTY_KEY = 'empty';
 const FULL_KEY = 'full';
-const FULL_BOTTLE_KEY = 'full_bottle';
+const FULL_BOTTLE_KEY = 'bottles';
 const DATE_KEY = 'date';
 
 global $dateOnServer;
