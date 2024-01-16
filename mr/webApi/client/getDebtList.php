@@ -20,7 +20,12 @@ $sql = "SELECT dbt.clientID, dbt.clientName, dbt.price - dbt.payed AS moneyBalan
 FROM `clients_debt` dbt
 LEFT JOIN customer c
 ON dbt.`clientID` = c.ID 
-WHERE `c`.`active` = 1";
+WHERE `c`.`active` = 1
+AND dbt.clientID IN (
+    SELECT DISTINCT crm.customerID FROM customer_to_region_map crm
+    WHERE crm.active = 1
+)
+";
 
 $moneyDebtResult = mysqli_query($con, $sql);
 
