@@ -19,8 +19,8 @@ class OrderHelper
         $orderIDs = trim($orderIDs, ',');
 
 
-        $sql = "SELECT oi.*, l.dasaxeleba FROM apenige2_mr3.order_items oi " .
-            "LEFT JOIN apenige2_mr3.ludi l ON l.id = oi.beerID " .
+        $sql = "SELECT oi.*, l.dasaxeleba FROM `order_items` oi " .
+            "LEFT JOIN `ludi` l ON l.id = oi.beerID " .
             "WHERE `orderID` IN ($orderIDs) ";
 
         $orderItems = [];
@@ -37,10 +37,10 @@ class OrderHelper
         }
 
         $sql =
-            "SELECT `orderID`, `beerID`, `chek`,`canTypeID`, sum(`count`) AS `count`, u.username AS distributor, l.dasaxeleba FROM apenige2_mr3.sales s 
-            LEFT JOIN apenige2_mr3.users u 
+            "SELECT `orderID`, `beerID`, `chek`,`canTypeID`, sum(`count`) AS `count`, u.username AS distributor, l.dasaxeleba FROM `sales` s 
+            LEFT JOIN `users` u 
             ON u.id = s.`modifyUserID` 
-            LEFT JOIN apenige2_mr3.ludi l ON l.id = s.beerID
+            LEFT JOIN `ludi` l ON l.id = s.beerID
             WHERE `orderID` IN ($orderIDs)
             GROUP BY `orderID`, `beerID`, `canTypeID`";
 
@@ -92,6 +92,7 @@ class OrderHelper
             $orders[$index]['bottleSales'] = $oBottleSales;
         }
 
+
         return $orders;
     }
 
@@ -104,7 +105,7 @@ class OrderHelper
         $clientIDs = trim($clientIDs, ',');
 
         $sqlMoneyPerClient =
-            "SELECT `obieqtis_id`, `distributor_id`, SUM(`tanxa`) AS money, paymentType FROM apenige2_mr3.moneyoutput 
+            "SELECT `obieqtis_id`, `distributor_id`, SUM(`tanxa`) AS money, paymentType FROM `moneyoutput` 
                 WHERE date(`tarigi`) = '$date' AND `obieqtis_id` IN ($clientIDs)
                 GROUP BY `obieqtis_id`, paymentType ";
 
@@ -136,7 +137,7 @@ class OrderHelper
         $clientIDs = trim($clientIDs, ',');
 
         $sqlBarrelsPerClient =
-            "SELECT `clientID`, `distributorID`, `canTypeID`, SUM(`count`) AS `count` FROM apenige2_mr3.barrel_output 
+            "SELECT `clientID`, `distributorID`, `canTypeID`, SUM(`count`) AS `count` FROM `barrel_output` 
                 WHERE date(`outputDate`) = '$date' AND `clientID` IN ($clientIDs)
                 GROUP BY `clientID`, `canTypeID` ";
 
@@ -162,7 +163,7 @@ class OrderHelper
     function attachRegions($orders)
     {
 
-        $sqlQuery = "SELECT `customerID`, `regionID` FROM apenige2_mr3.customer_to_region_map";
+        $sqlQuery = "SELECT `customerID`, `regionID` FROM `customer_to_region_map`";
         $rMap = [];
         $result = mysqli_query($this->con, $sqlQuery);
         while ($rs = mysqli_fetch_assoc($result)) {
@@ -183,9 +184,9 @@ class OrderHelper
         $isCompletedForBottles = true;
 
         $sqlGetDifference =
-            "SELECT o.`beerID`, o.`canTypeID`, o.`count`, (o.count - ifnull(s.saleCount, 0)) AS difference FROM apenige2_mr3.order_items o
+            "SELECT o.`beerID`, o.`canTypeID`, o.`count`, (o.count - ifnull(s.saleCount, 0)) AS difference FROM `order_items` o
                 LEFT JOIN (
-                    SELECT beerID, canTypeID, SUM(count) AS saleCount FROM apenige2_mr3.sales
+                    SELECT beerID, canTypeID, SUM(count) AS saleCount FROM `sales`
                     WHERE orderID = $orderID
                     GROUP BY beerID, canTypeID
                 ) s
