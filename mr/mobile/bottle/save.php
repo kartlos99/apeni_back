@@ -11,6 +11,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
+require_once('../../BaseDbManager.php');
 $sessionData = checkToken();
 
 // Takes raw data from the request
@@ -19,7 +20,13 @@ $json = file_get_contents('php://input');
 // Converts it into a PHP object
 $postData = json_decode($json);
 
-$bottleID = $postData->bottleID;
+$dbManager = new \BaseDbManager();
+$bottlesListSql = "
+SELECT * FROM `bottles` 
+WHERE `status` > 0
+ORDER BY `sortValue`";
+
+$bottleID = $postData->id;
 $bottleName = $postData->name;
 $volume = $postData->volume;
 $beerID = $postData->beerID;
@@ -79,10 +86,17 @@ VALUES(
         $addPriceMapSql = "INSERT INTO `bottle_prices`(`clientID`, `bottleID`, `price`, `modifyDate`, `modifyUserID`)"
             . " VALUES  $values_to_insert";
 
-        if (!mysqli_query($con, $addPriceMapSql)) {
+        if (mysqli_query($con, $addPriceMapSql)) {
+            $response[DATA] = $dbManager->getDataAsArray($bottlesListSql);
+        } else {
             echo "ERROR: Could not able to execute $addPriceMapSql. " . mysqli_error($con);
+            $errorCode = mysqli_errno($con);
+            $errorMsg = mysqli_error($con);
+            $deleteBottleSql = "DELETE FROM `bottles` WHERE `id`= $newBottleID";
+            $dbManager->executeScript($deleteBottleSql);
+            dieWithError($errorCode, $errorMsg);
         }
-        $response[DATA] = "$newBottleID";
+
     } else {
         dieWithError(mysqli_errno($con), mysqli_error($con));
     }
@@ -106,7 +120,7 @@ WHERE
     if (!mysqli_query($con, $updateSql)) {
         dieWithError(mysqli_errno($con), mysqli_error($con));
     } else {
-        $response[DATA] = "";
+        $response[DATA] = $dbManager->getDataAsArray($bottlesListSql);
     }
 }
 
@@ -115,3 +129,5 @@ WHERE
 //$vc->updateVersionFor(PRICE_VCS);
 
 echo json_encode($response);
+
+$dbManager->closeConnection();

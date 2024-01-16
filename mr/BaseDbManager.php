@@ -26,6 +26,10 @@ class BaseDbManager
         return $resultArray;
     }
 
+    function executeScript($sql): bool {
+        return mysqli_query($this->dbConn, $sql);
+    }
+
     function getDataAsArray($sqlQuery): array
     {
         $result = mysqli_query($this->dbConn, $sqlQuery);
