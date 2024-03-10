@@ -30,6 +30,10 @@ if ($id > 0) {
         $sql = "SELECT remove_sale($id, $userID)";
     }
 
+    if ($table == "mitana_bottle") {
+        $sql = "SELECT remove_bottle_sale($id, $userID)";
+    }
+
     if ($table == "kout") {
         $sql = "SELECT remove_barrel($id, $userID) ";
     }
