@@ -27,9 +27,9 @@ INSERT INTO `orders`(`regionID`, `orderDate`, `orderStatusID`, `distributorID`, 
 VALUES (
 '$orderRegion',        
 '$postData->orderDate',
-$postData->orderStatus,
-$postData->distributorID,
-$postData->clientID,
+'$postData->orderStatus',
+'$postData->distributorID',
+'$postData->clientID',
 $orderComment,
 " . time() . ",
 '$timeOnServer',
@@ -41,37 +41,63 @@ if (mysqli_query($con, $sql_insert_order)) {
 
     // inserting order items
 
-    $multiValue = "";
-    for ($i = 0; $i < count($postData->items); $i++){
-        $orderItem = $postData->items[$i];
+    if (count($postData->items) > 0) {
+        $multiValue = "";
+        for ($i = 0; $i < count($postData->items); $i++) {
+            $orderItem = $postData->items[$i];
 
-        $beerID = $orderItem->beerID;
-        $canTypeID = $orderItem->canTypeID;
-        $count = $orderItem->count;
-        $check = $orderItem->check ? 1 : 0;
-        $modifyUserID = $orderItem->modifyUserID;
+            $beerID = $orderItem->beerID;
+            $canTypeID = $orderItem->canTypeID;
+            $count = $orderItem->count;
+            $check = $orderItem->check ? 1 : 0;
 
-        if ($i > 0) { $multiValue .= ","; }
-        $multiValue .= "('$orderID', '$beerID', '$canTypeID', '$count', $check, '$timeOnServer', '$modifyUserID')";
-    }
+            if ($i > 0) {
+                $multiValue .= ",";
+            }
+            $multiValue .= "('$orderID', '$beerID', '$canTypeID', '$count', $check, '$timeOnServer', '$sessionData->userID')";
+        }
 
-    $sql_insert_items = "
+        $sql_insert_items = "
         INSERT INTO `order_items`(
         `orderID`,`beerID`,`canTypeID`,`count`,`chek`,`modifyDate`,`modifyUserID` )
         VALUES " . $multiValue;
 
-    if (mysqli_query($con, $sql_insert_items)) {
+        if (mysqli_query($con, $sql_insert_items)) {
             $response[DATA] = "შეკვეთა დაემატა!";
-    } else {
-        $response[SUCCESS] = false;
-        $response[ERROR_TEXT] = mysqli_error($con);
-        $response[ERROR_CODE] = mysqli_errno($con);
+        } else {
+            dieWithError(mysqli_errno($con), mysqli_error($con));
+        }
+    }
+    if (count($postData->bottleItems) > 0) {
+//        record bottle order items
+        $multiValue = "";
+        for ($i = 0; $i < count($postData->bottleItems); $i++) {
+            $orderItem = $postData->bottleItems[$i];
+
+            if ($i > 0)
+                $multiValue .= ",";
+
+            $multiValue .= "('$orderID', '$orderItem->bottleID', '$orderItem->count', '$sessionData->userID')";
+        }
+
+        $sql_insert_items = "
+        INSERT INTO `order_items_bottle`(
+            `orderID`,
+            `bottleID`,
+            `count`,
+            `modifyUserID`
+        )
+        VALUES " . $multiValue;
+
+        if (mysqli_query($con, $sql_insert_items)) {
+            $response[DATA] = "შეკვეთა დაემატა!";
+        } else {
+            dieWithError(mysqli_errno($con), mysqli_error($con));
+        }
     }
 
 } else {
-    $response[SUCCESS] = false;
-    $response[ERROR_TEXT] = mysqli_error($con);
-    $response[ERROR_CODE] = mysqli_errno($con);
+    dieWithError(mysqli_errno($con), mysqli_error($con));
 }
 //$response[DATA] = $sql;
 

@@ -29,6 +29,12 @@ print_r($_SESSION);
 echo '<br>';
 echo $dt - $_SESSION['tt'];
 
+echo "Home ENV!";
+echo "<br>";
+echo $_SERVER['SERVER_NAME'];
+echo "<br>";
+echo json_encode($_SERVER);
+
 //echo session_destroy();
 //printf("uniqid(): ".uniqid());
 //printf("uniqid('php_'): %s\r\n", uniqid('php_',true));
@@ -38,4 +44,3 @@ echo $dt - $_SESSION['tt'];
 //echo date('Y-m-d : g - h-i-s a', time());
 // $arr = [ 'as', 7, 'be', '!:::6!2'];
 // echo json_encode($arr);
-?>

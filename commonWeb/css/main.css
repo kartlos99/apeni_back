@@ -126,6 +126,24 @@ td.order-chek {
     text-align: right;
 }
 
+.friction {
+    font-size: small;
+    color: #7a7a7a;
+    font-weight: normal;
+}
+
+.debt-table th {
+    background-color: #cccccc;
+    cursor: pointer;
+    border: 2px solid #FFFFFF ;
+}
+
+.selected-title {
+    background-color: #c8e4dc !important;
+    font-weight: normal;
+    cursor: auto !important;
+}
+
 .asDate {
     font-family: verdana;
 }
@@ -191,4 +209,11 @@ td.order-chek {
 
 #summary {
     border: #4b5d7a solid 2px;
+}
+
+.storeHouseTitle {
+    width: auto;
+    color: #005555;
+    margin-top: 14px;
+    text-align: center;
 }

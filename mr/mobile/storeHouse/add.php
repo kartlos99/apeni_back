@@ -1,4 +1,5 @@
 <?php
+
 namespace Apeni\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -17,11 +18,10 @@ if (empty($postData->comment)) {
     $comment = "NULL";
 }
 
-$operTime = $timeOnServer;
 
 // check for valid barrels values
 if (isset($postData->outputBarrels) && count($postData->outputBarrels) > 0) {
-    $actualdate = $postData->operationTime ;
+    $actualdate = $postData->operationTime;
     $balanceMap = getEmptyBarrelsBalanceMap($con, $actualdate, $postData->groupID, $sessionData->regionID);
 
     foreach ($postData->outputBarrels as $barrelOutput) {
@@ -37,16 +37,15 @@ if (isset($postData->outputBarrels) && count($postData->outputBarrels) > 0) {
     }
 }
 
-//if ($postData->operationTime != "") {
+$operationTime = $postData->operationTime;
 
-    $operTime = $postData->operationTime;
-
-    $sqlDeleteBeerInput = "DELETE FROM `storehousebeerinpit` WHERE `groupID` = '$postData->groupID'";
-    $sqlDeleteBarrelOutput = "DELETE FROM `storehousebarreloutput` WHERE `groupID` = '$postData->groupID'";
-    mysqli_query($con, $sqlDeleteBarrelOutput);
-    mysqli_query($con, $sqlDeleteBeerInput);
-    $response[DATA] = "items Removed!";
-//}
+$sqlDeleteBeerInput = "DELETE FROM `storehousebeerinpit` WHERE `groupID` = '$postData->groupID'";
+$sqlDeleteBottleInput = "DELETE FROM `storehouse_bottle_input` WHERE `groupID` = '$postData->groupID'";
+$sqlDeleteBarrelOutput = "DELETE FROM `storehousebarreloutput` WHERE `groupID` = '$postData->groupID'";
+mysqli_query($con, $sqlDeleteBarrelOutput);
+mysqli_query($con, $sqlDeleteBottleInput);
+mysqli_query($con, $sqlDeleteBeerInput);
+$response[DATA] = "items Removed!";
 
 if (isset($postData->inputBeer) && count($postData->inputBeer) > 0) {
 
@@ -65,7 +64,7 @@ if (isset($postData->inputBeer) && count($postData->inputBeer) > 0) {
         if ($i > 0) {
             $multiValue .= ",";
         }
-        $multiValue .= "('$sessionData->regionID', '$postData->groupID', '$operTime', '$sessionData->userID', '$beerID',
+        $multiValue .= "('$sessionData->regionID', '$postData->groupID', '$operationTime', '$sessionData->userID', '$beerID',
         '$canTypeID', '$count', '$postData->chek', $comment, '$timeOnServer', '$sessionData->userID')";
     }
 
@@ -85,7 +84,6 @@ if (isset($postData->inputBeer) && count($postData->inputBeer) > 0) {
     VALUES " . $multiValue;
 
 
-
     if (mysqli_query($con, $sql)) {
         $response[DATA] = "inputBeerToStore-done";
     } else {
@@ -95,7 +93,44 @@ if (isset($postData->inputBeer) && count($postData->inputBeer) > 0) {
     }
 }
 
+if (isset($postData->inputBottle) && count($postData->inputBottle) > 0) {
 
+    $multiValue = "";
+    for ($i = 0; $i < count($postData->inputBottle); $i++) {
+        $receiveItem = $postData->inputBottle[$i];
+
+        $bottleID = $receiveItem->bottleID;
+        $count = $receiveItem->count;
+
+        if ($i > 0) {
+            $multiValue .= ",";
+        }
+        $multiValue .= "('$sessionData->regionID', '$postData->groupID', '$operationTime', '$sessionData->userID', '$bottleID',
+        '$count', '$postData->chek', $comment, '$timeOnServer', '$sessionData->userID')";
+    }
+
+    $sql = "INSERT INTO `storehouse_bottle_input`(
+                `regionID`,
+                `groupID`,
+                `inputDate`,
+                `distributorID`,
+                `bottleID`,
+                `count`,
+                `chek`,
+                `comment`,
+                `modifyDate`,
+                `modifyUserID`
+            )
+            VALUES " . $multiValue;
+
+    if (mysqli_query($con, $sql)) {
+        $response[DATA] = "inputBottleToStore-done";
+    } else {
+        $response[SUCCESS] = false;
+        $response[ERROR_TEXT] = mysqli_error($con);
+        $response[ERROR_CODE] = mysqli_errno($con);
+    }
+}
 
 if (isset($postData->outputBarrels) && count($postData->outputBarrels) > 0) {
 
@@ -110,7 +145,7 @@ if (isset($postData->outputBarrels) && count($postData->outputBarrels) > 0) {
         if ($i > 0) {
             $multiValue .= ",";
         }
-        $multiValue .= "('$sessionData->regionID', '$postData->groupID', '$operTime', '$sessionData->userID', '$canTypeID', '$count', 
+        $multiValue .= "('$sessionData->regionID', '$postData->groupID', '$operationTime', '$sessionData->userID', '$canTypeID', '$count', 
         '$postData->chek', $comment, '$timeOnServer', '$sessionData->userID')";
     }
 

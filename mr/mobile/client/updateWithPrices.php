@@ -20,9 +20,9 @@ $postData = json_decode($json);
 
 //$response[DATA] = "0";
 
-$client = $postData->obieqti;
-
-$prices = $postData->prices;
+$client = $postData->customer;
+$prices = $postData->beerPrices;
+$bottlePrices = $postData->bottlePrices;
 
 $reporter = new ChangesReporter($sessionData->userID);
 $reporter->checkRecord($CUSTOMER_TB, $client->id);
@@ -63,6 +63,30 @@ if (mysqli_query($con, $sqlUpdateClient)) {
         }
     }
 
+    for ($i = 0; $i < count($bottlePrices); $i++) {
+        $bottlePriceItem = $bottlePrices[$i];
+
+        $bottleID = $bottlePriceItem->bottleID;
+        $price = $bottlePriceItem->price;
+
+        $sqlUpdatePrice =
+            "UPDATE
+                `bottle_prices`
+            SET
+                `price` = '$price',
+                `modifyDate` = '$timeOnServer',
+                `modifyUserID` = '$sessionData->userID'
+            WHERE
+                `clientID` = '$client->id' AND `bottleID` = '$bottleID'";
+
+        if (!mysqli_query($con, $sqlUpdatePrice)) {
+            $response[SUCCESS] = false;
+            $response[ERROR_TEXT] = mysqli_error($con);
+            $response[ERROR_CODE] = mysqli_errno($con);
+            die(json_encode($response));
+        }
+    }
+
     $response[DATA] = "done";
 
     $vc = new VersionControl($con);
@@ -80,6 +104,4 @@ if (mysqli_query($con, $sqlUpdateClient)) {
 $reporter->closeConnection();
 
 echo json_encode($response);
-
-//$response[DATA] = $sql;
-// die json_encode($response);
+mysqli_close($con);

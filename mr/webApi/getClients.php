@@ -26,9 +26,10 @@ LEFT JOIN $CUSTOMER_TB o ON o.id = s.clientID
 LEFT JOIN ludi l ON l.id = s.beerID
 LEFT JOIN kasri k ON k.id = s.canTypeID
 WHERE 
-s.saleDate BETWEEN '$date1' AND '$date2' 
-AND o.active = 1
-AND regionID = {$sessionData->regionID}
+      date(s.saleDate) >= '$date1'
+  AND date(s.saleDate) <= '$date2'
+  AND o.active = 1
+  AND regionID = {$sessionData->regionID}
 $filterByCustomer
 GROUP BY
 s.clientID, s.beerID

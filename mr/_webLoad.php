@@ -1,11 +1,34 @@
 <?php
 
-require_once('/xampp/htdocs/app_config/mobile_tb.php');
+const HOME_SERVER_NAME = "localhost";
+const REAL_SERVER_NAME = "apeni.ge";
+const TEST_SERVER_NAME = "test.apeni.ge";
 
-require_once('/xampp/htdocs/apeni.localhost.com/mr/common_data.php');
+$mainDIR = "";
+$appConfigFile = "";
 
-require_once('/xampp/htdocs/apeni.localhost.com/mr/common_func.php');
+switch ($_SERVER['SERVER_NAME']) {
+    case REAL_SERVER_NAME:
+        $mainDIR = "/home/apenige2/public_html";
+        $appConfigFile = "/home/apenige2/app_config/mobile_mr.php";
+        break;
+    case TEST_SERVER_NAME:
+        $mainDIR = "/home/apenige2/public_html/test.apeni.ge";
+        $appConfigFile = "/home/apenige2/app_config/test_mr.php";
+        break;
+    case HOME_SERVER_NAME;
+    case "93.177.139.80":
+        $mainDIR = "/xampp/htdocs/apeni.localhost.com";
+        $appConfigFile = "/xampp/htdocs/app_config/mobile_tb.php";
+        break;
+}
 
-require_once('/xampp/htdocs/apeni.localhost.com/mr/common_class.php');
+require_once($appConfigFile);
 
-$folder = "/apeni.localhost.com/mr";
+require_once($mainDIR . '/mr/common_data.php');
+
+require_once($mainDIR . '/mr/common_func.php');
+
+require_once($mainDIR . '/mr/common_class.php');
+
+$folder = "/mr";

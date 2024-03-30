@@ -33,7 +33,11 @@ if ($result) {
     dieWithError(ER_CODE_CANT_CHECK_DEBT, ER_TEXT_CANT_CHECK_DEBT);
 
 if ($postData->allRegions)
-    $sql = "UPDATE " . $CUSTOMER_TB . " SET `active` = 0 WHERE `id` = " . $postData->clientID;
+    $sql = "UPDATE " . $CUSTOMER_TB . " SET
+     `active` = 0,
+     `modifyDate` = CURRENT_TIMESTAMP,
+     `modifyUserID` = " . $sessionData->userID . " 
+     WHERE `id` = " . $postData->clientID;
 else
     $sql = "UPDATE " . $dbKey::$CUSTOMER_MAP_TB . " SET `active` = 0 
     WHERE `customerID` = " . $postData->clientID . " AND `regionID` = '$sessionData->regionID'";

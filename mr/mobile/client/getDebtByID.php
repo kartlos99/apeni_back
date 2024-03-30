@@ -12,7 +12,7 @@ $clientID = $_GET["clientID"];
 $dataProvider = new DataProvider($con);
 
 // region doesn't matter for debt
-$sql = "SELECT dbt.*, ifnull(cr.needCleaning, 0) AS needCleaning, ifnull(cr.passDays, 0) AS passDays FROM `clients_debt` dbt
+$sql = "SELECT dbt.*, ifnull(cr.needCleaning, 0) AS needCleaning, ifnull(cr.passDays, 0) AS passDays FROM `debt_by_customer` dbt
 LEFT JOIN cleaningreport cr
 ON dbt.`clientID` = cr.clientID 
 WHERE dbt.`clientID` = $clientID";
@@ -35,7 +35,7 @@ echo json_encode($response);
 mysqli_close($con);
 
 
-function getBarrelsBalanceList($dbConn, $clientID = 0)
+function getBarrelsBalanceList($dbConn, $clientID = 0): array
 {
     $sqlQuery = "CALL getBarrelBalanceByID($clientID, 0);";
     $arr = [];

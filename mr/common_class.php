@@ -19,8 +19,8 @@ class OrderHelper
         $orderIDs = trim($orderIDs, ',');
 
 
-        $sql = "SELECT oi.*, l.dasaxeleba FROM apenige2_mr3.order_items oi " .
-            "LEFT JOIN apenige2_mr3.ludi l ON l.id = oi.beerID " .
+        $sql = "SELECT oi.*, l.dasaxeleba FROM `order_items` oi " .
+            "LEFT JOIN `ludi` l ON l.id = oi.beerID " .
             "WHERE `orderID` IN ($orderIDs) ";
 
         $orderItems = [];
@@ -29,12 +29,18 @@ class OrderHelper
             $orderItems[] = $rs;
         }
 
+        $sqlBottleOrderItems = "SELECT `id`, `orderID`, `bottleID`, `count` FROM `order_items_bottle` WHERE `orderID` IN ($orderIDs)";
+        $bottleOrderItems = [];
+        $result = mysqli_query($this->con, $sqlBottleOrderItems);
+        while ($rs = mysqli_fetch_assoc($result)) {
+            $bottleOrderItems[] = $rs;
+        }
 
         $sql =
-            "SELECT `orderID`, `beerID`, `chek`,`canTypeID`, sum(`count`) AS `count`, u.username AS distributor, l.dasaxeleba FROM apenige2_mr3.sales s 
-            LEFT JOIN apenige2_mr3.users u 
+            "SELECT `orderID`, `beerID`, `chek`,`canTypeID`, sum(`count`) AS `count`, u.username AS distributor, l.dasaxeleba FROM `sales` s 
+            LEFT JOIN `users` u 
             ON u.id = s.`modifyUserID` 
-            LEFT JOIN apenige2_mr3.ludi l ON l.id = s.beerID
+            LEFT JOIN `ludi` l ON l.id = s.beerID
             WHERE `orderID` IN ($orderIDs)
             GROUP BY `orderID`, `beerID`, `canTypeID`";
 
@@ -45,6 +51,14 @@ class OrderHelper
                 $sales[] = $rs;
             }
 
+        $sqlBottleSales = "SELECT orderID, bottleID, SUM(`count`) AS `count` FROM bottle_sales 
+                WHERE `orderID` IN ($orderIDs)
+                GROUP BY `orderID`, bottleID";
+        $bottleSales = [];
+        $result = mysqli_query($this->con, $sqlBottleSales);
+        while ($rs = mysqli_fetch_assoc($result)) {
+            $bottleSales[] = $rs;
+        }
 
         foreach ($orders as $index => $order) {
             $oItems = [];
@@ -53,16 +67,31 @@ class OrderHelper
                     $oItems[] = $item;
                 }
             }
+            $oItemsBottle = [];
+            foreach ($bottleOrderItems as $item) {
+                if ($order['ID'] == $item['orderID']) {
+                    $oItemsBottle[] = $item;
+                }
+            }
             $oSales = [];
             foreach ($sales as $item) {
                 if ($order['ID'] == $item['orderID']) {
                     $oSales[] = $item;
                 }
             }
+            $oBottleSales = [];
+            foreach ($bottleSales as $item) {
+                if ($order['ID'] == $item['orderID']) {
+                    $oBottleSales[] = $item;
+                }
+            }
 
             $orders[$index]['items'] = $oItems;
+            $orders[$index]['bottleItems'] = $oItemsBottle;
             $orders[$index]['sales'] = $oSales;
+            $orders[$index]['bottleSales'] = $oBottleSales;
         }
+
 
         return $orders;
     }
@@ -76,7 +105,7 @@ class OrderHelper
         $clientIDs = trim($clientIDs, ',');
 
         $sqlMoneyPerClient =
-            "SELECT `obieqtis_id`, `distributor_id`, SUM(`tanxa`) AS money, paymentType FROM apenige2_mr3.moneyoutput 
+            "SELECT `obieqtis_id`, `distributor_id`, SUM(`tanxa`) AS money, paymentType FROM `moneyoutput` 
                 WHERE date(`tarigi`) = '$date' AND `obieqtis_id` IN ($clientIDs)
                 GROUP BY `obieqtis_id`, paymentType ";
 
@@ -108,7 +137,7 @@ class OrderHelper
         $clientIDs = trim($clientIDs, ',');
 
         $sqlBarrelsPerClient =
-            "SELECT `clientID`, `distributorID`, `canTypeID`, SUM(`count`) AS `count` FROM apenige2_mr3.barrel_output 
+            "SELECT `clientID`, `distributorID`, `canTypeID`, SUM(`count`) AS `count` FROM `barrel_output` 
                 WHERE date(`outputDate`) = '$date' AND `clientID` IN ($clientIDs)
                 GROUP BY `clientID`, `canTypeID` ";
 
@@ -134,7 +163,7 @@ class OrderHelper
     function attachRegions($orders)
     {
 
-        $sqlQuery = "SELECT `customerID`, `regionID` FROM apenige2_mr3.customer_to_region_map";
+        $sqlQuery = "SELECT `customerID`, `regionID` FROM `customer_to_region_map`";
         $rMap = [];
         $result = mysqli_query($this->con, $sqlQuery);
         while ($rs = mysqli_fetch_assoc($result)) {
@@ -142,20 +171,22 @@ class OrderHelper
         }
 
         foreach ($orders as $index => $order) {
+//            20200612 ze asxabs
             $orders[$index]['availableRegions'] = $rMap[$order['clientID']];
         }
 
         return $orders;
     }
 
-    function checkOrderCompletion($orderID)
+    function checkOrderCompletion($orderID): bool
     {
-        $isCompleted = true;
+        $isCompletedForBarrels = true;
+        $isCompletedForBottles = true;
 
         $sqlGetDifference =
-            "SELECT o.`beerID`, o.`canTypeID`, o.`count`, (o.count - ifnull(s.saleCount, 0)) AS difference FROM apenige2_mr3.order_items o
+            "SELECT o.`beerID`, o.`canTypeID`, o.`count`, (o.count - ifnull(s.saleCount, 0)) AS difference FROM `order_items` o
                 LEFT JOIN (
-                    SELECT beerID, canTypeID, SUM(count) AS saleCount FROM apenige2_mr3.sales
+                    SELECT beerID, canTypeID, SUM(count) AS saleCount FROM `sales`
                     WHERE orderID = $orderID
                     GROUP BY beerID, canTypeID
                 ) s
@@ -165,10 +196,24 @@ class OrderHelper
         $result = mysqli_query($this->con, $sqlGetDifference);
         while ($rs = mysqli_fetch_assoc($result)) {
             if ($rs['difference'] > 0)
-                $isCompleted = false;
+                $isCompletedForBarrels = false;
         }
 
-        if ($isCompleted) {
+        $checkBottleDiffSql = "SELECT oib.bottleID, (oib.count - ifnull(bs1.saleCount , 0)) AS difference FROM order_items_bottle oib
+            LEFT JOIN (
+                SELECT bs.bottleID, SUM(bs.count) AS saleCount FROM bottle_sales bs
+                WHERE orderID = $orderID
+                GROUP BY bs.bottleID
+                ) bs1
+            ON oib.bottleID = bs1.bottleID
+            WHERE oib.orderID = $orderID";
+        $bottleCheckResult = mysqli_query($this->con, $checkBottleDiffSql);
+        while ($rs = mysqli_fetch_assoc($bottleCheckResult)) {
+            if ($rs['difference'] > 0)
+                $isCompletedForBottles = false;
+        }
+
+        if ($isCompletedForBarrels && $isCompletedForBottles) {
             $updateOrderSql =
                 "UPDATE `orders` SET `orderStatusID` = " . ORDER_STATUS_COMPLETED .
                 " WHERE ID = " . $orderID;
@@ -176,7 +221,18 @@ class OrderHelper
             mysqli_query($this->con, $updateOrderSql);
         }
 
-        return $isCompleted;
+        return $isCompletedForBarrels && $isCompletedForBottles;
+    }
+
+    function getActiveOrderIDForClient($clientID, $regionID): int {
+        $getOrderSql = "
+            SELECT ifnull(max(o.ID), 0) AS orderID FROM `orders` o
+            LEFT JOIN dictionary_items di ON di.id = o.orderStatusID
+            WHERE di.code = 'order_active' AND o.`regionID` = $regionID AND o.`clientID` = $clientID";
+
+        $result = mysqli_query($this->con, $getOrderSql);
+
+        return mysqli_fetch_assoc($result)['orderID'];
     }
 }
 

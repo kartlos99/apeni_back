@@ -52,6 +52,7 @@ const ER_CODE_EXTRA_BARREL_OUTPUT_STORE = 2202;
 const ER_TEXT_EXTRA_BARREL_OUTPUT_STORE = "შეყვანილი რაოდენობის ცარელი კასრი არ არის საწყობში, მითითებული დროისთვის.\nდრო: %s, \n%s -> %d";
 
 const ER_TEXT_EXTRA_BARREL_SALE = "საწყობში არაგვაქვს ამდენი რაოდენობა!";
+const ER_TEXT_AUTO_ORDER_CREATION = "ავტომატური შეკვეთა ვერ დარეგისტრირდა!";
 
 const ER_CODE_ADD_SALES = 2203;
 const ER_CODE_BARREL_OUTPUT = 2204;
@@ -66,8 +67,24 @@ const ER_TEXT_CANT_CHECK_DEBT = "ვერ მოხერხდა დავა
 const ER_CODE_DEBT_ON_CLIENT = 3002;
 const ER_TEXT_DEBT_ON_CLIENT = "ობიექტზე არსებობს დავალიანება!";
 
+const ERROR_CODE_MISSED_PARAM = 1505;
 
 //  ****************  DB const values  *******************
 
-$CUSTOMER_TB = "`customer`";
+$CUSTOMER_TB = "customer";
 //$CUSTOMER_MAP_TB = "`customer_to_region_map`";
+$BARREL_OUTPUT_TB = "barrel_output";
+$MONEY_OUTPUT_TB = "moneyoutput";
+$SALES_TB = "sales";
+$ORDERS_TB = "orders";
+
+const HISTORY_KEY = "history";
+const USERS_MAP_KEY = "users";
+const CUSTOMERS_MAP_KEY = "customers";
+const BARRELS_MAP_KEY = "barrels";
+const BEERS_MAP_KEY = "beers";
+
+const BOTTLE_STATUS_DELETE_FULL = 0;
+const BOTTLE_STATUS_ACTIVE = 1;
+const BOTTLE_STATUS_INACTIVE = 2;
+const BOTTLE_STATUS_DELETE_FROM_USAGE = 3;

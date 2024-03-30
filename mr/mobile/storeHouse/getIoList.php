@@ -17,14 +17,26 @@ if ($groupID != "") {
 }
 
 $sql =
-    "SELECT `ID`, `groupID`, `inputDate` AS ioDate, `distributorID`, `beerID`, `barrelID`, `count`, `chek`, `comment`, `modifyDate`, `modifyUserID` " .
+    "SELECT `ID`, `groupID`, `inputDate` AS ioDate, `distributorID`, `beerID`, `barrelID`, `count`, `chek`, `comment` " .
     "FROM `storehousebeerinpit` " . $filterInput .
     "UNION " .
-    "SELECT `ID`, `groupID`, `outputDate` AS ioDate, `distributorID`, 0 AS `beerID`, `barrelID`, `count`, `chek`, `comment`, `modifyDate`, `modifyUserID` " .
+    "SELECT `ID`, `groupID`, `outputDate` AS ioDate, `distributorID`, 0 AS `beerID`, `barrelID`, `count`, `chek`, `comment` " .
     "FROM `storehousebarreloutput` " . $filterOutput .
     "ORDER BY ioDate DESC, beerID
     limit 50 ";
 
+$sqlBottleInputs = "SELECT
+                        `id`,
+                        `regionID`,
+                        `groupID`,
+                        `inputDate`,
+                        `distributorID`,
+                        `bottleID`,
+                        `count`,
+                        `chek`,
+                        `comment`
+                    FROM
+                        `storehouse_bottle_input` " . $filterInput;
 
 $arr = [];
 $result = mysqli_query($con, $sql);
@@ -32,7 +44,15 @@ if ($result) {
     while ($rs = mysqli_fetch_assoc($result)) {
         $arr[] = $rs;
     }
-    $response[DATA] = $arr;
+    $bottlesResult = mysqli_query($con, $sqlBottleInputs);
+    $bArr = [];
+    while ($rs = mysqli_fetch_assoc($bottlesResult)) {
+        $bArr[] = $rs;
+    }
+    $response[DATA] = [
+        'barrels' => $arr,
+        'bottles' => $bArr
+    ];
 } else {
     dieWithError(
         mysqli_errno($con),

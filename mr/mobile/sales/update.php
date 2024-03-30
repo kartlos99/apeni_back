@@ -1,11 +1,13 @@
 <?php
 
 namespace Apeni\JWT;
-// ---------- gadascem dRes, gibrunebs shekveTebs ----------
 
 use OrderHelper;
 use DataProvider;
 use QueryHelper;
+use ChangesReporter;
+
+require_once "../../ChangesReporter.php";
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -75,7 +77,7 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
         $count = $saleItem->count;
 
         $updateSql = "
-        UPDATE `sales` SET 
+        UPDATE `$SALES_TB` SET 
             `saleDate` = '$saleDate',
             `beerID` = $beerID,
             `unitPrice` = '$price',
@@ -88,15 +90,58 @@ if (isset($postData->sales) && count($postData->sales) > 0) {
             `ID` = $saleItem->ID
         ";
 
+        $reporter = new ChangesReporter($sessionData->userID);
+        $reporter->checkRecord($SALES_TB, $saleItem->ID);
+
         if (mysqli_query($con, $updateSql)) {
             $response[DATA] = "sale-updated";
-            $orderHelper->checkOrderCompletion($saleItem->orderID);
+            $response[LOG_RECORD_ID_KEY] = $reporter->logAsNeed();
+            $orderID = $orderHelper->getActiveOrderIDForClient($postData->clientID, $sessionData->regionID);
+            if ($orderID > 0)
+                $orderHelper->checkOrderCompletion($orderID);
         } else {
             $response[SUCCESS] = false;
             $response[ERROR_TEXT] = mysqli_error($con);
             $response[ERROR_CODE] = mysqli_errno($con);
         }
+        $reporter->closeConnection();
+    }
+}
 
+if (isset($postData->bottleSales) && count($postData->bottleSales) > 0) {
+    $bottleSalesItem = $postData->bottleSales[0];
+
+    $response[DATA] = $bottleSalesItem->id;
+
+    $saleDate = $postData->operationDate;
+    $bottleID = $bottleSalesItem->bottleID;
+    $price = $bottleSalesItem->price;
+    $count = $bottleSalesItem->count;
+
+    $updateBottleSaleSql = "
+        UPDATE
+            `bottle_sales`
+        SET
+            `saleDate` = '$saleDate',
+            `bottleID` = '$bottleID',
+            `price` = '$price',
+            `count` = $count,
+            `comment` = $saleComment,
+            `modifyDate` = '$timeOnServer',
+            `modifyUserID` = $postData->modifyUserID
+WHERE
+    id = $bottleSalesItem->id ";
+
+    if (mysqli_query($con, $updateBottleSaleSql)) {
+        $response[DATA] = "sale-updated";
+//        $response[LOG_RECORD_ID_KEY] = $reporter->logAsNeed();
+        $orderID = $orderHelper->getActiveOrderIDForClient($postData->clientID, $sessionData->regionID);
+        if ($orderID > 0)
+            $orderHelper->checkOrderCompletion($orderID);
+    } else {
+        $response[SUCCESS] = false;
+        $response[ERROR_TEXT] = mysqli_error($con);
+        $response[ERROR_CODE] = mysqli_errno($con);
     }
 }
 
@@ -118,7 +163,7 @@ if (isset($postData->barrels) && count($postData->barrels) > 0) {
     if ($barrelItem->ID > 0) {
 
         $barrelsUpdateSql = "
-        UPDATE `barrel_output` SET
+        UPDATE $BARREL_OUTPUT_TB SET
             `outputDate` = '$barrelItem->outputDate',
             `canTypeID` = '$barrelItem->canTypeID',
             `count` = '$barrelItem->count',
@@ -128,13 +173,18 @@ if (isset($postData->barrels) && count($postData->barrels) > 0) {
         WHERE 
             `ID` = $barrelItem->ID";
 
+        $reporter = new ChangesReporter($sessionData->userID);
+        $reporter->checkRecord($BARREL_OUTPUT_TB, $barrelItem->ID);
+
         if (mysqli_query($con, $barrelsUpdateSql)) {
             $response[DATA] = "barrel-updated";
+            $response[LOG_RECORD_ID_KEY] = $reporter->logAsNeed();
         } else {
             $response[SUCCESS] = false;
             $response[ERROR_TEXT] = mysqli_errno($con) . " $barrelsUpdateSql " . mysqli_error($con);
             $response[ERROR_CODE] = ER_CODE_BARREL_OUTPUT;
         }
+        $reporter->closeConnection();
     }
 }
 
@@ -157,13 +207,18 @@ if (isset($postData->money) && count($postData->money) > 0) {
     WHERE
         `ID` = $id";
 
+    $reporter = new ChangesReporter($sessionData->userID);
+    $reporter->checkRecord($MONEY_OUTPUT_TB, $moneyItm->ID);
+
     if (mysqli_query($con, $moneyUpdateSql)) {
         $response[DATA] = "money-updated";
+        $response[LOG_RECORD_ID_KEY] = $reporter->logAsNeed();
     } else {
         $response[SUCCESS] = false;
         $response[ERROR_TEXT] = mysqli_error($con);
         $response[ERROR_CODE] = mysqli_errno($con);
     }
+    $reporter->closeConnection();
 }
 
 echo json_encode($response);

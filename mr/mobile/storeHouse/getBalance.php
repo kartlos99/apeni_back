@@ -1,21 +1,25 @@
 <?php
+
 namespace Apeni\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
+require_once('../../BaseDbManager.php');
 $sessionData = checkToken();
 
-//$http_response_header
-if (isset($_GET["date"])) {
-    $date = $_GET["date"];
-} else {
-    $date = $dateOnServer;
-}
+const EMPTY_KEY = 'empty';
+const FULL_KEY = 'full';
+const FULL_BOTTLE_KEY = 'bottles';
+const DATE_KEY = 'date';
+
+global $dateOnServer;
+
+$date = $_GET[DATE_KEY] ?? $dateOnServer;
 
 $dataArr = [];
 
-$chek = isset($_GET['chek']) ? $_GET['chek'] : 0;
+$chek = $_GET['chek'] ?? 0;
 
 if ($chek == 0) {
 // carieli kasrebi (obieqtebidan amogebuli da sawobidan gagzavnili sawarmoshi)
@@ -65,7 +69,7 @@ if ($chek == 0) {
         while ($rs = mysqli_fetch_assoc($result)) {
             $arr[] = $rs;
         }
-        $dataArr['empty'] = $arr;
+        $dataArr[EMPTY_KEY] = $arr;
     } else {
         $response[SUCCESS] = false;
         $response[ERROR_TEXT] = "can't compute Empty barrels Balance!";
@@ -96,7 +100,7 @@ if ($chek == 0) {
         while ($rs = mysqli_fetch_assoc($result)) {
             $arr[] = $rs;
         }
-        $dataArr['full'] = $arr;
+        $dataArr[FULL_KEY] = $arr;
     } else {
         $response[SUCCESS] = false;
         $response[ERROR_TEXT] = "can't compute Full store Balance!";
@@ -132,7 +136,7 @@ FROM (
         while ($rs = mysqli_fetch_assoc($result)) {
             $arr[] = $rs;
         }
-        $dataArr['full'] = $arr;
+        $dataArr[FULL_KEY] = $arr;
     } else {
         $response[SUCCESS] = false;
         $response[ERROR_TEXT] = "can't compute Full checked store Balance!";
@@ -141,9 +145,29 @@ FROM (
     }
 }
 
+// calculating bottles i/o in storehouse
+$bottleBalanceSql = "
+SELECT bottleID, SUM(`inputToStore`) AS inputToStore, SUM(saleCount) AS saleCount 
+FROM (
+    SELECT bottleID, SUM(`count`) AS inputToStore, 0 AS saleCount FROM storehouse_bottle_input
+    WHERE DATE(`inputDate`) <= '$date' AND `regionID` = {$sessionData->regionID}
+    GROUP BY bottleID
+    
+    UNION ALL
+    
+    SELECT bottleID, 0 AS inputToStore, SUM(`count`) AS saleCount FROM bottle_sales
+    WHERE DATE(`saleDate`) <= '$date' AND `regionID` = {$sessionData->regionID}
+    GROUP BY bottleID
+    ) bb
+GROUP BY bottleID  
+";
+
+$dbManager = new \BaseDbManager();
+$dataArr[FULL_BOTTLE_KEY] = $dbManager->getDataAsArray($bottleBalanceSql);
 
 $response[DATA] = $dataArr;
 
 echo json_encode($response);
 
+$dbManager->closeConnection();
 mysqli_close($con);
