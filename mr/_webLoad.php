@@ -8,10 +8,6 @@ $mainDIR = "";
 $appConfigFile = "";
 
 switch ($_SERVER['SERVER_NAME']) {
-    case HOME_SERVER_NAME || "93.177.139.80" :
-        $mainDIR = "/xampp/htdocs/apeni.localhost.com";
-        $appConfigFile = "/xampp/htdocs/app_config/mobile_tb.php";
-        break;
     case REAL_SERVER_NAME:
         $mainDIR = "/home/apenige2/public_html";
         $appConfigFile = "/home/apenige2/app_config/mobile_mr.php";
@@ -19,6 +15,11 @@ switch ($_SERVER['SERVER_NAME']) {
     case TEST_SERVER_NAME:
         $mainDIR = "/home/apenige2/public_html/test.apeni.ge";
         $appConfigFile = "/home/apenige2/app_config/test_mr.php";
+        break;
+    case HOME_SERVER_NAME;
+    case "93.177.139.80":
+        $mainDIR = "/xampp/htdocs/apeni.localhost.com";
+        $appConfigFile = "/xampp/htdocs/app_config/mobile_tb.php";
         break;
 }
 
