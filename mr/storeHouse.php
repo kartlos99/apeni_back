@@ -45,4 +45,16 @@ include_once '_header.php';
         </tbody>
     </table>
 
+    <h4 class="storeHouseTitle">ბოთლები</h4>
+    <table id="tbBottles" class="table table-section">
+        <thead>
+        <tr>
+            <th class="textToEnd">დასახელება</th>
+            <th class="textToEnd">რაოდენობა</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
 <?php include_once '_footer.php'; ?>

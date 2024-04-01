@@ -2,6 +2,7 @@ let beerList;
 let view = {
     fullBarrelTable: $("#tbFullBarrels").find('tbody'),
     emptyBarrelTable: $("#tbEmptyBarrels").find('tbody'),
+    bottlesTable: $("#tbBottles").find('tbody'),
 }
 
 getBeerList();
@@ -30,9 +31,21 @@ function getStoreHouseData() {
         success: function (resp) {
             if (resp.success) {
                 showStoreHouseInfo(resp.data);
+                getBottles(resp.data.bottles)
             } else {
                 showError(resp.errorCode, resp.errorText);
             }
+        }
+    });
+}
+
+function getBottles(bottlesData) {
+    $.ajax({
+        url: 'mobile/bottle/list.php',
+        dataType: 'json',
+        headers: getHeaders(),
+        success: function (resp) {
+            showBottlesBalance(resp, bottlesData);
         }
     });
 }
@@ -42,6 +55,24 @@ function showStoreHouseInfo(data) {
     view.emptyBarrelTable.empty();
     proceedFullBarrels(data.full);
     proceedEmptyBarrels(data.empty)
+}
+
+function showBottlesBalance(bottles, bottlesData) {
+    view.bottlesTable.empty();
+
+    bottlesData.forEach(function (bottleDataItem) {
+        let tdName = $('<td />');
+        let tdCount = $('<td />').addClass("ricxvi");
+        let bottleName = bottles.find(item => item.id === bottleDataItem.bottleID).name;
+        let count = parseInt(bottleDataItem.inputToStore) - parseInt(bottleDataItem.saleCount);
+        tdName.text(bottleName);
+        tdCount.text(count)
+        let tr = $('<tr></tr>').append(tdName, tdCount);
+        if (count < 0) {
+            tr.addClass("warning");
+        }
+        view.bottlesTable.append(tr);
+    })
 }
 
 function proceedFullBarrels(fData) {
@@ -72,6 +103,10 @@ function proceedEmptyBarrels(eData) {
         simpleRow[eItem.barrelID] = eItem.inputEmptyToStore - eItem.outputEmptyFromStoreCount;
     })
     view.emptyBarrelTable.append(makeFullRow(simpleRow))
+}
+
+function proceedBottles(data) {
+
 }
 
 function makeFullRow(item) {
