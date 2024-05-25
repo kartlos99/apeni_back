@@ -1,8 +1,9 @@
 <?php
 //namespace Apeni\JWT;
 session_start();
-$VERSION = "4.2.0";
 include_once '_webLoad.php';
+include_once '../config.php';
+
 //$sessionData = checkToken();
 if (!isset($_SESSION['username'])) {
     $url = "http" . ((!empty($_SERVER['HTTPS'])) ? "s" : "") . "://" . $_SERVER['SERVER_NAME'] . $folder . "/login.php";
@@ -130,7 +131,7 @@ if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
             <!-- <li><a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a></li> -->
             <li><a href="logout.php" class="article">გასვლა</a></li>
         </ul>
-        <div class="onbuttom">v <?= $VERSION ?></div>
+        <div class="onbuttom">v <?= WEB_VERSION_NAME ?></div>
     </nav>
     <!--sidebar-->
 
