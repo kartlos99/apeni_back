@@ -21,4 +21,28 @@ class UserDataManager extends BaseDataManager
                     `status` = 1 AND username = '$userName' AND pass = '$password'";
         return $this->getDataAsArray($sql);
     }
+
+    function findUser($userID): array
+    {
+        $sql = "SELECT
+                    `id`,
+                    `username`,
+                    `pass`,
+                    `name`,
+                    `type`,
+                    `status`
+                FROM
+                    `users`
+                WHERE
+                    id = $userID";
+        return $this->getDataAsArray($sql);
+    }
+
+    function updatePassword($userID, $password): array
+    {
+        $sql = "UPDATE `users`
+                SET `pass` = '$password'
+                WHERE id = $userID";
+        return $this->baseInsert($sql);
+    }
 }

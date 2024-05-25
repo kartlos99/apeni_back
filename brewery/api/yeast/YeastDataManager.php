@@ -19,7 +19,18 @@ class YeastDataManager extends BaseDataManager
 
     public function getYeasts(): array
     {
-        $sql = "SELECT `ID`, `code`, `parentID`, `ph`, `useCount`, `itemCreateDate`, `status`, `comment`, `modifyDate`, `modifyUserID` FROM `yeast` WHERE `status` > 0";
+        $sql = "SELECT `ID`, `code`, `parentID`, `useCount`, `itemCreateDate`, `status`, `comment`, `modifyDate`, `modifyUserID`, 
+                ifnull((SELECT`value`
+                FROM `yeast_data`
+                WHERE
+                    `measurementDate` = (
+                    SELECT MAX(`measurementDate`)
+                    FROM yeast_data
+                    WHERE yeastID = `yeast`.`ID`
+                )
+                ), 0) AS ph
+                FROM `yeast` 
+                WHERE `status` > 0";
         return $this->getDataAsArray($sql);
     }
 
