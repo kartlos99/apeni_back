@@ -25,6 +25,9 @@ if (empty($groupID)) {
     UNION ALL
      SELECT groupID, inputDate FROM storehouse_bottle_input
      WHERE regionID = {$sessionData->regionID}
+    UNION ALL
+     SELECT groupID, outputDate FROM storehousebarreloutput
+     WHERE regionID = {$sessionData->regionID}
     ) bb
     GROUP BY bb.`groupID`
     ORDER BY bb.`inputDate` DESC
