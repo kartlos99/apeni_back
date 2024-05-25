@@ -18,7 +18,7 @@ function dieWithError($code, $text)
 function checkToken()
 {
     // temporary, while testing api
-    // return [];
+    return (object)["userID" => 15, "regionID" => 1];
     $token = getBearerToken();
     $regionID = getRegion();
     if (!is_numeric($regionID) || $regionID == "0")

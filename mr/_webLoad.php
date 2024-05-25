@@ -22,13 +22,10 @@ switch ($_SERVER['SERVER_NAME']) {
         $appConfigFile = "/xampp/htdocs/app_config/mobile_tb.php";
         break;
 }
-
 require_once($appConfigFile);
 
 require_once($mainDIR . '/mr/common_data.php');
-
 require_once($mainDIR . '/mr/common_func.php');
-
 require_once($mainDIR . '/mr/common_class.php');
 
 $folder = "/mr";

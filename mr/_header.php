@@ -76,6 +76,11 @@ if ($pos !== false) {
     $thisPage = 'storeHouse';
 }
 
+$pos = strpos($_SERVER['PHP_SELF'], "expenses.php");
+if ($pos !== false) {
+    $thisPage = 'expenses';
+}
+
 if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
     header("Location: logout.php");
 
@@ -119,6 +124,9 @@ if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
             <?php endif; ?>
             <li class="cleaning">
                 <a href="cleaning.php">სისტ. წმენდა</a>
+            </li>
+            <li class="expenses">
+                <a href="expenses.php">ხარჯები</a>
             </li>
         </ul>
 
