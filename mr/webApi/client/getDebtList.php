@@ -1,4 +1,5 @@
 <?php
+
 namespace Apeni\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -17,7 +18,7 @@ use Exporter;
 
 // region doesn't matter for debt
 $sql = "SELECT dbt.clientID, dbt.clientName, dbt.price - dbt.payed AS moneyBalance  
-FROM `clients_debt` dbt
+FROM `debt_by_customer` dbt
 LEFT JOIN customer c
 ON dbt.`clientID` = c.ID 
 WHERE `c`.`active` = 1
@@ -57,6 +58,7 @@ if ($forExport) {
 }
 
 mysqli_close($con);
+
 function getBarrelsBalanceList($dbConn, $clientID = 0): array
 {
     $sqlQuery = "CALL getBarrelBalanceByID($clientID, 0);";
