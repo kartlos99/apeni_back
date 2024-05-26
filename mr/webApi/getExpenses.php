@@ -28,6 +28,7 @@ FROM `xarjebi` ex
 LEFT JOIN users u ON ex.`distributor_id` = u.id
 WHERE date(`tarigi`) >= '$date1' AND date(`tarigi`) <= '$date2' AND `regionID` = $regionID
 ORDER BY ex.`tarigi`
+LIMIT 500
 ";
 
 $data = [];
