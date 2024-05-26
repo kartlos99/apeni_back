@@ -1,4 +1,5 @@
 <?php
+
 namespace Apeni\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -7,17 +8,19 @@ require_once('_load.php');
 
 $sessionData = checkToken();
 
+require_once('../../commonWeb/Exporter.php');
+
+use Exporter;
+
 $date1 = $_GET['date1'];
 $date2 = $_GET['date2'];
 
 
 $expensesSql = "
-SELECT ex.`id`, date(`tarigi`) AS expenseDate, u.username AS operator, `tanxa`, ex.`comment` 
-
+SELECT ex.`id`, date(`tarigi`) AS expenseDate, u.username AS operator, ex.`comment`, `tanxa` 
 FROM `xarjebi` ex
 LEFT JOIN users u ON ex.`distributor_id` = u.id
 WHERE date(`tarigi`) >= '$date1' AND date(`tarigi`) <= '$date2' AND `regionID` = {$sessionData->regionID}
-
 ORDER BY ex.`tarigi`
 ";
 
@@ -35,4 +38,13 @@ if ($result) {
 
 $response[DATA] = $data;
 
-echo json_encode($response);
+$forExport = isset($_GET['forExport']);
+if ($forExport) {
+    $columns = ["id", "თარიღი", "ოპერატორი", "კომენტარი", "თანხა ₾"];
+    $exporter = new Exporter();
+    $exporter->exportData($columns, $data, "expenses_$date1--$date2");
+} else {
+    echo json_encode($response);
+}
+
+mysqli_close($con);

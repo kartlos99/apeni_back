@@ -48,3 +48,8 @@ function dataToRow(item) {
     let tdAmount = $('<td />').text(item.tanxa).addClass("ricxvi");
     return $('<tr />').append(tdDate, tdOperator, tdComment, tdAmount);
 }
+
+$('#exportExpensesBtn').on('click', function () {
+    window.location.href = "../mr/webApi/getExpenses.php?date1=" + dateInput1.val()
+        + '&date2=' + dateInput2.val() + '&forExport=true';
+});

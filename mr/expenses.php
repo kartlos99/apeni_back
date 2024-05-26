@@ -12,6 +12,11 @@ include_once '_header.php';
                 <input id="date1" type="date">-დან <input id="date2" type="date">-მდე
                 <button id='btnRefresh'>განახლება</button>
             </td>
+            <td>
+                <div style="float: right">
+                    <button id="exportExpensesBtn" class="btn">ექსპორტი</button>
+                </div>
+            </td>
         </tr>
     </table>
 
