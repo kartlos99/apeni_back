@@ -18,17 +18,22 @@ function dieWithError($code, $text)
 function checkToken()
 {
     // temporary, while testing api
-    return (object)["userID" => 15, "regionID" => 1];
+    // return (object)["userID" => 15, "regionID" => 1];
     $token = getBearerToken();
     $regionID = getRegion();
     if (!is_numeric($regionID) || $regionID == "0")
         dieWithError(409, "no region set!");
 
+    $dataPayload = checkGivenToken($token);
+    $dataPayload->{'regionID'} = $regionID;
+    return $dataPayload;
+}
+
+function checkGivenToken($token) {
+
     try {
 
-        $dataPayload = JWT::decode($token, SECRET_KEY, ['HS256']);
-        $dataPayload->{'regionID'} = $regionID;
-        return $dataPayload;
+        return JWT::decode($token, SECRET_KEY, ['HS256']);
 
     } catch (ExpiredException $e) {
         $errorText = $e->getMessage();
@@ -46,7 +51,7 @@ function checkToken()
     return [];
 }
 
-function hasOwnStorage($dbConn, $regionID)
+function hasOwnStorage($dbConn, $regionID): bool
 {
     $rg = mysqli_fetch_assoc(mysqli_query($dbConn, "SELECT `ownStorage` FROM `regions` WHERE `ID`=$regionID"));
     return $rg['ownStorage'] == 1;

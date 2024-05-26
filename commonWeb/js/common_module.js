@@ -38,6 +38,7 @@ mainMenu.find('li').removeClass('active');
 mainMenu.find('li.' + pageJS).addClass('active');
 
 let tkn = "Bearer " + viewSessionData.attr("data-tkn");
+let token = viewSessionData.attr("data-tkn");
 let currentRegionID = getCookie(REGION_ID_KEY);
 
 // window.localStorage.setItem('tkn', tkn);

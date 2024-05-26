@@ -51,5 +51,8 @@ function dataToRow(item) {
 
 $('#exportExpensesBtn').on('click', function () {
     window.location.href = "../mr/webApi/getExpenses.php?date1=" + dateInput1.val()
-        + '&date2=' + dateInput2.val() + '&forExport=true';
+        + '&date2=' + dateInput2.val()
+        + '&regionID=' + currentRegionID
+        + '&token=' + token
+        + '&forExport=true';
 });
