@@ -1,15 +1,24 @@
 <?php
-
 namespace Apeni\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 session_start();
 require_once "../../../mr/_webLoad.php";
+include_once('../../../jwt/JWT.php');
+include_once('../../../jwt/extension.php');
 
-if (!isset($_SESSION['username'])) {
-    $url = "http" . ((!empty($_SERVER['HTTPS'])) ? "s" : "") . "://" . $_SERVER['SERVER_NAME'] . $folder . "/login.php";
-    header("Location: $url");
+$forExport = $_GET['forExport'] ?? false;
+
+if ($forExport) {
+    if (!isset($_SESSION['username'])) {
+        $url = "http" . ((!empty($_SERVER['HTTPS'])) ? "s" : "") . "://" . $_SERVER['SERVER_NAME'] . $folder . "/login.php";
+        header("Location: $url");
+    }
+    $regionID = $_GET['regionID'] ?? 0;
+} else {
+    $sessionData = checkToken();
+    $regionID = $sessionData->regionID;
 }
 
 require_once('../../../commonWeb/Exporter.php');
@@ -24,7 +33,7 @@ ON dbt.`clientID` = c.ID
 WHERE `c`.`active` = 1
 AND dbt.clientID IN (
     SELECT DISTINCT crm.customerID FROM customer_to_region_map crm
-    WHERE crm.active = 1
+    WHERE crm.active = 1 and crm.regionID = $regionID
 )
 ";
 
@@ -46,8 +55,6 @@ if ($moneyDebtResult) {
     $response[ERROR_CODE] = ER_CODE_NOT_FOUNT;
     echo json_encode($response);
 }
-
-$forExport = $_GET['forExport'] ?? false;
 
 if ($forExport) {
     $columns = ["clientID", "clientName", "moneyBalance", "50იანი", "30იანი", "20იანი", "10იანი"];

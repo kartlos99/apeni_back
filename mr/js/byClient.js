@@ -21,7 +21,7 @@ $('#btnDone').on('click', function (e) {
 });
 
 $('#btnExportDebt').on('click', function () {
-    window.location.href = "../mr/webApi/client/getDebtList.php?forExport=true";
+    window.location.href = "../mr/webApi/client/getDebtList.php?forExport=true&regionID=" + currentRegionID;
 });
 
 clientSelector.on('change', function (e) {
