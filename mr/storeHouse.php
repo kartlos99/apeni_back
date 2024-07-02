@@ -12,7 +12,7 @@ $barrels = $dataProvider->getBarrels();
             <a href="#balanceContainer" aria-controls="balance" role="tab" data-toggle="tab">მიმდინარე მდგომარობა</a>
         </li>
         <li role="presentation">
-            <a href="#monthlyInputContainer" aria-controls="debt" role="tab" data-toggle="tab">თვის ჭრილში</a>
+            <a href="#monthlyInputContainer" aria-controls="inputs" role="tab" data-toggle="tab">თვის ჭრილში</a>
         </li>
     </ul>
 
@@ -67,7 +67,25 @@ $barrels = $dataProvider->getBarrels();
             <label for="selectYear">აირჩიეთ წელი</label>
             <select id="selectYear" class="form-control"></select>
             <br>
-            <div class="mainContainer"></div>
+            <!-- Nav tabs -->
+            <ul class="nav nav-pills nav-justified" >
+                <li role="presentation" class="active">
+                    <a href="#barrelList" aria-controls="barrels" data-toggle="tab">კასრები</a>
+                </li>
+                <li role="presentation">
+                    <a href="#bottleList" aria-controls="bottles" data-toggle="tab">ბოთლები</a>
+                </li>
+            </ul>
+            <br>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="barrelList">
+                    <div class="mainContainer"></div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="bottleList">
+                    <div class="mainBottlesContainer"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -99,6 +117,32 @@ $barrels = $dataProvider->getBarrels();
                 <?php foreach ($barrels as $key => $br) : ?>
                     <td class="<?= $br['dasaxeleba'] ?>">-</td>
                 <?php endforeach; ?>
+            </tr>
+        </table>
+
+        <!-- bottles -->
+        <div class="panel panel-primary bottle-input-month">
+            <div class="panel-heading">
+                Tve
+            </div>
+            <div class="panel-body">
+                <table class="table table-section">
+                    <thead>
+                    <th>დასახელება</th>
+                    <th>ლიტრაჟი</th>
+                    <th>რაოდენობა</th>
+                    </thead>
+                    <tbody class="bottle-input-items">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <table>
+            <tr class="bottle-row">
+                <td class="bottle-name">a</td>
+                <td class="liter">a</td>
+                <td class="amount">a</td>
             </tr>
         </table>
     </div>

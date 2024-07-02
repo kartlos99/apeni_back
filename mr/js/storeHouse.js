@@ -1,6 +1,8 @@
 let beerList;
 let barrelInputMonthToClone;
 let inputRowToClone;
+let bottleInputMonthToClone;
+let bottleInputRowToClone;
 
 let view = {
     fullBarrelTable: $("#tbFullBarrels").find('tbody'),
@@ -8,6 +10,7 @@ let view = {
     bottlesTable: $("#tbBottles").find('tbody'),
     yearSelector: $('#selectYear'),
     mainDiv: $('div.mainContainer'),
+    mainBottlesDiv: $('div.mainBottlesContainer'),
     cloneContainer: $('#cloneContainerDiv'),
 }
 
@@ -142,12 +145,16 @@ $(document).ready(function () {
 
     view.yearSelector.val(currentYear);
     getStoreHouseInputs(currentYear);
+    getStoreHouseBottleInputs(currentYear);
     barrelInputMonthToClone = view.cloneContainer.find('div.barrel-input-month');
     inputRowToClone = view.cloneContainer.find('tr.barrels-row')
+    bottleInputMonthToClone = view.cloneContainer.find('div.bottle-input-month');
+    bottleInputRowToClone = view.cloneContainer.find('tr.bottle-row')
 });
 
 view.yearSelector.on('change', function (e) {
     getStoreHouseInputs(view.yearSelector.val());
+    getStoreHouseBottleInputs(view.yearSelector.val());
 });
 
 function getStoreHouseInputs(year) {
@@ -167,6 +174,53 @@ function getStoreHouseInputs(year) {
             }
         }
     });
+}
+
+function getStoreHouseBottleInputs(year) {
+    if (currentRegionID !== '1') return
+    $.ajax({
+        url: 'webApi/getStoreHouseBottleInputByMonth.php?year=' + year,
+        dataType: 'json',
+        headers: getHeaders(),
+        success: function (resp) {
+
+            if (resp.success) {
+                console.log(resp.success)
+                proceedBottleInputs(resp.data)
+            } else {
+                console.log(resp);
+                showError(resp.errorCode, resp.errorText);
+            }
+        }
+    });
+}
+
+function proceedBottleInputs(data) {
+    console.log(data);
+    view.mainBottlesDiv.empty();
+
+    Object.entries(data).forEach(function (sItem) {
+
+        let monthCloneView = bottleInputMonthToClone.clone();
+
+        let monthInputsContainer = monthCloneView.find('tbody.bottle-input-items');
+        let monthTotalLiter = 0;
+
+        Object.values(sItem[1]).forEach(function (sRow) {
+            monthTotalLiter += parseInt(sRow.liter);
+            let barrelInputRow = bottleInputRowToClone.clone();
+            barrelInputRow.find('td.bottle-name').text(sRow.bottle);
+            barrelInputRow.find('td.liter').text(sRow.liter);
+            barrelInputRow.find('td.amount').text(sRow.amount);
+            monthInputsContainer.append(barrelInputRow);
+        });
+
+        let monthTitle = monthObj[sItem[0]];
+        let unitTitle = monthTitle + " - ლიტრაჟი: " + monthTotalLiter + " ლტ.";
+        monthCloneView.find('div.panel-heading').text(unitTitle);
+
+        view.mainBottlesDiv.append(monthCloneView);
+    })
 }
 
 function proceedInputData(data) {
