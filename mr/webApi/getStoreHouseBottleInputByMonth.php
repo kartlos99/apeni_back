@@ -23,7 +23,7 @@ MONTH(s.`inputDate`) AS `month`,
 `bottleID`,
 b.name AS bottle,
 SUM(`count`) AS amount,
-SUM(`count` * b.actualVolume) AS liter
+round(SUM(`count` * b.actualVolume)) AS liter
 FROM `storehouse_bottle_input` s
 
 LEFT JOIN bottles AS b
