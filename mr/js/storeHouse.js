@@ -1,8 +1,14 @@
 let beerList;
+let barrelInputMonthToClone;
+let inputRowToClone;
+
 let view = {
     fullBarrelTable: $("#tbFullBarrels").find('tbody'),
     emptyBarrelTable: $("#tbEmptyBarrels").find('tbody'),
     bottlesTable: $("#tbBottles").find('tbody'),
+    yearSelector: $('#selectYear'),
+    mainDiv: $('div.mainContainer'),
+    cloneContainer: $('#cloneContainerDiv'),
 }
 
 getBeerList();
@@ -126,4 +132,71 @@ function makeFullRow(item) {
 
 $(document).ready(function () {
     getRegions();
-})
+
+    let i;
+    let currentYear = getYear();
+
+    for (i = 2018; i <= currentYear; i++) {
+        $('<option />').text(i).attr('value', i).appendTo('#selectYear');
+    }
+
+    view.yearSelector.val(currentYear);
+    getStoreHouseInputs(currentYear);
+    barrelInputMonthToClone = view.cloneContainer.find('div.barrel-input-month');
+    inputRowToClone = view.cloneContainer.find('tr.barrels-row')
+});
+
+view.yearSelector.on('change', function (e) {
+    getStoreHouseInputs(view.yearSelector.val());
+});
+
+function getStoreHouseInputs(year) {
+    if (currentRegionID !== '1') return
+    $.ajax({
+        url: 'webApi/getStoreHouseInputByMonth.php?year=' + year,
+        dataType: 'json',
+        headers: getHeaders(),
+        success: function (resp) {
+
+            if (resp.success) {
+                console.log(resp.success)
+                proceedInputData(resp.data)
+            } else {
+                console.log(resp);
+                showError(resp.errorCode, resp.errorText);
+            }
+        }
+    });
+}
+
+function proceedInputData(data) {
+    view.mainDiv.empty();
+
+    Object.entries(data).forEach(function (sItem) {
+
+        let monthCloneView = barrelInputMonthToClone.clone();
+
+        let monthInputsContainer = monthCloneView.find('tbody.barrel-input-items');
+        let monthTotalLiter = 0;
+
+        Object.values(sItem[1]).forEach(function (sRow) {
+            monthTotalLiter += parseInt(sRow.liter);
+            let barrelInputRow = inputRowToClone.clone();
+            barrelInputRow.find('td.beer-name').text(sRow.beer);
+            barrelInputRow.find('td.liter').text(sRow.liter);
+
+            sRow.barrels.forEach(function (barrel) {
+                let bType = barrel.canType;
+                barrelInputRow.find('td.' + bType).text(barrel.amount);
+            })
+
+            monthInputsContainer.append(barrelInputRow);
+        });
+
+        let monthTitle = monthObj[sItem[0]];
+        let unitTitle = monthTitle + " - ლიტრაჟი: " + monthTotalLiter + " ლტ.";
+        monthCloneView.find('div.panel-heading').text(unitTitle);
+
+        view.mainDiv.append(monthCloneView);
+    })
+}

@@ -371,7 +371,7 @@ function loadSubCategory(catID, subID, sel_ID) {
     }
 }
 
-function getRegions() {
+function getRegions(callback = undefined) {
     if (viewSessionData.attr("data-userID") !== getCookie(USER_ID_KEY)) {
         currentRegionID = 0
         saveCookie(REGION_ID_KEY, 0)
@@ -392,6 +392,8 @@ function getRegions() {
                 })
 
                 viewSelectRegion.val(currentRegionID);
+                if (callback !== undefined)
+                    callback();
             } else {
                 console.log(resp);
                 showError(resp.errorCode, resp.errorText);
@@ -411,4 +413,8 @@ function onRegionChange(regionID) {
 }
 
 function pageIsReady() {
+}
+
+function getYear() {
+    return new Date().getFullYear();
 }

@@ -2,6 +2,9 @@
 let saleMonthToClone;
 let saleRowToClone;
 let mainDiv = $('div.mainContainer');
+let view = {
+    cloneContainer: $('#cloneContainerDiv'),
+}
 
 function getSales(year) {
 
@@ -145,22 +148,19 @@ let ready = $(document).ready(function () {
     // $('#price_crit_weight_status_id').attr("readonly", true).val(0).find('option').attr('disabled', true);
     // loadTypesList(0, 'typename_id');
 
-    var i;
+    let i;
     for (i = 2018; i <= getYear(); i++) {
         $('<option />').text(i).attr('value', i).appendTo('#selectYear');
     }
 
     $('#selectYear').val(getYear());
 
-    saleMonthToClone = $('#cloneContainerDiv').find('div.sale-month');
-    saleRowToClone = $('#cloneContainerDiv').find('tr.sale-row');
+    saleMonthToClone = view.cloneContainer.find('div.sale-month');
+    saleRowToClone = view.cloneContainer.find('tr.sale-row');
     getSales(getYear());
     // techPriceForm.find('i.fa-times').trigger('click');
 });
 
-function getYear() {
-    return new Date().getFullYear();
-}
 
 $('#selectYear').on('change', function (e) {
     getSales($('#selectYear').val());
