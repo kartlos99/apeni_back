@@ -42,7 +42,43 @@ if ($result) {
     $response[ERROR_TEXT] = "server error";
 }
 
-$response[DATA] = $data;
+$dailyCashSql = "SELECT
+    DATE(`tarigi`) AS 'payDay',
+    ROUND(SUM(`tanxa`), 2) AS 'cash'
+FROM
+    `moneyoutput` m
+WHERE
+    date(`tarigi`) >= '$date1' AND date(`tarigi`) <= '$date2' AND `regionID` = $regionID AND `paymentType` = 1
+GROUP BY
+    DATE(`tarigi`)
+ORDER BY
+    DATE(`tarigi`)";
+
+$cashArr = [];
+$cashResult = mysqli_query($con, $dailyCashSql);
+if ($cashResult) {
+    while ($rs = mysqli_fetch_assoc($cashResult)) {
+        $cashArr[] = $rs;
+    }
+} else {
+    $response[ERROR_CODE] = 428;
+    $response[ERROR_TEXT] = "server error";
+}
+
+$groupedExpanses = [];
+foreach ($data as $item) {
+    $groupedExpanses[$item['expenseDate']]['expenses'][] = $item;
+}
+$groupedCash = [];
+foreach ($cashArr as $item) {
+    $groupedCash[$item['payDay']] = $item['cash'];
+}
+
+foreach ($groupedExpanses as $key => $item) {
+    $groupedExpanses[$key]['cash'] = $groupedCash[$key] ?? 0;
+}
+
+$response[DATA] = $groupedExpanses;
 
 if ($forExport) {
     $columns = ["id", "თარიღი", "ოპერატორი", "კომენტარი", "თანხა ₾"];

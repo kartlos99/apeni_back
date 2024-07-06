@@ -8,6 +8,11 @@ let dateInput2 = $('#date2');
 let expensesTable = $("#tbExpenses").find('tbody');
 let btnRefresh = $('#btnRefresh');
 
+let view = {
+    expensesDayToClone: $('div.expenses-day'),
+    mainContainer: $('div.mainContainer')
+}
+
 $(document).ready(function () {
     console.log("expenses: ready!");
     getRegions();
@@ -25,10 +30,7 @@ function getData(date1, date2) {
         headers: getHeaders(),
         success: function (resp) {
             if (resp.success) {
-                expensesTable.empty()
-                resp.data.forEach(function (expenseItem) {
-                    expensesTable.append(dataToRow(expenseItem))
-                })
+                proceedData(Object.values(resp.data));
                 // expensesTable.append(totalRow(resp.data))
             } else {
                 showError(resp.errorCode, resp.errorText);
@@ -40,6 +42,43 @@ function getData(date1, date2) {
 btnRefresh.on('click', function (e) {
     getData(dateInput1.val(), dateInput2.val());
 });
+
+function proceedData(data) {
+    view.mainContainer.empty();
+
+    data.forEach(function (expenseItem) {
+        view.mainContainer.append(constructDay(expenseItem))
+
+    })
+}
+
+function constructDay(dayData) {
+    let dayView = view.expensesDayToClone.clone();
+
+    let dayTB = dayView.find('tbody.day-item');
+    let sum = 0;
+    dayTB.empty()
+    dayData.expenses.forEach(function (exp) {
+        dayTB.append(dataToRow(exp))
+        sum += parseFloat(exp.tanxa);
+    });
+
+    dayTB.append(daySumRow(dayData.cash, sum))
+
+    let dayTitle = dayData.expenses[0].expenseDate;
+    dayView.find('div.panel-heading').text(dayTitle);
+
+    return dayView;
+}
+
+function daySumRow(cash, expSum) {
+    let atHand = parseFloat(cash) - parseFloat(expSum);
+    let tdDate = $('<th />').text("შეჯამება:");
+    let tdOperator = $('<td />').text("ქეში: " + cash).addClass("ricxvi");
+    let tdComment = $('<td />').text("ხარჯბი: " + expSum).addClass("ricxvi");
+    let tdAmount = $('<td />').text("ხელზე: " + atHand).addClass("ricxvi");
+    return $('<tr />').addClass("cash-row").append(tdDate, tdOperator, tdComment, tdAmount);
+}
 
 function dataToRow(item) {
     let tdDate = $('<td />').text(item.expenseDate);

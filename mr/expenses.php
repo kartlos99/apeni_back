@@ -21,17 +21,28 @@ include_once '_header.php';
         </tr>
     </table>
 
-    <table id="tbExpenses" class="table table-section">
-        <thead>
-        <tr>
-            <th>თარიღი</th>
-            <th>ოპერატორი</th>
-            <th>კომენტარი</th>
-            <th class="textToEnd">თანხა ₾</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+    <div class="mainContainer"></div>
+
+    <div id="cloneContainerDiv" class="hidden">
+        <div class="panel panel-primary expenses-day">
+            <div class="panel-heading">
+                day
+            </div>
+            <div class="panel-body">
+                <table id="tbExpenses" class="table table-section">
+                    <thead>
+                    <tr>
+                        <th>თარიღი</th>
+                        <th>ოპერატორი</th>
+                        <th>კომენტარი</th>
+                        <th class="textToEnd">თანხა ₾</th>
+                    </tr>
+                    </thead>
+                    <tbody class="day-item">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
 <?php include_once '_footer.php'; ?>
