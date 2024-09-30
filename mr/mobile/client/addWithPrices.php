@@ -25,6 +25,7 @@ $bottlePrices = $postData->bottlePrices;
 
 $sqlAddClient = "INSERT INTO $CUSTOMER_TB (
     `dasaxeleba`,
+    `group`,
     `adress`,
     `tel`,
     `comment`,
@@ -37,6 +38,7 @@ $sqlAddClient = "INSERT INTO $CUSTOMER_TB (
 )
     VALUES(
     '$client->dasaxeleba',
+    '$client->group',
     '$client->adress',
     '$client->tel',
     '$client->comment',

@@ -1,7 +1,13 @@
 <?php
 
-class BaseDbManager
+// const CUSTOM_HTTP_ERROR_CODE = 422;
+// const KEY_ERROR_CODE = "errorCode";
+// const KEY_ERROR_MESSAGE = "errorMessage";
+
+class BaseDbManagerV2
 {
+    // const CUSTOM_HTTP_ERROR_CODE = 422;
+    private $httpErrorCode = 422;
 
     private $dbConn;
 
@@ -9,6 +15,25 @@ class BaseDbManager
     {
         $this->dbConn = mysqli_connect(HOST, DB_user, DB_pass, DB_name) or die('db_connection_error!.. class:BaseDbManager');
         mysqli_set_charset($this->dbConn, "utf8");
+    }
+    
+    function dieWithHttpError($errorText = "un known error", $errorCode = 0, $httpStatusCode = 422)
+    {
+        // die( $errorText . $errorCode . $httpStatusCode11);
+        http_response_code($httpStatusCode);
+        die(json_encode([
+            errorMessage => $errorText,
+            errorCode => $errorCode
+        ]));
+    }
+    
+    function dieWithDbError() {
+        // die(mysqli_errno($this->dbConn));
+        // die(sqlErrorWithCode());
+        $this->dieWithHttpError(
+            mysqli_error($this->dbConn),
+            json_encode(mysqli_errno($this->dbConn))
+        );
     }
 
     public function closeConnection()
@@ -39,7 +64,7 @@ class BaseDbManager
                 $resultArray[] = $rs;
             }
         } else {
-            $this->dieWithError(BASE_ERROR_CODE, $this->sqlErrorWithCode());
+            $this->dieWithDbError();
         }
         return $resultArray;
     }
@@ -53,7 +78,7 @@ class BaseDbManager
                 $resultArray[] = json_encode($rs);
             }
         } else {
-            $this->dieWithError(BASE_ERROR_CODE, $this->sqlErrorWithCode());
+            $this->dieWithDbError();
         }
         return $resultArray;
     }
@@ -62,7 +87,7 @@ class BaseDbManager
     {
         $result = mysqli_query($this->dbConn, $insertSql);
         if (!$result)
-            $this->dieWithError(BASE_ERROR_CODE, mysqli_error($this->dbConn));
+            $this->dieWithDbError();
         return [RECORD_ID_KEY => mysqli_insert_id($this->dbConn)];
     }
 
@@ -71,19 +96,19 @@ class BaseDbManager
         return mysqli_query($this->dbConn, $deleteSql);
     }
 
-    function dieWithError($code, $text)
-    {
-        $response[SUCCESS] = false;
-        $response[ERROR_TEXT] = $text;
-        $response[ERROR_CODE] = $code;
-        die(json_encode($response));
-    }
+    // function dieWithError($code, $text)
+    // {
+    //     $response[SUCCESS] = false;
+    //     $response[ERROR_TEXT] = $text;
+    //     $response[ERROR_CODE] = $code;
+    //     die(json_encode($response));
+    // }
 
     private function sqlErrorWithCode()
     {
         $fullError = [
-            "SQL_ERROR_CODE" => mysqli_errno($this->dbConn),
-            "SQL_ERROR_TEXT" => mysqli_error($this->dbConn),
+            // "SQL_ERROR_CODE" => mysqli_errno($this->dbConn),
+            "SQL_ERROR_TEXT" => mysqli_error($this->dbConn)
         ];
         return json_encode($fullError);
     }

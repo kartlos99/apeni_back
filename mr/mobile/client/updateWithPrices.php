@@ -29,6 +29,7 @@ $reporter->checkRecord($CUSTOMER_TB, $client->id);
 
 $sqlUpdateClient = "UPDATE $CUSTOMER_TB SET " .
     "`dasaxeleba` = '$client->dasaxeleba'," .
+    "`group` = '$client->group'," .
     "`adress` = '$client->adress'," .
     "`tel` = '$client->tel'," .
     "`comment` = '$client->comment'," .
