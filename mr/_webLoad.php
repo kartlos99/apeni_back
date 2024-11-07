@@ -1,6 +1,6 @@
 <?php
 
-const HOME_SERVER_NAME = "localhost";
+const HOME_SERVER_NAME = "apeni.local";
 const REAL_SERVER_NAME = "apeni.ge";
 const TEST_SERVER_NAME = "test.apeni.ge";
 
@@ -16,7 +16,9 @@ switch ($_SERVER['SERVER_NAME']) {
         $mainDIR = "/home/apenige2/public_html/test.apeni.ge";
         $appConfigFile = "/home/apenige2/app_config/test_mr.php";
         break;
-    case HOME_SERVER_NAME;
+    case HOME_SERVER_NAME:
+//    case "93.177.139.80:9697":
+    case "192.168.0.102":
     case "93.177.139.80":
         $mainDIR = "/xampp/htdocs/apeni.localhost.com";
         $appConfigFile = "/xampp/htdocs/app_config/mobile_tb.php";
