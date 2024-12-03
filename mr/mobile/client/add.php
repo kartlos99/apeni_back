@@ -1,5 +1,5 @@
 <?php
-
+// Not in use
 namespace Apeni\JWT;
 
 use DbKey;
