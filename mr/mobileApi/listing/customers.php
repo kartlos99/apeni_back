@@ -24,7 +24,7 @@ $customerListSql =
         c.`comment`,
         c.`sk` AS identifyCode,
         c.`sakpiri` AS contactPerson,
-        c.`active`,
+        c.`active` AS `status`,
         c.`reg_date`,
         c.`chek`,
         c.`modifyDate`,
@@ -34,7 +34,7 @@ $customerListSql =
         LEFT JOIN $CUSTOMER_TB c
         ON cm.customerID = c.id
     WHERE
-    cm.regionID = {$sessionData->regionID} AND cm.active = 1 AND c.active = 1 
+    cm.regionID = {$sessionData->regionID} AND cm.active = 1  
     ORDER BY
         dasaxeleba ";
 
