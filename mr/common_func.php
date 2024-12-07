@@ -18,7 +18,7 @@ function dieWithError($code, $text)
 function checkToken()
 {
     // temporary, while testing api
-    // return (object)["userID" => 15, "regionID" => 1];
+//     return (object)["userID" => 15, "regionID" => 1, "userType" => 9];
     $token = getBearerToken();
     $regionID = getRegion();
     if (!is_numeric($regionID) || $regionID == "0")
@@ -55,4 +55,17 @@ function hasOwnStorage($dbConn, $regionID): bool
 {
     $rg = mysqli_fetch_assoc(mysqli_query($dbConn, "SELECT `ownStorage` FROM `regions` WHERE `ID`=$regionID"));
     return $rg['ownStorage'] == 1;
+}
+
+const errorMessage = "errorMessage";
+const errorCode = "errorCode";
+
+function throwHttpError($errorCode = 0, $errorText = "Unknown error.", $httpStatusCode = 422)
+{
+    // die( $errorText . $errorCode . $httpStatusCode11);
+    http_response_code($httpStatusCode);
+    die(json_encode([
+        errorMessage => $errorText,
+        errorCode => $errorCode
+    ]));
 }
