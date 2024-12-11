@@ -44,12 +44,12 @@ $sqlXarji = "SELECT `id`, `regionID`, `tarigi` AS `date`, `distributor_id` AS `d
 
 $sqlSale = "
 SELECT
-    l.dasaxeleba AS beerName,
+    b.name AS beerName,
     ROUND( SUM( s.count * s.unitPrice * k.litraji ),  2 ) AS price,
     SUM( s.count * k.litraji) AS litraji
 FROM
     `sales` AS s
-LEFT JOIN ludi AS l ON  s.beerID = l.id
+LEFT JOIN beer AS b ON  s.beerID = b.id
 LEFT JOIN kasri AS k ON k.id = s.canTypeID
 WHERE
     DATE(s.saleDate) = '$receivedDate' AND `regionID` = {$sessionData->regionID}
