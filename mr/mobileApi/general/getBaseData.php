@@ -17,7 +17,11 @@ $result["beers"] = $dbManager->getDataAsArray($beerListSql);
 $bottleListSql = "SELECT * FROM `bottles` WHERE `status` > 0 ORDER BY `sortValue`";
 $result["bottles"] = $dbManager->getDataAsArray($bottleListSql);
 
-$barrelListSql = "SELECT `id`, `dasaxeleba` AS name, `litraji` AS volume, `sortValue` FROM `kasri` ORDER BY sortValue";
+$barrelListSql =
+    "SELECT `id`, `name`, `volume`, `actualVolume`, `status`, `sortValue`, `image`
+FROM `barrels` 
+WHERE barrels.status > 0
+ORDER BY barrels.sortValue";
 $result["barrels"] = $dbManager->getDataAsArray($barrelListSql);
 
 

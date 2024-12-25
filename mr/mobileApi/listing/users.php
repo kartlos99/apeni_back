@@ -4,8 +4,11 @@ namespace Apeni\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
+const USERS = "users";
+const REGIONS = "regions";
+
 require_once('../connection.php');
- $sessionData = checkToken();
+$sessionData = checkToken();
 require_once('../../BaseDbManagerV2.php');
 $dbManager = new \BaseDbManagerV2();
 
@@ -30,6 +33,31 @@ WHERE
 
 $users = $dbManager->getDataAsArray($userListSql);
 
-echo json_encode($users);
+$attachedRegionsIdSql = "SELECT `regionID` 
+FROM `user_to_region_map`
+WHERE `userID` = ";
+
+$regionsSql = "SELECT
+    `ID` as `id`, `code`, `name`, `active` as `status`, `ownStorage`
+FROM
+    `regions`
+WHERE
+    `active` > 0";
+
+$result = [
+    USERS => [],
+    REGIONS => $dbManager->getDataAsArray($regionsSql)
+];
+
+foreach ($users as $user) {
+    $regions = $dbManager->getDataAsArray($attachedRegionsIdSql . $user['id']);
+    $user[REGIONS] = array_map(
+        fn($value): int => $value["regionID"],
+        $regions
+    );
+    $result[USERS][] = $user;
+}
+
+echo json_encode($result);
 
 $dbManager->closeConnection();
