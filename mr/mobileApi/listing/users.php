@@ -18,7 +18,7 @@ $userListSql = "SELECT
     a.`name`,
     a.`type`,
     a.`tel`,
-    a.`adress`,
+    a.`adress` as `address`,
     IFNULL(b.username, 'x') AS maker,
     a.active AS userStatus,
     a.`comment`
@@ -29,7 +29,9 @@ LEFT JOIN `users` b ON
 LEFT JOIN user_to_region_map um ON
     um.userID = a.id
 WHERE
-    um.regionID = {$sessionData->regionID} AND a.active >= 1 ";
+    um.regionID = {$sessionData->regionID} AND a.active >= 1
+ORDER BY a.`username`
+";
 
 $users = $dbManager->getDataAsArray($userListSql);
 
