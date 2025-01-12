@@ -1,7 +1,9 @@
 <?php
 
 namespace Apeni\JWT;
+
 use DbKey;
+
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
@@ -9,6 +11,8 @@ require_once('../connection.php');
 $sessionData = checkToken();
 require_once('../../BaseDbManagerV2.php');
 $dbManager = new \BaseDbManagerV2();
+
+const MODIFY_REGION_PERMISSION_CODE = "permManageRegion";
 
 // Takes raw data from the request
 $json = file_get_contents('php://input');
@@ -19,6 +23,10 @@ $postData = json_decode($json);
 $user = $postData->user;
 
 $addMode = $user->id == "";
+
+$regionIDsString = implode(",", $postData->regionIDs);
+
+$hasPermissionToModifyRegion = $dbManager->hasPermission(MODIFY_REGION_PERMISSION_CODE, $sessionData->userID);
 
 if ($addMode) {
     $sql =
@@ -36,6 +44,12 @@ if ($addMode) {
          '$user->comment',
          '$timeOnServer'
          )";
+
+    $regionMappingSql = "INSERT INTO %s (`userId`, `regionId`, `state`) SELECT %s, regions.id, regions.id IN ($regionIDsString) FROM regions;";
+
+    if (!$hasPermissionToModifyRegion && $sessionData->regionID != $regionIDsString) {
+        dieWithDefaultHttpError("no permission to modify region!", 1480);
+    }
 } else {
 
     $setPass = $postData->changePass ? "`pass`='$postData->password', " : "";
@@ -52,15 +66,17 @@ if ($addMode) {
         "`comment`='$user->comment' " .
         "WHERE" .
         "  `users`.`id` = $user->id ";
+
+    $regionMappingSql = "UPDATE %s map
+        SET `state`= map.regionId IN ($regionIDsString)
+        WHERE map.userId = %s ";
 }
 
 $insertResult = $dbManager->baseInsert($sql);
-$newUserId = $insertResult[RECORD_ID_KEY];
+$newUserId = $addMode ? $insertResult[RECORD_ID_KEY] : $user->id;
 
-if ($addMode) {
-    $sqlInsertCustomerMap =
-        "INSERT INTO " . DbKey::$USER_MAP_TB . " (`userID`, `regionID`) VALUES ('$newUserId', '$sessionData->regionID');";
-    $dbManager->baseInsert($sqlInsertCustomerMap);
+if ($hasPermissionToModifyRegion || $addMode) {
+    $dbManager->baseInsert(sprintf($regionMappingSql, DbKey::$USER_TO_REGION_MAP_TB, $newUserId));
 }
 
 echo json_encode($insertResult);

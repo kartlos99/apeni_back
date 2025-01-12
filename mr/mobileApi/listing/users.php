@@ -26,18 +26,18 @@ FROM
     `users` a
 LEFT JOIN `users` b ON
     `a`.`maker` = `b`.`id`
-LEFT JOIN user_to_region_map um ON
+LEFT JOIN user_to_region_mapping um ON
     um.userID = a.id
 WHERE
-    um.regionID = {$sessionData->regionID} AND a.active >= 1
+    um.regionID = {$sessionData->regionID} AND a.active >= 1 AND um.state = 1
 ORDER BY a.`username`
 ";
 
 $users = $dbManager->getDataAsArray($userListSql);
 
 $attachedRegionsIdSql = "SELECT `regionID` 
-FROM `user_to_region_map`
-WHERE `userID` = ";
+FROM `user_to_region_mapping`
+WHERE `userID` = %s AND state = 1";
 
 $regionsSql = "SELECT
     `ID` as `id`, `code`, `name`, `active` as `status`, `ownStorage`
@@ -52,7 +52,7 @@ $result = [
 ];
 
 foreach ($users as $user) {
-    $regions = $dbManager->getDataAsArray($attachedRegionsIdSql . $user['id']);
+    $regions = $dbManager->getDataAsArray(sprintf($attachedRegionsIdSql, $user['id']));
     $user[REGIONS] = array_map(
         fn($value): int => $value["regionID"],
         $regions

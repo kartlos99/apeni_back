@@ -121,4 +121,17 @@ class BaseDbManagerV2
             return $resultArray[0][$fieldName];
         }
     }
+
+    function hasPermission($permissionCode, $userID): bool {
+        $sql = "SELECT permissions.ID, permissions.code FROM `permission_mapping` 
+            LEFT JOIN permissions ON permission_mapping.permissionID = permissions.ID
+            WHERE permission_mapping.roleID = (SELECT users.type FROM users WHERE users.id = $userID)";
+
+        $permissionList = $this->getDataAsArray($sql);
+        foreach ($permissionList as $permission) {
+            if ($permission['code'] == $permissionCode)
+                return true;
+        }
+        return false;
+    }
 }

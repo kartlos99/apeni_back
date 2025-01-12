@@ -326,8 +326,10 @@ class DataProvider
 
 class DbKey
 {
-    public static $CUSTOMER_MAP_TB = "`customer_to_region_map`";
-    public static $USER_MAP_TB = "`user_to_region_map`";
+    public static string $CUSTOMER_MAP_TB = "`customer_to_region_map`";
+    public static string $USER_MAP_TB = "`user_to_region_map`";
+    public static string $USER_TO_REGION_MAP_TB = "`user_to_region_mapping`";
+    public static string $USERS_TB = "`users`";
 }
 
 class QueryHelper
