@@ -21,11 +21,13 @@ function checkToken()
 //     return (object)["userID" => 15, "regionID" => 1, "userType" => 9];
     $token = getBearerToken();
     $regionID = getRegion();
-    if (!is_numeric($regionID) || $regionID == "0")
-        dieWithError(409, "no region set!");
 
     $dataPayload = checkGivenToken($token);
     $dataPayload->{'regionID'} = $regionID;
+
+    if (!is_numeric($regionID) || $regionID == "0")
+        dieWithError(409, "no region set!");
+
     return $dataPayload;
 }
 
@@ -68,4 +70,43 @@ function throwHttpError($errorCode = 0, $errorText = "Unknown error.", $httpStat
         errorMessage => $errorText,
         errorCode => $errorCode
     ]));
+}
+
+function checkTokenN()
+{
+//    throwHttpError(401, "errorText", 401);
+    // temporary, while testing api
+     return (object)["userID" => 15, "regionID" => 1, "userType" => 9];
+    $token = getBearerToken();
+    $regionID = getRegion();
+
+    $dataPayload = checkGivenTokenN($token);
+    $dataPayload->{'regionID'} = $regionID;
+
+    if (!is_numeric($regionID) || $regionID == "0")
+        throwHttpError(409, "no region set!", 409);
+
+    return $dataPayload;
+}
+
+function checkGivenTokenN($token) {
+
+    try {
+
+        return JWT::decode($token, SECRET_KEY, ['HS256']);
+
+    } catch (ExpiredException $e) {
+        $errorText = $e->getMessage();
+    } catch (UnexpectedValueException $exception) {
+        $errorText = $exception->getMessage();
+    } catch (DomainException $exception) {
+        $errorText = $exception->getMessage();
+    } catch (Exception $exception) {
+        $errorText = $exception->getMessage();
+    }
+
+    if (!empty($errorText))
+        throwHttpError(401, $errorText, 401);
+
+    return [];
 }

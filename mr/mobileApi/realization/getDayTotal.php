@@ -4,11 +4,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-// $sessionData = checkToken();
-$sessionData = (object)[
-    "regionID" => 1,
-    "userID" => 1
-    ];
+$sessionData = checkTokenN();
 
 $receivedDate = $_GET["date"];
 $distrId = $_GET["distributorId"];

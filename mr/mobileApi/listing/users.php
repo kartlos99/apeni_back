@@ -8,7 +8,7 @@ const USERS = "users";
 const REGIONS = "regions";
 
 require_once('../connection.php');
-$sessionData = checkToken();
+$sessionData = checkTokenN();
 require_once('../../BaseDbManagerV2.php');
 $dbManager = new \BaseDbManagerV2();
 
