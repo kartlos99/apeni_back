@@ -54,9 +54,9 @@ if (mysqli_num_rows($result) == 1) {
             reg.`active` as `status`,
             reg.`ownStorage`
         FROM 
-            `user_to_region_map` map, `regions` reg
+            `user_to_region_mapping` map, `regions` reg
         WHERE 
-            `userID` = " . $userData['id'] . " AND map.`regionID` = reg.ID";
+            `userID` = " . $userData['id'] . " AND map.`regionID` = reg.ID AND map.state = 1";
     $regionsResult = mysqli_query($con, $sqlAllowedRegions);
     $regions = [];
     while ($rs = mysqli_fetch_assoc($regionsResult)) {
