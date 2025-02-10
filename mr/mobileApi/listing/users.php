@@ -26,10 +26,8 @@ FROM
     `users` a
 LEFT JOIN `users` b ON
     `a`.`maker` = `b`.`id`
-LEFT JOIN user_to_region_mapping um ON
-    um.userID = a.id
 WHERE
-    um.regionID = {$sessionData->regionID} AND a.active >= 1 AND um.state = 1
+    a.active >= 1
 ORDER BY a.`username`
 ";
 
