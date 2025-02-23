@@ -33,3 +33,4 @@ require_once($mainDIR . '/jwt/JWT.php');
 require_once($mainDIR . '/jwt/extension.php');
 
 require_once($mainDIR . '/mr/constants.php');
+require_once($mainDIR . '/mr/sqlScriptRepo.php');
