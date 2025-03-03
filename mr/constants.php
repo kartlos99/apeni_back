@@ -4,6 +4,9 @@
 const RECORD_ID_KEY = "recordId";
 const LOG_RECORD_ID_KEY = "logRecordId";
 
+const errorMessage = "errorMessage";
+const errorCode = "errorCode";
+
 
 // CODE-s
 const BASE_ERROR_CODE = 1400;

@@ -57,13 +57,17 @@ class BaseDbManagerV2
 
     function getDataAsArray($sqlQuery): array
     {
-        $result = mysqli_query($this->dbConn, $sqlQuery);
         $resultArray = [];
-        if ($result) {
-            while ($rs = mysqli_fetch_assoc($result)) {
-                $resultArray[] = $rs;
+        try {
+            $result = mysqli_query($this->dbConn, $sqlQuery);
+            if ($result) {
+                while ($rs = mysqli_fetch_assoc($result)) {
+                    $resultArray[] = $rs;
+                }
+            } else {
+                $this->dieWithDbError();
             }
-        } else {
+        } catch (Exception $e) {
             $this->dieWithDbError();
         }
         return $resultArray;
@@ -85,9 +89,13 @@ class BaseDbManagerV2
 
     function baseInsert($insertSql): array
     {
-        $result = mysqli_query($this->dbConn, $insertSql);
-        if (!$result)
+        try {
+            $result = mysqli_query($this->dbConn, $insertSql);
+            if (!$result)
+                $this->dieWithDbError();
+        } catch (Exception $e) {
             $this->dieWithDbError();
+        }
         return [RECORD_ID_KEY => mysqli_insert_id($this->dbConn)];
     }
 

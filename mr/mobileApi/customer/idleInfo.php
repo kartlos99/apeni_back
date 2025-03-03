@@ -16,8 +16,13 @@ LEFT JOIN customer c ON c.id = s.`clientID`
 LEFT JOIN customer_to_region_map c_map ON c_map.customerID = c.id
 WHERE c_map.regionID = {$sessionData->regionID} AND c_map.active = 1
 GROUP BY `clientID`
-HAVING passedDays > (SELECT valueInt FROM dictionary_items WHERE code = 'customer_idle_warning')
+
 ";
+/**
+ * folowing line was removed from query as warning display logic moved
+ * to application (in front)
+ * */
+// HAVING passedDays > (SELECT valueInt FROM dictionary_items WHERE code = 'customer_idle_warning')
 
 echo json_encode(
     $dbManager->getDataAsArray($sqlIdleInfo)
