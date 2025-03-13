@@ -12,8 +12,8 @@ require_once('_load.php');
 $userID = $_GET['userID'];
 
 $sqlAllowedRegions =
-    "SELECT `regionID`, `name` FROM `user_to_region_map` map, `regions` reg
-         WHERE `userID` = " . $userID . " AND map.`regionID` = reg.ID
+    "SELECT `regionID`, `name` FROM `user_to_region_mapping` map, `regions` reg
+         WHERE `userID` = " . $userID . " AND map.`regionID` = reg.ID AND map.state = 1
          ORDER BY `name`";
 $regionsResult = mysqli_query($con, $sqlAllowedRegions);
 $regions = [];
