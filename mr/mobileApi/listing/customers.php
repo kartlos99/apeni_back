@@ -43,8 +43,8 @@ $customers = $dbManager->getDataAsArray($customerListSql);
 $cr = [];
 foreach ($customers as $customer) {
 
-    $sqlGetPrices = "SELECT * FROM `fasebi` WHERE `obj_id` = " . $customer["id"];
-    $sqlBottlePrices = "SELECT * FROM `bottle_prices` WHERE `clientID` = " . $customer["id"];
+    $sqlGetPrices = "SELECT * FROM `beer_prices_2` WHERE `clientID` = " . $customer["id"];
+    $sqlBottlePrices = "SELECT * FROM `bottle_prices_2` WHERE `clientID` = " . $customer["id"];
 
     $beerPrice = $dbManager->getDataAsArray($sqlGetPrices);
     $bottlePrice = $dbManager->getDataAsArray($sqlBottlePrices);

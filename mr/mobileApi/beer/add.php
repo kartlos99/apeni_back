@@ -5,7 +5,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once('../connection.php');
-//$sessionData = checkToken();
+$sessionData = checkTokenN();
 require_once('../../BaseDbManagerV2.php');
 $dbManager = new \BaseDbManagerV2();
 
@@ -20,7 +20,7 @@ $name = $postData->name;
 $price = $postData->price;
 $color = $postData->color;
 
-if ($beerId == 0) { // axali ludis chawera
+if ($beerId == 0) { // new beer
 
     $addBeerSql = "INSERT INTO `beer`(`name`, `price`, `status`, `color`, `sortValue`)  
                     VALUES ( '$name', '$price', '1', '$color', UNIX_TIMESTAMP())";
@@ -38,21 +38,19 @@ if ($beerId == 0) { // axali ludis chawera
     $values_to_insert = "(";
 
     for ($i = 0; $i < count($customerIds); $i++) {
-        $values_to_insert = $values_to_insert . "'$customerIds[$i]', '$newBeerId', '$price', '$timeOnServer')";
+        $values_to_insert = $values_to_insert . "'$customerIds[$i]', '$newBeerId', '$price', '$timeOnServer', '$sessionData->userID')";
 
         if ($i < (count($customerIds) - 1)) {
             $values_to_insert = $values_to_insert . ", (";
         }
     }
 
-    $addPricesSql = "INSERT INTO `fasebi` 
-	                    (`obj_id`, `beer_id`, `fasi`, `tarigi`) 
-	                VALUES
-	                    $values_to_insert";
+    $addPricesSql = "INSERT INTO `beer_prices_2`(`clientID`, `beerID`, `price`, `modifyDate`, `modifyUserID`) 
+	                VALUES $values_to_insert";
 
     $dbManager->baseInsert($addPricesSql);
 
-} else { // redaqtireba
+} else { // editing
 
     $updateBeerSql = "UPDATE
             `beer`
@@ -62,13 +60,9 @@ if ($beerId == 0) { // axali ludis chawera
             `color` = '$color'
         WHERE
             `id` = '$beerId'";
-//die($updateBeerSql);
+
     $dbManager->baseInsert($updateBeerSql);
 }
-
-//$vc = new VersionControl($con);
-//$vc->updateVersionFor(BEER_VCS);
-//$vc->updateVersionFor(PRICE_VCS);
 
 $beerListSql = "SELECT * FROM `beer` where `beer`.`status` > 0 order by sortValue";
 

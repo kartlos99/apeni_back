@@ -1,4 +1,7 @@
 <?php
+/**
+ *  NOT IN USE !!!!!!!!
+ */
 
 // ---------- axali/redaqtireba ludi ----------
 

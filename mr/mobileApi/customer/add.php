@@ -56,15 +56,15 @@ $multiValue = "";
 for ($i = 0; $i < count($prices); $i++) {
     $priceItem = $prices[$i];
 
-    $beerID = $priceItem->beer_id;
-    $price = $priceItem->fasi;
+    $beerID = $priceItem->beerID;
+    $price = $priceItem->price;
 
     if ($i > 0) {
         $multiValue .= ",";
     }
     $multiValue .= "('$newCustomerId', '$beerID', '$price', '$timeOnServer', '" . $sessionData->userID ."')";
 }
-$sqlInsertPrices = "INSERT INTO `fasebi`(`obj_id`, `beer_id`, `fasi`, `tarigi`, `user_id`) VALUES " . $multiValue;
+$sqlInsertPrices = "INSERT INTO `beer_prices_2`(`clientID`, `beerID`, `price`, `modifyDate`, `modifyUserID`) VALUES " . $multiValue;
 
 $dbManager->baseInsert($sqlInsertPrices);
 
@@ -81,7 +81,7 @@ for ($i = 0; $i < count($bottlePrices); $i++) {
     }
     $values_to_insert .= "('$newCustomerId', '$bottleID', '$price', '$timeOnServer', $sessionData->userID )";
 }
-$addBottlePriceMapSql = "INSERT INTO `bottle_prices`(`clientID`, `bottleID`, `price`, `modifyDate`, `modifyUserID`)"
+$addBottlePriceMapSql = "INSERT INTO `bottle_prices_2`(`clientID`, `bottleID`, `price`, `modifyDate`, `modifyUserID`)"
     . " VALUES  $values_to_insert";
 
 $dbManager->baseInsert($addBottlePriceMapSql);

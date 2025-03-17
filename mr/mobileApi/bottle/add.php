@@ -63,14 +63,14 @@ VALUES(
     $values_to_insert = "(";
 
     for ($i = 0; $i < count($customerIds); $i++) {
-        $values_to_insert = $values_to_insert . "'$customerIds[$i]', '$newBottleId', '$price', '$timeOnServer', $sessionData->userID )";
+        $values_to_insert = $values_to_insert . "'$customerIds[$i]', '$newBottleId', '$price', '$timeOnServer', '$sessionData->userID' )";
 
         if ($i < (count($customerIds) - 1)) {
             $values_to_insert = $values_to_insert . ", (";
         }
     }
 
-    $addPriceMapSql = "INSERT INTO `bottle_prices`(`clientID`, `bottleID`, `price`, `modifyDate`, `modifyUserID`)"
+    $addPriceMapSql = "INSERT INTO `bottle_prices_2`(`clientID`, `bottleID`, `price`, `modifyDate`, `modifyUserID`)"
         . " VALUES  $values_to_insert";
 
     $dbManager->baseInsert($addPriceMapSql);

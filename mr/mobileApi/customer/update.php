@@ -38,44 +38,73 @@ $sqlUpdateCustomer = "UPDATE $CUSTOMER_TB SET " .
 $updateResult = $dbManager->baseInsert($sqlUpdateCustomer);
 
 /** build sql for beer prices */
-for ($i = 0; $i < count($prices); $i++) {
-    $priceItem = $prices[$i];
+/**
+ * ************* MOVE beer prices from old table to new **********
+ *
+ * INSERT INTO `beer_prices_2`(`clientID`, `beerID`, `price`, `modifyDate`, `modifyUserID`)
+ * SELECT fasebi.obj_id, fasebi.beer_id, fasebi.fasi, fasebi.tarigi, fasebi.user_id FROM fasebi
+ * ON DUPLICATE KEY UPDATE
+ * `price`=VALUES(`price`),
+ * `modifyDate`=CURRENT_TIMESTAMP,
+ * `modifyUserID`=VALUES(`modifyUserID`)
+ *
+ * *******  UPDATE/INSERT beer price mapping **************
+ *
+ * INSERT INTO `beer_prices_2`(`clientID`, `beerID`, `price`, `modifyUserID`)
+ * VALUES
+ * ('27','2','222','12')
+ * ON DUPLICATE KEY UPDATE
+ * `modifyDate`= IF( beer_prices_2.price = VALUES(`price`), beer_prices_2.modifyDate, CURRENT_TIMESTAMP),
+ * `modifyUserID`= IF( beer_prices_2.price = VALUES(`price`), beer_prices_2.modifyUserID, VALUES(`modifyUserID`)),
+ * `price` = VALUES(`price`)
+ */
+if (!empty($prices)) {
+    $values = "";
+    foreach ($prices as $beerPrice) {
+        $values .= "('$beerPrice->clientID','$beerPrice->beerID','$beerPrice->price','$sessionData->userID'),";
+    }
+    $updateBeerPricesSql = "INSERT INTO `beer_prices_2`(`clientID`, `beerID`, `price`, `modifyUserID`)
+VALUES " . trim($values, ",") . "
+ ON DUPLICATE KEY UPDATE
+`modifyDate`= IF( beer_prices_2.price = VALUES(`price`), beer_prices_2.modifyDate, CURRENT_TIMESTAMP),
+`modifyUserID`= IF( beer_prices_2.price = VALUES(`price`), beer_prices_2.modifyUserID, VALUES(`modifyUserID`)),
+`price` = VALUES(`price`)";
 
-    $beerID = $priceItem->beer_id;
-    $price = $priceItem->fasi;
-    $clientID = $priceItem->obj_id;
-
-    $sqlUpdatePrice =
-        "UPDATE
-            fasebi 
-        SET 
-            `fasi` = $price,
-            `tarigi` = '$timeOnServer' 
-        WHERE
-            `obj_id`= $clientID AND `beer_id` = $beerID";
-
-    $dbManager->baseInsert($sqlUpdatePrice);
+    $dbManager->baseInsert($updateBeerPricesSql);
 }
 
 /** build sql for bottle prices */
-for ($i = 0; $i < count($bottlePrices); $i++) {
-    $bottlePriceItem = $bottlePrices[$i];
+if (!empty($bottlePrices)) {
+    /**
+     * Script for MOVING existing bottle prices to new table
+     *
+     * INSERT INTO `bottle_prices_2`(`clientID`, `bottleID`, `price`, `modifyDate`, `modifyUserID`)
+     * SELECT `clientID`, `bottleID`, `price`, `modifyDate`, `modifyUserID` FROM bottle_prices
+     * ON DUPLICATE KEY UPDATE
+     * `price`=VALUES(`price`),
+     * `modifyDate`=CURRENT_TIMESTAMP,
+     * `modifyUserID`=VALUES(`modifyUserID`)
+     *
+     * INSERT INTO `bottle_prices_2`(`clientID`, `bottleID`, `price`, `modifyUserID`)
+     * VALUES
+     * ('27','6','606','16')
+     * ON DUPLICATE KEY UPDATE
+     * `modifyDate`= IF( bottle_prices_2.price = VALUES(`price`), bottle_prices_2.modifyDate, CURRENT_TIMESTAMP),
+     * `modifyUserID`= IF( bottle_prices_2.price = VALUES(`price`), bottle_prices_2.modifyUserID, VALUES(`modifyUserID`)),
+     * `price` = VALUES(`price`)
+     */
+    $values = "";
+    foreach ($bottlePrices as $bottlePrice) {
+        $values .= "('$bottlePrice->clientID','$bottlePrice->bottleID','$bottlePrice->price','$sessionData->userID'),";
+    }
+    $updateBottlePricesSql = "INSERT INTO `bottle_prices_2`(`clientID`, `bottleID`, `price`, `modifyUserID`)
+    VALUES " . trim($values, ",") . " 
+    ON DUPLICATE KEY UPDATE
+    `modifyDate`= IF( bottle_prices_2.price = VALUES(`price`), bottle_prices_2.modifyDate, CURRENT_TIMESTAMP),
+    `modifyUserID`= IF( bottle_prices_2.price = VALUES(`price`), bottle_prices_2.modifyUserID, VALUES(`modifyUserID`)),
+    `price` = VALUES(`price`)";
 
-    $bottleID = $bottlePriceItem->bottleID;
-    $price = $bottlePriceItem->price;
-    $clientId = $bottlePriceItem->clientID;
-
-    $sqlUpdatePrice =
-        "UPDATE
-                `bottle_prices`
-            SET
-                `price` = '$price',
-                `modifyDate` = '$timeOnServer',
-                `modifyUserID` = '$sessionData->userID'
-            WHERE
-                `clientID` = '$clientId' AND `bottleID` = '$bottleID'";
-
-    $dbManager->baseInsert($sqlUpdatePrice);
+    $dbManager->baseInsert($updateBottlePricesSql);
 }
 
 echo json_encode("DONE update: id = $customer->id");
