@@ -26,7 +26,7 @@ require_once('../../../commonWeb/Exporter.php');
 use Exporter;
 
 // region doesn't matter for debt
-$sql = "SELECT dbt.clientID, dbt.clientName, dbt.price - dbt.payed AS moneyBalance  
+$sql = "SELECT dbt.clientID, dbt.clientName, round(dbt.price - dbt.payed, 2) AS moneyBalance  
 FROM `debt_by_customer` dbt
 LEFT JOIN customer c
 ON dbt.`clientID` = c.ID 

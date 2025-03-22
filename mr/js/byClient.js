@@ -239,7 +239,7 @@ function dataToRow(item) {
     return makeDebtRow(item.clientName, item.moneyBalance, item['10იანი'], item['20იანი'], item['30იანი'], item['50იანი'], false);
 }
 
-function makeDebtRow (name, amount, b1, b2, b3, b5, isTotal ) {
+function makeDebtRow(name, amount, b1, b2, b3, b5, isTotal) {
     let tdCustomer = $('<td />').text(name);
     let tdMoney = formatMoney(amount);
     let td10 = $('<td />').text(b1).addClass("ricxvi");
@@ -253,10 +253,17 @@ function makeDebtRow (name, amount, b1, b2, b3, b5, isTotal ) {
     return tr;
 }
 
-function formatMoney(f) {
+function formatMoney(numberStr) {
     // let td = $('<td />').addClass("ricxvi");
-    let rr = f.split('.');
-    let frictionSpan = $('<span />').text('.' + rr[1]).addClass("friction");
+    let rr = numberStr.split('.');
+    let decimal = "00"
+    if (rr[1] !== undefined) {
+        if (rr[1].length === 1)
+            decimal = rr[1] + '0';
+        else
+            decimal = rr[1];
+    }
+    let frictionSpan = $('<span />').text('.' + decimal).addClass("friction");
     return $('<td />').addClass("ricxvi")
         .append(rr[0])
         .append(frictionSpan)
@@ -291,18 +298,23 @@ function calculateSum(array) {
 function compareByName(a, b) {
     return a.clientName.localeCompare(b.clientName);
 }
+
 function compareByAmount(a, b) {
     return parseFloat(b.moneyBalance) - parseFloat(a.moneyBalance);
 }
+
 function compareByB10(a, b) {
     return parseInt(b[KEY_BARREL_10]) - parseFloat(a[KEY_BARREL_10]);
 }
+
 function compareByB20(a, b) {
     return parseInt(b[KEY_BARREL_20]) - parseFloat(a[KEY_BARREL_20]);
 }
+
 function compareByB30(a, b) {
     return parseInt(b[KEY_BARREL_30]) - parseFloat(a[KEY_BARREL_30]);
 }
+
 function compareByB50(a, b) {
     return parseInt(b[KEY_BARREL_50]) - parseFloat(a[KEY_BARREL_50]);
 }

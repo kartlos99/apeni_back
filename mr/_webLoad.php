@@ -1,6 +1,6 @@
 <?php
 
-const HOME_SERVER_NAME = "apeni.local";
+const HOME_SERVER_NAME = "apeni.localhost";
 const REAL_SERVER_NAME = "apeni.ge";
 const TEST_SERVER_NAME = "test.apeni.ge";
 

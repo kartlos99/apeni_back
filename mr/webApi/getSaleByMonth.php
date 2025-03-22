@@ -8,23 +8,23 @@ require_once('_load.php');
 
 $sessionData = checkToken();
 
-$year = isset($_GET['year']) ? $_GET['year'] : 2020;
+$year = $_GET['year'] ?? 2020;
 
 $sqlSales = "SELECT 
 concat(YEAR(s.saleDate), MONTH(s.saleDate), s.beerID) AS ID,
 YEAR(s.saleDate) AS weli,
 MONTH(s.saleDate) AS tve,
-l.dasaxeleba AS beerName,
-l.color,
-l.id AS beerID,
-round(sum(s.count * k.litraji * s.unitPrice), 2) AS price,
-sum(s.count * k.litraji) AS liter
+b.name AS beerName,
+b.color,
+b.id AS beerID,
+round(sum(s.count * k.volume * s.unitPrice), 2) AS price,
+sum(s.count * k.volume) AS liter
 FROM `sales` s
 
-LEFT JOIN ludi AS l
-ON  s.beerID = l.id
+LEFT JOIN `beer` AS b
+ON  s.beerID = b.id
 
-LEFT JOIN kasri AS k
+LEFT JOIN `barrels` AS k
 ON  s.canTypeID = k.id
 
 WHERE
@@ -34,23 +34,23 @@ GROUP BY
     MONTH(s.saleDate),    
     s.beerID
     
-ORDER BY YEAR(s.saleDate), MONTH(s.saleDate), l.sortValue";
+ORDER BY YEAR(s.saleDate), MONTH(s.saleDate), b.sortValue";
 
 $sql = "
 SELECT 
 concat(YEAR(s.saleDate), MONTH(s.saleDate), s.beerID) AS sID,
 YEAR(s.saleDate) AS weli,
 MONTH(s.saleDate) AS tve,
-l.dasaxeleba AS beerName,
-sum(s.count * k.litraji) AS liter,
+b.name AS beerName,
+sum(s.count * k.volume) AS liter,
 sum(s.count) AS canCount, 
-k.dasaxeleba AS canType
+k.name AS canType
 FROM `sales` s
 
-LEFT JOIN ludi AS l
-ON  s.beerID = l.id
+LEFT JOIN `beer` AS b
+ON  s.beerID = b.id
 
-LEFT JOIN kasri AS k
+LEFT JOIN `barrels` AS k
 ON  s.canTypeID = k.id
 
 WHERE YEAR(s.saleDate) = $year AND regionID = {$sessionData->regionID}
@@ -58,10 +58,10 @@ WHERE YEAR(s.saleDate) = $year AND regionID = {$sessionData->regionID}
 GROUP BY
 	YEAR(s.saleDate), 
     MONTH(s.saleDate),    
-    l.dasaxeleba,
+    b.name,
     s.canTypeID
     
-ORDER BY YEAR(s.saleDate), MONTH(s.saleDate), l.sortValue, k.sortValue;
+ORDER BY YEAR(s.saleDate), MONTH(s.saleDate), b.sortValue, k.sortValue;
 ";
 
 $sqlMoneyOutput = "
