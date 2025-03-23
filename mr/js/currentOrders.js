@@ -71,134 +71,7 @@ function getOrders() {
             ordersList.empty();
 
             if (resp.success) {
-                let oData = resp.data
-                beerMap = new Map();
-
-                let sortedData = oData.sort(function (a, b) {
-                    if (a.sortValue < b.sortValue)
-                        return 1;
-                    else
-                        return -1
-                }).sort(function (a, b) {
-                    if (a.orderStatus === 'order_active')
-                        return -1;
-                    else
-                        return 1
-                }).sort(function (a, b) {
-                    if (a.distr < b.distr)
-                        return -1
-                    else
-                        return 1
-                })
-
-                sortedData.forEach(function (order) {
-                    let newOrder = orderUnitToClone.clone();
-
-                    let isChek = false
-                    if (order.items.find(it => it.chek == "1") != undefined)
-                        isChek = true
-
-                    newOrder.find('td.client').text("ობიექტი: " + order.client);
-                    newOrder.find('td.distributor').text("დისტრ: " + order.distr);
-                    newOrder.find('td.order-status').text("სტატუსი: " + order.statusName);
-
-                    if (order.sales.length > 0) {
-                        newOrder.find('table.table-mitana').removeClass("hidden");
-                        newOrder.find('td.delivery').text("დისტრ: " + order.sales[0].distributor);
-                    }
-                    if (order.amount.length > 0) {
-                        newOrder.find('table.table-mitana').removeClass("hidden");
-                        let moneyCell = newOrder.find('td.money')
-                        moneyCell.append($('<span />').text("აღებული: ").addClass(""));
-                        order.amount.forEach(function (mItem) {
-                            if (mItem.paymentType === "1")
-                                moneyCell.append($('<span />').text(mItem.money + "₾ ხელზე").addClass("cash-money"));
-                            else
-                                moneyCell.append($('<span />').text(mItem.money + "₾ ბანკი").addClass("bank-money"));
-                        });
-                    }
-
-                    if (isChek) {
-                        let iconChk = $('<i />').addClass("fas fa-circle fa-2x");
-                        newOrder.find('td.order-chek').append(iconChk);
-                    }
-                    if (order.comment != null) {
-                        newOrder.find('div.order-comment').text(order.comment)
-                    }
-                    if (order.orderStatus !== "order_active")
-                        newOrder.addClass('order-completed');
-                    else {
-                        order.items.forEach(function (oItem) {
-                            switch (oItem.canTypeID) {
-                                case "1":
-                                    proceedOrderSum(new BeerRow(oItem.dasaxeleba, 0, 0, 0, oItem.count));
-                                    break;
-                                case "2":
-                                    proceedOrderSum(new BeerRow(oItem.dasaxeleba, 0, 0, oItem.count, 0));
-                                    break;
-                                case "3":
-                                    proceedOrderSum(new BeerRow(oItem.dasaxeleba, 0, oItem.count, 0, 0));
-                                    break;
-                                case "4":
-                                    proceedOrderSum(new BeerRow(oItem.dasaxeleba, oItem.count, 0, 0, 0));
-                                    break;
-                                default:
-                                    alert("unknown can type!");
-                            }
-                        })
-                    }
-
-                    let rowContainer = newOrder.find('tbody.order-rows-container');
-
-                    let beerIDs = order.items.map(it => it.beerID).filter(onlyUnique);
-
-                    order.sales.forEach(function (saleItem) {
-                        if ($.inArray(saleItem.beerID, beerIDs) === -1)
-                            beerIDs.push(saleItem.beerID)
-                    })
-
-                    for (let bID of beerIDs) {
-                        let newOrderRow = orderRowToClone.clone();
-
-                        let oneBeerItems = order.items.filter(x => x.beerID === bID);
-                        let oneBeerSales = order.sales.filter(x => x.beerID === bID);
-
-                        if (oneBeerItems.length > 0 || oneBeerSales.length > 0) {
-                            newOrderRow.find('td.beer-name').text(getBeerName(oneBeerItems, oneBeerSales))
-
-                            oneBeerItems.forEach(function (bItem) {
-                                let saleCount = oneBeerSales.filter(x => x.canTypeID === bItem.canTypeID).reduce((s, a) => s + parseInt(a.count), 0);
-                                let unitData = getOrderWithSaleView(bItem.count, saleCount);
-                                newOrderRow.find('td.' + bItem.canTypeID).append(unitData);
-
-                                oneBeerSales = oneBeerSales.filter(function (saleItem) {
-                                    return saleItem.canTypeID !== bItem.canTypeID
-                                });
-                            });
-                            oneBeerSales.forEach(function (sItem) {
-                                let saleCount = oneBeerSales.filter(x => x.canTypeID === sItem.canTypeID).reduce((s, a) => s + parseInt(a.count), 0);
-                                let unitData = getOrderWithSaleView(0, saleCount);
-                                newOrderRow.find('td.' + sItem.canTypeID).append(unitData);
-                            });
-
-                            rowContainer.append(newOrderRow);
-                        }
-                    }
-
-                    if (order.emptyBarrels.length > 0) {
-                        let newOrderRow = orderRowToClone.clone();
-                        newOrderRow.addClass("empty-barrels");
-                        newOrderRow.find('td.beer-name').text('წამოღბული კასრები')
-
-                        order.emptyBarrels.forEach(function (emptyItem) {
-                            newOrderRow.find('td.' + emptyItem.canTypeID).text(emptyItem.count);
-                        });
-                        rowContainer.append(newOrderRow);
-                    }
-
-                    ordersList.append(newOrder);
-                })
-
+                drawOrdersTable(resp.data);
             } else {
                 console.log(resp);
                 showError(resp.errorCode, resp.errorText);
@@ -206,6 +79,142 @@ function getOrders() {
             displayActiveOrderSum();
         }
     });
+}
+
+function drawOrdersTable(orders) {
+    beerMap = new Map();
+
+    let sortedData = orders.sort(function (a, b) {
+        if (a.sortValue < b.sortValue)
+            return 1;
+        else
+            return -1
+    }).sort(function (a, b) {
+        if (a.orderStatus === 'order_active')
+            return -1;
+        else
+            return 1
+    }).sort(function (a, b) {
+        if (a.distr < b.distr)
+            return -1
+        else
+            return 1
+    })
+
+    sortedData.forEach(function (order) {
+        let newOrder = orderUnitToClone.clone();
+
+        let isChek = false
+        if (order.items.find(it => it.chek == "1") != undefined)
+            isChek = true
+
+        newOrder.find('td.client').text("ობიექტი: " + order.client);
+        newOrder.find('td.distributor').text("დისტრ: " + order.distr);
+        newOrder.find('td.order-status').text("სტატუსი: " + order.statusName);
+
+        if (order.sales.length > 0) {
+            newOrder.find('table.table-mitana').removeClass("hidden");
+            newOrder.find('td.delivery').text("დისტრ: " + order.sales[0].distributor);
+        }
+        if (order.amount.length > 0) {
+            newOrder.find('table.table-mitana').removeClass("hidden");
+            let moneyCell = newOrder.find('td.money')
+            moneyCell.append($('<span />').text("აღებული: ").addClass(""));
+            order.amount.forEach(function (mItem) {
+                if (mItem.paymentType === "1")
+                    moneyCell.append($('<span />').text(mItem.money + "₾ ხელზე").addClass("cash-money"));
+                else
+                    moneyCell.append($('<span />').text(mItem.money + "₾ ბანკი").addClass("bank-money"));
+            });
+        }
+
+        if (isChek) {
+            let iconChk = $('<i />').addClass("fas fa-circle fa-2x");
+            newOrder.find('td.order-chek').append(iconChk);
+        }
+        if (order.comment != null) {
+            newOrder.find('div.order-comment').text(order.comment)
+        }
+        if (order.orderStatus !== "order_active")
+            newOrder.addClass('order-completed');
+        else {
+            order.items
+                .sort(function (a, b) {
+                    if (a.name < b.name)
+                        return 1
+                    else
+                        return -1
+                })
+                .forEach(function (oItem) {
+                    switch (oItem.canTypeID) {
+                        case "1":
+                            proceedOrderSum(new BeerRow(oItem.name, 0, 0, 0, oItem.count));
+                            break;
+                        case "2":
+                            proceedOrderSum(new BeerRow(oItem.name, 0, 0, oItem.count, 0));
+                            break;
+                        case "3":
+                            proceedOrderSum(new BeerRow(oItem.name, 0, oItem.count, 0, 0));
+                            break;
+                        case "4":
+                            proceedOrderSum(new BeerRow(oItem.name, oItem.count, 0, 0, 0));
+                            break;
+                        default:
+                            alert("unknown can type!");
+                    }
+                })
+        }
+
+        let rowContainer = newOrder.find('tbody.order-rows-container');
+
+        let beerIDs = order.items.map(it => it.beerID).filter(onlyUnique);
+
+        order.sales.forEach(function (saleItem) {
+            if ($.inArray(saleItem.beerID, beerIDs) === -1)
+                beerIDs.push(saleItem.beerID)
+        })
+
+        for (let bID of beerIDs) {
+            let newOrderRow = orderRowToClone.clone();
+
+            let oneBeerItems = order.items.filter(x => x.beerID === bID);
+            let oneBeerSales = order.sales.filter(x => x.beerID === bID);
+
+            if (oneBeerItems.length > 0 || oneBeerSales.length > 0) {
+                newOrderRow.find('td.beer-name').text(getBeerName(oneBeerItems, oneBeerSales))
+
+                oneBeerItems.forEach(function (bItem) {
+                    let saleCount = oneBeerSales.filter(x => x.canTypeID === bItem.canTypeID).reduce((s, a) => s + parseInt(a.count), 0);
+                    let unitData = getOrderWithSaleView(bItem.count, saleCount);
+                    newOrderRow.find('td.' + bItem.canTypeID).append(unitData);
+
+                    oneBeerSales = oneBeerSales.filter(function (saleItem) {
+                        return saleItem.canTypeID !== bItem.canTypeID
+                    });
+                });
+                oneBeerSales.forEach(function (sItem) {
+                    let saleCount = oneBeerSales.filter(x => x.canTypeID === sItem.canTypeID).reduce((s, a) => s + parseInt(a.count), 0);
+                    let unitData = getOrderWithSaleView(0, saleCount);
+                    newOrderRow.find('td.' + sItem.canTypeID).append(unitData);
+                });
+
+                rowContainer.append(newOrderRow);
+            }
+        }
+
+        if (order.emptyBarrels.length > 0) {
+            let newOrderRow = orderRowToClone.clone();
+            newOrderRow.addClass("empty-barrels");
+            newOrderRow.find('td.beer-name').text('წამოღბული კასრები')
+
+            order.emptyBarrels.forEach(function (emptyItem) {
+                newOrderRow.find('td.' + emptyItem.canTypeID).text(emptyItem.count);
+            });
+            rowContainer.append(newOrderRow);
+        }
+
+        ordersList.append(newOrder);
+    })
 }
 
 function proceedOrderSum(beerRow) {
@@ -264,8 +273,8 @@ function getOrderWithSaleView(orderCount, saleCount) {
 
 function getBeerName(orderItems, saleItems) {
     if (orderItems.length > 0)
-        return orderItems[0].dasaxeleba;
+        return orderItems[0].name;
     if (saleItems.length > 0)
-        return saleItems[0].dasaxeleba;
+        return saleItems[0].name;
     return "_";
 }

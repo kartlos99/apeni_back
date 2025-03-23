@@ -10,7 +10,7 @@ class OrderHelper
         $this->con = $db_con;
     }
 
-    function attachItemsToOrder($orders)
+    function attachItemsToOrder($orders): array
     {
         $orderIDs = "";
         foreach ($orders as $order) {
@@ -19,8 +19,8 @@ class OrderHelper
         $orderIDs = trim($orderIDs, ',');
 
 
-        $sql = "SELECT oi.*, l.dasaxeleba FROM `order_items` oi " .
-            "LEFT JOIN `ludi` l ON l.id = oi.beerID " .
+        $sql = "SELECT oi.*, b.name FROM `order_items` oi " .
+            "LEFT JOIN `beer` b ON b.id = oi.beerID " .
             "WHERE `orderID` IN ($orderIDs) ";
 
         $orderItems = [];
@@ -29,20 +29,28 @@ class OrderHelper
             $orderItems[] = $rs;
         }
 
-        $sqlBottleOrderItems = "SELECT `id`, `orderID`, `bottleID`, `count` FROM `order_items_bottle` WHERE `orderID` IN ($orderIDs)";
+        $sqlBottleOrderItems = "SELECT `id`, `orderID`, `bottleID`, `count`
+            FROM `order_items_bottle` 
+            WHERE `orderID` IN ($orderIDs)";
         $bottleOrderItems = [];
         $result = mysqli_query($this->con, $sqlBottleOrderItems);
         while ($rs = mysqli_fetch_assoc($result)) {
             $bottleOrderItems[] = $rs;
         }
 
-        $sql =
-            "SELECT `orderID`, `beerID`, `chek`,`canTypeID`, sum(`count`) AS `count`, u.username AS distributor, l.dasaxeleba FROM `sales` s 
-            LEFT JOIN `users` u 
-            ON u.id = s.`modifyUserID` 
-            LEFT JOIN `ludi` l ON l.id = s.beerID
-            WHERE `orderID` IN ($orderIDs)
-            GROUP BY `orderID`, `beerID`, `canTypeID`";
+        $sql = "SELECT 
+                    `orderID`,
+                    `beerID`,
+                    `chek`,
+                    `canTypeID`, 
+                    sum(`count`) AS `count`,
+                    u.username AS distributor, 
+                    b.name 
+                FROM `sales` s 
+                LEFT JOIN `users` u ON u.id = s.`modifyUserID` 
+                LEFT JOIN `beer` b ON b.id = s.beerID
+                WHERE `orderID` IN ($orderIDs)
+                GROUP BY `orderID`, `beerID`, `canTypeID`";
 
         $sales = [];
         $result = mysqli_query($this->con, $sql);
@@ -91,7 +99,6 @@ class OrderHelper
             $orders[$index]['sales'] = $oSales;
             $orders[$index]['bottleSales'] = $oBottleSales;
         }
-
 
         return $orders;
     }

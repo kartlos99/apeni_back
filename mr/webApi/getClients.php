@@ -15,16 +15,18 @@ $filterByCustomer = "";
 if (isset($_GET['customerID']) && $_GET['customerID'] > 0)
     $filterByCustomer = " AND o.id = " . $_GET['customerID'];
 
-$sql = "SELECT 
-s.clientID, o.dasaxeleba AS clientName,
-s.beerID, l.dasaxeleba AS beerName,
-SUM(s.count * k.litraji) AS liter,
-round(SUM(s.count * k.litraji * s.unitPrice), 2) AS price,
-l.color
+$sql = "SELECT
+       s.clientID, 
+       o.dasaxeleba AS clientName,
+       s.beerID,
+       b.name AS beerName,
+SUM(s.count * k.volume) AS liter,
+round(SUM(s.count * k.volume * s.unitPrice), 2) AS price,
+b.color
 from sales s 
 LEFT JOIN $CUSTOMER_TB o ON o.id = s.clientID
-LEFT JOIN ludi l ON l.id = s.beerID
-LEFT JOIN kasri k ON k.id = s.canTypeID
+LEFT JOIN beer b ON b.id = s.beerID
+LEFT JOIN barrels k ON k.id = s.canTypeID
 WHERE 
       date(s.saleDate) >= '$date1'
   AND date(s.saleDate) <= '$date2'
