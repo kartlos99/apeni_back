@@ -24,16 +24,16 @@ concat(YEAR(s.`inputDate`), MONTH(s.`inputDate`), s.beerID) AS ID,
 YEAR(s.`inputDate`) AS `year`,
 MONTH(s.`inputDate`) AS `month`,
 `beerID`,
-l.dasaxeleba AS beer,
+b.name AS beer,
 `barrelID`,
 SUM(`count`) AS amount,
-SUM(`count` * k.litraji) AS liter
+SUM(`count` * k.volume) AS liter
 FROM `storehousebeerinpit` s
 
-LEFT JOIN ludi AS l
-ON  s.beerID = l.id
+LEFT JOIN `beer` AS b
+ON  s.beerID = b.id
 
-LEFT JOIN kasri AS k
+LEFT JOIN `barrels` AS k
 ON  s.`barrelID` = k.id
 
 WHERE year(s.`inputDate`) = $year
@@ -44,24 +44,24 @@ GROUP BY
     MONTH(s.`inputDate`),    
     s.beerID
     
-ORDER BY YEAR(s.`inputDate`), MONTH(s.`inputDate`), l.sortValue",
+ORDER BY YEAR(s.`inputDate`), MONTH(s.`inputDate`), b.sortValue",
 
     BARREL_INPUT_DETAIL => "SELECT 
 concat(YEAR(s.`inputDate`), MONTH(s.`inputDate`), s.beerID) AS ID,
 YEAR(s.`inputDate`) AS `year`,
 MONTH(s.`inputDate`) AS `month`,
 `beerID`,
-l.dasaxeleba AS beer,
+b.name AS beer,
 s.`barrelID`,
-k.dasaxeleba AS canType,
+k.name AS canType,
 SUM(`count`) AS amount,
-SUM(`count` * k.litraji) AS liter
+SUM(`count` * k.volume) AS liter
 FROM `storehousebeerinpit` s
 
-LEFT JOIN ludi AS l
-ON  s.beerID = l.id
+LEFT JOIN beer AS b
+ON  s.beerID = b.id
 
-LEFT JOIN kasri AS k
+LEFT JOIN barrels AS k
 ON  s.`barrelID` = k.id
 
 WHERE year(s.`inputDate`) = $year
@@ -73,7 +73,7 @@ GROUP BY
     s.beerID,
     s.`barrelID`
     
-ORDER BY YEAR(s.`inputDate`), MONTH(s.`inputDate`), l.sortValue, k.sortValue"
+ORDER BY YEAR(s.`inputDate`), MONTH(s.`inputDate`), b.sortValue, k.sortValue"
 ];
 
 $queryResult = [];

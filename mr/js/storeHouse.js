@@ -18,15 +18,18 @@ getBeerList();
 
 function getBeerList() {
     $.ajax({
-        url: 'mobile/get_ludi_list.php',
+        url: 'mobileApi/listing/beers.php',
         dataType: 'json',
         headers: getHeaders(),
         success: function (resp) {
-            if (resp.success) {
-                beerList = resp.data;
-                getStoreHouseData();
+            beerList = resp;
+            getStoreHouseData();
+        },
+        error: function (errorResponse) {
+            if (errorResponse.status === 422) {
+                showError(errorResponse.status, "შეცდომა: " + errorResponse.responseJSON.errorMessage);
             } else {
-                showError(resp.errorCode, resp.errorText);
+                showError(errorResponse.status, "მოხდა შეცდომა: " + errorResponse.statusText);
             }
         }
     });
@@ -94,7 +97,7 @@ function proceedFullBarrels(fData) {
     let groupedArray = Object.values(grouped);
     groupedArray.forEach(function (fItem) {
         let simpleRow = {};
-        simpleRow.name = beerList.find(item => item.id === fItem[0].beerID).dasaxeleba;
+        simpleRow.name = beerList.find(item => item.id === fItem[0].beerID).name;
         fItem.forEach(function (fItemItem) {
             simpleRow[fItemItem.barrelID] = fItemItem.inputToStore - fItemItem.saleCount;
         })
