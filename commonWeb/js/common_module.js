@@ -25,6 +25,13 @@ function f_show() {
 function f_hide() {
 }
 
+const BeerStatus = Object.freeze({
+    ACTIVE: "1",
+    INACTIVE: "2",
+    DELETED: "0"
+});
+const ownErrorCode = 422;
+
 let REGION_ID_KEY = "regionID";
 let USER_ID_KEY = "userID";
 

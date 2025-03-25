@@ -81,6 +81,11 @@ if ($pos !== false) {
     $thisPage = 'expenses';
 }
 
+$pos = strpos($_SERVER['PHP_SELF'], "prices.php");
+if ($pos !== false) {
+    $thisPage = 'prices';
+}
+
 if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
     header("Location: logout.php");
 
@@ -128,6 +133,11 @@ if ($userType != USERTYPE_ADMIN && $thisPage != 'currentOrders')
             <li class="expenses">
                 <a href="expenses.php">ხარჯები</a>
             </li>
+            <?php if ($userType == USERTYPE_ADMIN || $userType == USERTYPE_MANAGER) : ?>
+                <li class="prices">
+                    <a href="prices.php">ფასები</a>
+                </li>
+            <?php endif; ?>
         </ul>
 
         <div class="region-container">
