@@ -24,6 +24,10 @@ function getBeers() {
         headers: getHeaders(),
         success: function (resp) {
             beerList = resp;
+            resp.filter(item => item.status === BeerStatus.ACTIVE)
+                .forEach(function (beer) {
+                    activeBeerIDs.push(beer.id);
+                });
             getCustomers();
         },
         error: function (errorResponse) {
@@ -71,7 +75,6 @@ function createPriceHeader() {
     beerList
         .filter(item => item.status === BeerStatus.ACTIVE)
         .forEach(function (beer) {
-            activeBeerIDs.push(beer.id);
             headRow.append($('<th />').text(beer.name))
         })
     return headRow;
@@ -91,11 +94,15 @@ function createPriceRow(customer, prices) {
             thisRow.find('input').hide();
             thisRow.find('span').show();
             thisRow.find('button').text("Edit");
+            readRowData(thisRow);
         }
     })
     let tdCustomer = $('<td />').text(customer.name).addClass('customer');
     let tdOptions = $('<td />').append(editBtn)
-    let dataRow = $('<tr />').attr("data-state", "normal").append(tdCustomer);
+    let dataRow = $('<tr />')
+        .attr("data-state", "normal")
+        .attr("customerID", customer.id)
+        .append(tdCustomer);
 
     activeBeerIDs.forEach(function (beerID) {
         let priceItem = prices.find(function (price) {
@@ -108,6 +115,7 @@ function createPriceRow(customer, prices) {
         let spanView = $('<span />').text(priceValue);
         let inputView = $('<input />').val(priceValue).attr('type', 'number');
         inputView.addClass('price-input');
+        inputView.attr("data-beerID", beerID);
         inputView.hide();
         let dataCell = $('<td />').append(spanView, inputView).addClass('ricxvi');
         dataRow.append(dataCell);
@@ -116,3 +124,38 @@ function createPriceRow(customer, prices) {
     return dataRow;
 }
 
+function readRowData(currentRow) {
+    let prices = [];
+    currentRow.find('input').each(function (index) {
+        prices.push({
+            "beerID": $(this).attr('data-beerID'),
+            "price": $(this).val()
+        })
+    });
+
+    savePrices({
+        'customerID': currentRow.attr('customerID'),
+        'beerPrices': prices
+    })
+}
+
+function savePrices(data) {
+    $.ajax({
+        url: 'webApi/client/updatePrices.php',
+        method: 'post',
+        data: data,
+        dataType: 'json',
+        headers: getHeaders(),
+        success: function (resp) {
+            getCustomers()
+            console.log(resp);
+        },
+        error: function (errorResponse) {
+            if (errorResponse.status === ownErrorCode) {
+                showError(errorResponse.status, "შეცდომა: " + errorResponse.responseJSON.errorMessage);
+            } else {
+                showError(errorResponse.status, "მოხდა შეცდომა: " + errorResponse.statusText);
+            }
+        }
+    });
+}

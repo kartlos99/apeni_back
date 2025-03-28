@@ -30,4 +30,6 @@ require_once($mainDIR . '/mr/common_data.php');
 require_once($mainDIR . '/mr/common_func.php');
 require_once($mainDIR . '/mr/common_class.php');
 
+require_once($mainDIR . '/mr/constants.php');
+
 $folder = "/mr";

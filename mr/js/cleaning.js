@@ -19,7 +19,7 @@ function getCleaningData() {
                     cleaningTable.append(dataToRow(item))
                 })
             } else {
-                showError(resp.errorCode, resp.errorText);
+                showError(response.errorCode, response.errorText);
             }
         }
     });
