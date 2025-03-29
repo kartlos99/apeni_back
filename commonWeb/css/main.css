@@ -132,6 +132,12 @@ td.order-chek {
     font-weight: normal;
 }
 
+.int-number {
+    font-size: medium;
+    color: #444444;
+    font-weight: normal;
+}
+
 .debt-table th {
     background-color: #cccccc;
     cursor: pointer;

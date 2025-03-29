@@ -197,10 +197,12 @@ function createPriceRow(customer, prices) {
             return price.itemID === itemID
         });
         let priceValue = "-";
-        if (priceItem !== undefined)
-            priceValue = priceItem.price
+        let spanView = $('<span />').text("-");
+        if (priceItem !== undefined) {
+            priceValue = Number(priceItem.price).toFixed(2)
+            spanView = wrapNumberSpan(priceValue);
+        }
 
-        let spanView = $('<span />').text(priceValue);
         let inputView = $('<input />').val(priceValue).attr('type', 'number');
         inputView.addClass('price-input');
         inputView.attr("itemID", itemID);
@@ -210,6 +212,21 @@ function createPriceRow(customer, prices) {
     });
     dataRow.append(tdOptions);
     return dataRow;
+}
+
+function wrapNumberSpan(numberStr) {
+    let parts = numberStr.split('.');
+    let decimal = "00"
+    if (parts[1] !== undefined) {
+        if (parts[1].length === 1)
+            decimal = parts[1] + '0';
+        else
+            decimal = parts[1];
+    }
+    let frictionSpan = $('<span />').text('.' + decimal).addClass("friction");
+    return $('<span />').addClass('int-number')
+        .append(parts[0])
+        .append(frictionSpan)
 }
 
 function readRowData(currentRow) {
@@ -237,7 +254,6 @@ function savePrices(data) {
         headers: getHeaders(),
         success: function (resp) {
             getCustomers()
-            console.log(resp);
         },
         error: function (errorResponse) {
             if (errorResponse.status === ownErrorCode) {
