@@ -13,14 +13,15 @@ $sessionData = checkTokenN();
 require_once('../../BaseDbManagerV2.php');
 $dbManager = new \BaseDbManagerV2();
 
-$beerPrices = $_POST["beerPrices"];
+$prices = $_POST["prices"];
 $customerID = $_POST["customerID"];
+$product = $_POST["product"];
 
-if (!empty($beerPrices)) {
+if (!empty($prices) && $product == "beer") {
     $values = "";
-    foreach ($beerPrices as $beerPrice) {
-        $beerID = $beerPrice["beerID"];
-        $price = $beerPrice["price"];
+    foreach ($prices as $itemPrice) {
+        $beerID = $itemPrice["itemID"];
+        $price = $itemPrice["price"];
         $values .= "('$customerID','$beerID','$price','$sessionData->userID'),";
     }
     $updateBeerPricesSql = "INSERT INTO `beer_prices_2`(`clientID`, `beerID`, `price`, `modifyUserID`)

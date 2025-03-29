@@ -1,11 +1,24 @@
 let mainTable = $("#pricesTable");
 let pricesTableHead = mainTable.find('thead');
 let pricesTableBody = mainTable.find('tbody');
+let beerSwitchBtn = $("#beerSwitchBtn");
+let bottleSwitchBtn = $("#bottleSwitchBtn");
 
 let beerList;
+let bottleList;
 let customers;
 let activeBeerIDs = [];
+let activeBottleIDs = [];
+let activeItemIDs = [];
 
+const CLASS_CHECK = "fa-check";
+
+const ProductType = Object.freeze({
+    BEER: "beer",
+    BOTTLE: "bottle"
+});
+
+let activeProduct = ProductType.BEER;
 
 /**
  * dasahendlia SemTxveva roda obieqtze ludis fasi araa gawerili
@@ -15,7 +28,32 @@ let activeBeerIDs = [];
 $(document).ready(function () {
     getRegions();
     getBeers();
+    getBottles();
 });
+
+beerSwitchBtn.on('click', function () {
+    switchToBeer()
+});
+
+bottleSwitchBtn.on('click', function () {
+    switchToBottle()
+});
+
+function switchToBeer() {
+    bottleSwitchBtn.removeClass(CLASS_CHECK);
+    beerSwitchBtn.addClass(CLASS_CHECK);
+    activeProduct = ProductType.BEER;
+    activeItemIDs = activeBeerIDs;
+    proceedData();
+}
+
+function switchToBottle() {
+    beerSwitchBtn.removeClass(CLASS_CHECK);
+    bottleSwitchBtn.addClass(CLASS_CHECK);
+    activeProduct = ProductType.BOTTLE;
+    activeItemIDs = activeBottleIDs;
+    proceedData();
+}
 
 function getBeers() {
     $.ajax({
@@ -40,6 +78,29 @@ function getBeers() {
     });
 }
 
+function getBottles() {
+    $.ajax({
+        url: 'mobileApi/listing/bottles.php',
+        dataType: 'json',
+        headers: getHeaders(),
+        success: function (resp) {
+            bottleList = resp;
+            resp.filter(item => item.status === BeerStatus.ACTIVE)
+                .forEach(function (bottle) {
+                    activeBottleIDs.push(bottle.id);
+                });
+            // getCustomers();
+        },
+        error: function (errorResponse) {
+            if (errorResponse.status === ownErrorCode) {
+                showError(errorResponse.status, "შეცდომა: " + errorResponse.responseJSON.errorMessage);
+            } else {
+                showError(errorResponse.status, "მოხდა შეცდომა: " + errorResponse.statusText);
+            }
+        }
+    });
+}
+
 function getCustomers() {
     $.ajax({
         url: 'mobileApi/listing/customers.php',
@@ -47,7 +108,8 @@ function getCustomers() {
         headers: getHeaders(),
         success: function (resp) {
             customers = resp;
-            proceedData();
+            // initially show beer prices
+            switchToBeer();
         },
         error: function (errorResponse) {
             if (errorResponse.status === ownErrorCode) {
@@ -62,10 +124,22 @@ function getCustomers() {
 function proceedData() {
     pricesTableBody.empty()
     pricesTableHead.empty()
-    pricesTableHead.append(createPriceHeader())
+    if (activeProduct === ProductType.BEER)
+        pricesTableHead.append(createPriceHeader());
+    else
+        pricesTableHead.append(createBottlePriceHeader());
 
     customers.forEach(function (customer) {
-        pricesTableBody.append(createPriceRow(customer, customer.beerPrices));
+        if (activeProduct === ProductType.BEER)
+            pricesTableBody.append(createPriceRow(customer, customer.beerPrices.map((it) => ({
+                "itemID": it.beerID,
+                "price": it.price
+            }))));
+        else
+            pricesTableBody.append(createPriceRow(customer, customer.bottlePrices.map((it) => ({
+                "itemID": it.bottleID,
+                "price": it.price
+            }))));
     })
 }
 
@@ -80,10 +154,21 @@ function createPriceHeader() {
     return headRow;
 }
 
+function createBottlePriceHeader() {
+    let tdCustomer = $('<th />').text("ობიექტის დასახელება");
+    let headRow = $('<tr />').append(tdCustomer);
+    bottleList
+        .filter(item => item.status === BeerStatus.ACTIVE)
+        .forEach(function (item) {
+            headRow.append($('<th />').text(item.name))
+        })
+    return headRow;
+}
+
 function createPriceRow(customer, prices) {
     let editBtn = $('<button />').text("Edit").addClass('edit-button');
     editBtn.on('click', function (b) {
-        let thisRow = $(this).closest('tr'); //.find('.customer').text("midiii");
+        let thisRow = $(this).closest('tr');
         if (thisRow.attr('data-state') == "normal") {
             thisRow.attr("data-state", "edit");
             thisRow.find('input').show();
@@ -104,9 +189,9 @@ function createPriceRow(customer, prices) {
         .attr("customerID", customer.id)
         .append(tdCustomer);
 
-    activeBeerIDs.forEach(function (beerID) {
+    activeItemIDs.forEach(function (itemID) {
         let priceItem = prices.find(function (price) {
-            return price.beerID === beerID
+            return price.itemID === itemID
         });
         let priceValue = "-";
         if (priceItem !== undefined)
@@ -115,7 +200,7 @@ function createPriceRow(customer, prices) {
         let spanView = $('<span />').text(priceValue);
         let inputView = $('<input />').val(priceValue).attr('type', 'number');
         inputView.addClass('price-input');
-        inputView.attr("data-beerID", beerID);
+        inputView.attr("itemID", itemID);
         inputView.hide();
         let dataCell = $('<td />').append(spanView, inputView).addClass('ricxvi');
         dataRow.append(dataCell);
@@ -128,14 +213,15 @@ function readRowData(currentRow) {
     let prices = [];
     currentRow.find('input').each(function (index) {
         prices.push({
-            "beerID": $(this).attr('data-beerID'),
+            "itemID": $(this).attr('itemID'),
             "price": $(this).val()
         })
     });
 
     savePrices({
         'customerID': currentRow.attr('customerID'),
-        'beerPrices': prices
+        'prices': prices,
+        'product': activeProduct
     })
 }
 

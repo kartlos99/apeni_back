@@ -222,3 +222,11 @@ td.order-chek {
     width: 100px;
     text-align: center;
 }
+
+.fa-check {
+    color: #e07702;
+}
+
+i.btn {
+    padding: 12px;
+}
