@@ -34,6 +34,23 @@ VALUES " . trim($values, ",") . "
     $dbManager->baseInsert($updateBeerPricesSql);
 }
 
+if (!empty($prices) && $product == "bottle") {
+    $values = "";
+    foreach ($prices as $itemPrice) {
+        $bottleID = $itemPrice["itemID"];
+        $price = $itemPrice["price"];
+        $values .= "('$customerID','$bottleID','$price','$sessionData->userID'),";
+    }
+    $updateBottlePricesSql = "INSERT INTO `bottle_prices_2`(`clientID`, `bottleID`, `price`, `modifyUserID`)
+    VALUES " . trim($values, ",") . " 
+    ON DUPLICATE KEY UPDATE
+    `modifyDate`= IF( bottle_prices_2.price = VALUES(`price`), bottle_prices_2.modifyDate, CURRENT_TIMESTAMP),
+    `modifyUserID`= IF( bottle_prices_2.price = VALUES(`price`), bottle_prices_2.modifyUserID, VALUES(`modifyUserID`)),
+    `price` = VALUES(`price`)";
+
+    $dbManager->baseInsert($updateBottlePricesSql);
+}
+
 
 echo json_encode([
     "pData" => $_POST,

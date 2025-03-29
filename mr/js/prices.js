@@ -109,7 +109,10 @@ function getCustomers() {
         success: function (resp) {
             customers = resp;
             // initially show beer prices
-            switchToBeer();
+            if (activeProduct === ProductType.BEER)
+                switchToBeer();
+            else
+                switchToBottle();
         },
         error: function (errorResponse) {
             if (errorResponse.status === ownErrorCode) {
