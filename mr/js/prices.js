@@ -12,10 +12,17 @@ let activeBottleIDs = [];
 let activeItemIDs = [];
 
 const CLASS_CHECK = "fa-check";
+const EDIT_TEXT = "რედაქტ.";
+const SAVE_TEXT = "შენახვა";
 
 const ProductType = Object.freeze({
     BEER: "beer",
     BOTTLE: "bottle"
+});
+
+const DataRowState = Object.freeze({
+    NORMAL: "normal",
+    EDIT: "edit"
 });
 
 let activeProduct = ProductType.BEER;
@@ -168,22 +175,36 @@ function createBottlePriceHeader() {
     return headRow;
 }
 
+function switchToEditMode(dataRow) {
+    dataRow.attr("data-state", DataRowState.EDIT);
+    dataRow.find('input').show();
+    dataRow.find('span').hide();
+    dataRow.find('button').text(SAVE_TEXT);
+}
+
+function switchToNormalMode(dataRow) {
+    dataRow.attr("data-state", DataRowState.NORMAL);
+    dataRow.find('input').hide();
+    dataRow.find('span').show();
+    dataRow.find('button').text(EDIT_TEXT);
+}
+
+function onOptionClick(dataRow) {
+    if (dataRow.attr('data-state') == DataRowState.NORMAL) {
+        pricesTableBody.find("tr[data-state='edit']").each(function () {
+            switchToNormalMode($(this));
+        });
+        switchToEditMode(dataRow);
+    } else {
+        switchToNormalMode(dataRow);
+        readRowData(dataRow);
+    }
+}
+
 function createPriceRow(customer, prices) {
-    let editBtn = $('<button />').text("Edit").addClass('edit-button');
+    let editBtn = $('<button />').text(EDIT_TEXT).addClass('edit-button');
     editBtn.on('click', function (b) {
-        let thisRow = $(this).closest('tr');
-        if (thisRow.attr('data-state') == "normal") {
-            thisRow.attr("data-state", "edit");
-            thisRow.find('input').show();
-            thisRow.find('span').hide();
-            thisRow.find('button').text("Save");
-        } else {
-            thisRow.attr("data-state", "normal");
-            thisRow.find('input').hide();
-            thisRow.find('span').show();
-            thisRow.find('button').text("Edit");
-            readRowData(thisRow);
-        }
+        onOptionClick($(this).closest('tr'));
     })
     let tdCustomer = $('<td />').text(customer.name).addClass('customer');
     let tdOptions = $('<td />').append(editBtn)
