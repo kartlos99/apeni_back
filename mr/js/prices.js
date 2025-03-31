@@ -196,7 +196,7 @@ function onOptionClick(dataRow) {
         });
         switchToEditMode(dataRow);
     } else {
-        switchToNormalMode(dataRow);
+        // switchToNormalMode(dataRow);
         readRowData(dataRow);
     }
 }
@@ -251,19 +251,27 @@ function wrapNumberSpan(numberStr) {
 }
 
 function readRowData(currentRow) {
+    let isAllPricesValid = true;
     let prices = [];
     currentRow.find('input').each(function (index) {
+        if (Number($(this).val()) <= 0) {
+            isAllPricesValid = false
+        }
         prices.push({
             "itemID": $(this).attr('itemID'),
             "price": $(this).val()
         })
     });
 
-    savePrices({
-        'customerID': currentRow.attr('customerID'),
-        'prices': prices,
-        'product': activeProduct
-    })
+    if (isAllPricesValid) {
+        savePrices({
+            'customerID': currentRow.attr('customerID'),
+            'prices': prices,
+            'product': activeProduct
+        });
+    } else {
+        showError(499, "არასწორი ფასის შეყვანა! ჩაწერეთ დადებითი რიცხვი!");
+    }
 }
 
 function savePrices(data) {
