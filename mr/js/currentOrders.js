@@ -111,6 +111,9 @@ function drawOrdersTable(orders) {
         newOrder.find('td.client').text("ობიექტი: " + order.client);
         newOrder.find('td.distributor').text("დისტრ: " + order.distr);
         newOrder.find('td.order-status').text("სტატუსი: " + order.statusName);
+        if (order.orderPrice === 0) {
+            newOrder.find('td.order-price').addClass('warning');
+        }
         newOrder.find('td.order-price').text("ღირებ: " + Number(order.orderPrice).toFixed(2) + " ₾");
 
         if (order.sales.length > 0) {

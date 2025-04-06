@@ -145,6 +145,7 @@ class OrderHelper
 
         $priceSql = "
         SELECT -- oi.*, b.volume, o.clientID, c.dasaxeleba, pr.price, 
+        GROUP_CONCAT(ifNull(pr.price, 'x')) AS priceConcat,
         o.ID AS orderId,
         round(SUM(pr.price * b.volume * oi.count), 2) AS orderPrice
         FROM `order_items` oi
@@ -152,7 +153,7 @@ class OrderHelper
         LEFT JOIN beer_prices_2 pr ON o.clientID = pr.clientID AND oi.beerID = pr.beerID
         LEFT JOIN barrels b ON b.id = oi.canTypeID
         LEFT JOIN customer c ON c.id = o.clientID
-        WHERE date(o.orderDate) = '$date' AND o.ID IN ($orderIDs)
+        WHERE o.ID IN ($orderIDs)
         GROUP BY o.ID
         ";
 
@@ -168,6 +169,9 @@ class OrderHelper
             foreach ($arr as $priceItem) {
                 if ($order['ID'] == $priceItem['orderId']) {
                     $price = $priceItem['orderPrice'];
+                }
+                if (strpos($priceItem['priceConcat'], 'x') !== false) {
+                    $price = 0;
                 }
             }
             $orders[$index]['orderPrice'] = $price;
