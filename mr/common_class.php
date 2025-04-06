@@ -144,17 +144,38 @@ class OrderHelper
         $orderIDs = trim($orderIDs, ',');
 
         $priceSql = "
-        SELECT -- oi.*, b.volume, o.clientID, c.dasaxeleba, pr.price, 
+SELECT 
+	GROUP_CONCAT(op.priceConcat) AS priceConcat,
+    op.orderId,
+    SUM(op.orderPrice) AS orderPrice 
+FROM
+(
+    SELECT
+        GROUP_CONCAT(ifNull(pr.price, 'x')) AS priceConcat,
+        o.ID AS orderId,
+        round(SUM(pr.price * oi.count), 2) AS orderPrice
+    FROM `order_items_bottle` oi  
+    LEFT JOIN orders o ON oi.`orderID` = o.ID
+    LEFT JOIN bottle_prices_2 pr ON o.clientID = pr.clientID AND oi.bottleID = pr.bottleID
+    LEFT JOIN customer c ON c.id = o.clientID
+    WHERE o.ID IN ($orderIDs)
+    GROUP BY o.ID      
+    
+    UNION ALL
+    
+    SELECT -- oi.*, b.volume, o.clientID, c.dasaxeleba, pr.price, 
         GROUP_CONCAT(ifNull(pr.price, 'x')) AS priceConcat,
         o.ID AS orderId,
         round(SUM(pr.price * b.volume * oi.count), 2) AS orderPrice
-        FROM `order_items` oi
-        LEFT JOIN orders o ON oi.`orderID` = o.ID
-        LEFT JOIN beer_prices_2 pr ON o.clientID = pr.clientID AND oi.beerID = pr.beerID
-        LEFT JOIN barrels b ON b.id = oi.canTypeID
-        LEFT JOIN customer c ON c.id = o.clientID
-        WHERE o.ID IN ($orderIDs)
-        GROUP BY o.ID
+    FROM `order_items` oi
+    LEFT JOIN orders o ON oi.`orderID` = o.ID
+    LEFT JOIN beer_prices_2 pr ON o.clientID = pr.clientID AND oi.beerID = pr.beerID
+    LEFT JOIN barrels b ON b.id = oi.canTypeID
+    LEFT JOIN customer c ON c.id = o.clientID
+    WHERE o.ID IN ($orderIDs)
+    GROUP BY o.ID
+) op
+GROUP BY op.orderId
         ";
 
         $arr = [];
