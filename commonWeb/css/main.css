@@ -79,15 +79,19 @@ td.order-chek {
 }
 
 .client {
-    width: 40%;
+    width: 35%;
 }
 
 .distributor {
-    width: 30%;
+    width: 25%;
 }
 
 .order-status {
-    width: 20%;
+    width: 18%;
+}
+
+.order-price {
+    width: 18%;
 }
 
 .table {

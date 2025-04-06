@@ -103,7 +103,7 @@ class OrderHelper
         return $orders;
     }
 
-    function attachTakenMoney($orders, $date)
+    function attachTakenMoney($orders, $date): array
     {
         $clientIDs = "";
         foreach ($orders as $order) {
@@ -135,7 +135,48 @@ class OrderHelper
         return $orders;
     }
 
-    function attachEmptyBarrels($orders, $date)
+    function attachOrderPrice($orders, $date): array
+    {
+        $orderIDs = "";
+        foreach ($orders as $order) {
+            $orderIDs .= $order['ID'] . ',';
+        }
+        $orderIDs = trim($orderIDs, ',');
+
+        $priceSql = "
+        SELECT -- oi.*, b.volume, o.clientID, c.dasaxeleba, pr.price, 
+        o.ID AS orderId,
+        round(SUM(pr.price * b.volume * oi.count), 2) AS orderPrice
+        FROM `order_items` oi
+        LEFT JOIN orders o ON oi.`orderID` = o.ID
+        LEFT JOIN beer_prices_2 pr ON o.clientID = pr.clientID AND oi.beerID = pr.beerID
+        LEFT JOIN barrels b ON b.id = oi.canTypeID
+        LEFT JOIN customer c ON c.id = o.clientID
+        WHERE date(o.orderDate) = '$date' AND o.ID IN ($orderIDs)
+        GROUP BY o.ID
+        ";
+
+        $arr = [];
+        $result = mysqli_query($this->con, $priceSql);
+        if (mysqli_num_rows($result) > 0)
+            while ($rs = mysqli_fetch_assoc($result)) {
+                $arr[] = $rs;
+            }
+
+        foreach ($orders as $index => $order) {
+            $price = 0;
+            foreach ($arr as $priceItem) {
+                if ($order['ID'] == $priceItem['orderId']) {
+                    $price = $priceItem['orderPrice'];
+                }
+            }
+            $orders[$index]['orderPrice'] = $price;
+        }
+
+        return $orders;
+    }
+
+    function attachEmptyBarrels($orders, $date): array
     {
         $clientIDs = "";
         foreach ($orders as $order) {
@@ -231,7 +272,8 @@ class OrderHelper
         return $isCompletedForBarrels && $isCompletedForBottles;
     }
 
-    function getActiveOrderIDForClient($clientID, $regionID): int {
+    function getActiveOrderIDForClient($clientID, $regionID): int
+    {
         $getOrderSql = "
             SELECT ifnull(max(o.ID), 0) AS orderID FROM `orders` o
             LEFT JOIN dictionary_items di ON di.id = o.orderStatusID

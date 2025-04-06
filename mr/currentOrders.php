@@ -35,6 +35,7 @@ $barrels = $dataProvider->getBarrels();
                         <td class="client title-field"></td>
                         <td class="distributor title-field"></td>
                         <td class="order-status title-field"></td>
+                        <td class="order-price title-field"></td>
                         <td class="order-chek"></td>
                     </tr>
                 </table>
