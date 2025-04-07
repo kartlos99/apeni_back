@@ -240,3 +240,8 @@ td.order-chek {
 i.btn {
     padding: 12px;
 }
+
+tr.divider td {
+    height: 2px;
+    border-bottom: #948769 solid 2px;
+}

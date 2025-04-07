@@ -29,8 +29,9 @@ class OrderHelper
             $orderItems[] = $rs;
         }
 
-        $sqlBottleOrderItems = "SELECT `id`, `orderID`, `bottleID`, `count`
-            FROM `order_items_bottle` 
+        $sqlBottleOrderItems = "SELECT oi.`id`, `orderID`, `bottleID`, `count`, `b`.`name`
+            FROM `order_items_bottle` oi
+            LEFT JOIN bottles b ON oi.bottleID = b.id
             WHERE `orderID` IN ($orderIDs)";
         $bottleOrderItems = [];
         $result = mysqli_query($this->con, $sqlBottleOrderItems);
@@ -59,7 +60,9 @@ class OrderHelper
                 $sales[] = $rs;
             }
 
-        $sqlBottleSales = "SELECT orderID, bottleID, SUM(`count`) AS `count` FROM bottle_sales 
+        $sqlBottleSales = "SELECT orderID, bottleID, SUM(`count`) AS `count`, b.name
+                FROM bottle_sales s
+                LEFT JOIN bottles b ON s.bottleID = b.id
                 WHERE `orderID` IN ($orderIDs)
                 GROUP BY `orderID`, bottleID";
         $bottleSales = [];

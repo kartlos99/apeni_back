@@ -1,5 +1,6 @@
 let orderUnitToClone;
 let orderRowToClone;
+let bottleOrderRowToClone;
 let ordersList = $('div.order-list');
 let dateField = $("#orderDate");
 let doneBtn = $("#btnLoadOrders");
@@ -44,6 +45,7 @@ $(document).ready(function () {
     let cloneItemsContainer = $('#cloneContainerDiv');
     orderUnitToClone = cloneItemsContainer.find('div.order-unit');
     orderRowToClone = cloneItemsContainer.find('tr.order-row');
+    bottleOrderRowToClone = cloneItemsContainer.find('tr.bottle-order-row');
 
     tarigi = getFormatedDate();
     dateField.val(tarigi)
@@ -172,10 +174,15 @@ function drawOrdersTable(orders) {
         let rowContainer = newOrder.find('tbody.order-rows-container');
 
         let beerIDs = order.items.map(it => it.beerID).filter(onlyUnique);
+        let bottleIDs = order.bottleItems.map(it => it.bottleID).filter(onlyUnique);
 
         order.sales.forEach(function (saleItem) {
             if ($.inArray(saleItem.beerID, beerIDs) === -1)
                 beerIDs.push(saleItem.beerID)
+        })
+        order.bottleSales.forEach(function (sItem) {
+            if ($.inArray(sItem.bottleID, bottleIDs) === -1)
+                bottleIDs.push(sItem.bottleID)
         })
 
         for (let bID of beerIDs) {
@@ -204,6 +211,32 @@ function drawOrdersTable(orders) {
 
                 rowContainer.append(newOrderRow);
             }
+        }
+
+        if (bottleIDs.length > 0) {
+            rowContainer.append($('<tr />').addClass('divider').append($('<td />').attr('colspan', 5)));
+        }
+
+        for (let bottleID of bottleIDs) {
+            let newOrderRow = bottleOrderRowToClone.clone();
+
+            let bottleOrderItems = order.bottleItems.filter(x => x.bottleID === bottleID);
+            let bottleSaleItems = order.bottleSales.filter(x => x.bottleID === bottleID);
+
+            if (bottleOrderItems.length > 0 || bottleSaleItems.length > 0) {
+                newOrderRow.find('td.bottle-name').text(getBottleName(bottleOrderItems, bottleSaleItems));
+
+                let saleCount = bottleSaleItems.reduce((sum, item) => sum + parseInt(item.count), 0);
+                let orderItemCount = 0;
+                if (bottleOrderItems.length > 0) {
+                    orderItemCount = parseInt(bottleOrderItems[0].count);
+                }
+                let cellValue = getOrderWithSaleView(orderItemCount, saleCount);
+
+                newOrderRow.find('td.data').append(cellValue);
+            }
+
+            rowContainer.append(newOrderRow);
         }
 
         if (order.emptyBarrels.length > 0) {
@@ -276,6 +309,14 @@ function getOrderWithSaleView(orderCount, saleCount) {
 }
 
 function getBeerName(orderItems, saleItems) {
+    if (orderItems.length > 0)
+        return orderItems[0].name;
+    if (saleItems.length > 0)
+        return saleItems[0].name;
+    return "_";
+}
+
+function getBottleName(orderItems, saleItems) {
     if (orderItems.length > 0)
         return orderItems[0].name;
     if (saleItems.length > 0)

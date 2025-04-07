@@ -70,6 +70,10 @@ $barrels = $dataProvider->getBarrels();
                 <td class="2"></td>
                 <td class="1"></td>
             </tr>
+            <tr class="bottle-order-row">
+                <td class="bottle-name" colspan="3">bottle</td>
+                <td class="data" colspan="2"></td>
+            </tr>
         </table>
     </div>
 
