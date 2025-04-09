@@ -113,10 +113,13 @@ function drawOrdersTable(orders) {
         newOrder.find('td.client').text("ობიექტი: " + order.client);
         newOrder.find('td.distributor').text("დისტრ: " + order.distr);
         newOrder.find('td.order-status').text("სტატუსი: " + order.statusName);
+        let orderPriceValue = "ღირებ: " + Number(order.orderPrice).toFixed(2) + " ₾";
         if (order.orderPrice === 0) {
+            newOrder.find('td.order-price').attr("title", "შეკვეთის ღირებულების განსაზღვრა შეუძლებელია.\nრომელიღაც პროდუქტზე ფასი არ ფიქსირდება!")
             newOrder.find('td.order-price').addClass('warning');
+            orderPriceValue = "ღირებ: -";
         }
-        newOrder.find('td.order-price').text("ღირებ: " + Number(order.orderPrice).toFixed(2) + " ₾");
+        newOrder.find('td.order-price').text(orderPriceValue);
 
         if (order.sales.length > 0) {
             newOrder.find('table.table-mitana').removeClass("hidden");
