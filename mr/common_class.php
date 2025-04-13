@@ -191,11 +191,8 @@ GROUP BY op.orderId
         foreach ($orders as $index => $order) {
             $price = 0;
             foreach ($arr as $priceItem) {
-                if ($order['ID'] == $priceItem['orderId']) {
+                if ($order['ID'] == $priceItem['orderId'] && strpos($priceItem['priceConcat'], 'x') === false) {
                     $price = $priceItem['orderPrice'];
-                }
-                if (strpos($priceItem['priceConcat'], 'x') !== false) {
-                    $price = 0;
                 }
             }
             $orders[$index]['orderPrice'] = $price;
