@@ -24,6 +24,8 @@ $customerListSql =
         c.`comment`,
         c.`sk` AS identifyCode,
         c.`sakpiri` AS contactPerson,
+        c.`location`,
+        c.`paymentType`,
         c.`active` AS `status`,
         c.`reg_date`,
         c.`chek`,

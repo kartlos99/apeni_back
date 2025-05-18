@@ -28,6 +28,8 @@ $sqlAddCustomer = "INSERT INTO $CUSTOMER_TB (
     `comment`,
     `sk`,
     `sakpiri`,
+    `location`,
+    `paymentType`,
     `active`,
     `reg_date`,
     `chek`,
@@ -41,6 +43,8 @@ $sqlAddCustomer = "INSERT INTO $CUSTOMER_TB (
     '$customer->comment',
     '$customer->identifyCode',
     '$customer->contactPerson',
+    '$customer->location',
+    '$customer->paymentType',
     '1',
     '$timeOnServer',
     '$customer->chek', "

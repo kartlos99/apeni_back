@@ -22,6 +22,10 @@ $customer = $postData;
 $prices = $postData->beerPrices;
 $bottlePrices = $postData->bottlePrices;
 
+$pt = "null";
+if (isset($customer->paymentType))
+    $pt = "'$customer->paymentType'";
+
 $sqlUpdateCustomer = "UPDATE $CUSTOMER_TB SET " .
     "`dasaxeleba` = '$customer->name'," .
     "`group` = '$customer->group'," .
@@ -30,6 +34,8 @@ $sqlUpdateCustomer = "UPDATE $CUSTOMER_TB SET " .
     "`comment` = '$customer->comment'," .
     "`sk` = '$customer->identifyCode'," .
     "`sakpiri` = '$customer->contactPerson'," .
+    "`location` = '$customer->location'," .
+    "`paymentType` = $pt," .
     "`chek` = '$customer->chek'," .
     "`modifyDate` = CURRENT_TIMESTAMP," .
     "`modifyUserID` = " . $sessionData->userID .
