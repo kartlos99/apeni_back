@@ -20,6 +20,10 @@ $customer = $postData;
 $prices = $postData->beerPrices;
 $bottlePrices = $postData->bottlePrices;
 
+$pt = "null";
+if (isset($customer->paymentType))
+    $pt = "'$customer->paymentType'";
+
 $sqlAddCustomer = "INSERT INTO $CUSTOMER_TB (
     `dasaxeleba`,
     `group`,
@@ -44,7 +48,7 @@ $sqlAddCustomer = "INSERT INTO $CUSTOMER_TB (
     '$customer->identifyCode',
     '$customer->contactPerson',
     '$customer->location',
-    '$customer->paymentType',
+    $pt,
     '1',
     '$timeOnServer',
     '$customer->chek', "
