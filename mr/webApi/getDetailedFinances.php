@@ -20,7 +20,7 @@ $sql = "SELECT
     c.dasaxeleba, 
     `distributor_id`, 
     u.username AS distributor, 
-    `paymentType`, 
+    m.`paymentType`, 
     round( `tanxa`, 2) AS amount, 
     m.`tarigi` 
 FROM `moneyoutput` m
@@ -30,7 +30,7 @@ LEFT JOIN users u ON u.id = m.`distributor_id`
 WHERE date(`tarigi`) BETWEEN '$date1' AND '$date2' 
 AND m.`regionID` = {$sessionData->regionID}
 $filterByCustomer
-ORDER by m.`tarigi` DESC, `distributor_id`, `paymentType`";
+ORDER by m.`tarigi` DESC, `distributor_id`, m.`paymentType`";
 
 $customers = [];
 $result = mysqli_query($con, $sql);

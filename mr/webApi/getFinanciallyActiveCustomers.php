@@ -1,4 +1,5 @@
 <?php
+
 namespace Apeni\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -14,7 +15,7 @@ $sql = "SELECT id, dasaxeleba FROM `customer` c
 WHERE
     c.`active`=1 AND c.id IN (
         SELECT DISTINCT obieqtis_id FROM `moneyoutput` m 
-        WHERE m.tarigi BETWEEN '$date1' AND '$date2'
+        WHERE date(m.tarigi) BETWEEN '$date1' AND '$date2'
             AND m.regionID = {$sessionData->regionID}
     )
 ORDER BY dasaxeleba";
