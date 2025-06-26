@@ -76,7 +76,7 @@ function checkTokenN()
 {
 //    throwHttpError(401, "errorText", 401);
     // temporary, while testing api
-     return (object)["userID" => 15, "regionID" => 1, "userType" => 9];
+//     return (object)["userID" => 15, "regionID" => 1, "userType" => 9];
     $token = getBearerToken();
     $regionID = getRegion();
 
