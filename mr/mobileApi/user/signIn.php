@@ -46,9 +46,12 @@ if (count($fetchedUsers) == 1) {
     $sqlPermissions = "SELECT `permissionID` FROM `permission_mapping` WHERE `roleID` = " . $userData['type'];
 
     $permissions = $dbManager->getDataAsArray($sqlPermissions);
-    foreach ($permissions as $permission) {
-        $userData['permissions'][] = $permission['permissionID'];
-    }
+    if (count($permissions) > 0)
+        foreach ($permissions as $permission) {
+            $userData['permissions'][] = $permission['permissionID'];
+        }
+    else
+        $userData['permissions'] = [];
 
     $sqlAllowedRegions =
         "SELECT

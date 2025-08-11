@@ -16,7 +16,7 @@ class BaseDbManagerV2
         $this->dbConn = mysqli_connect(HOST, DB_user, DB_pass, DB_name) or die('db_connection_error!.. class:BaseDbManager');
         mysqli_set_charset($this->dbConn, "utf8");
     }
-    
+
     function dieWithHttpError($errorText = "un known error", $errorCode = 0, $httpStatusCode = 422)
     {
         // die( $errorText . $errorCode . $httpStatusCode11);
@@ -26,8 +26,9 @@ class BaseDbManagerV2
             errorCode => $errorCode
         ]));
     }
-    
-    function dieWithDbError() {
+
+    function dieWithDbError()
+    {
         // die(mysqli_errno($this->dbConn));
         // die(sqlErrorWithCode());
         $this->dieWithHttpError(
@@ -51,7 +52,8 @@ class BaseDbManagerV2
         return $resultArray;
     }
 
-    function executeScript($sql): bool {
+    function executeScript($sql): bool
+    {
         return mysqli_query($this->dbConn, $sql);
     }
 
@@ -121,16 +123,17 @@ class BaseDbManagerV2
         return json_encode($fullError);
     }
 
-    function getSingleValue($resultArray, $fieldName)
+    function getSingleValue($resultArray, $fieldName, $default = null)
     {
         if (empty($resultArray)) {
-            return null;
+            return $default;
         } else {
-            return $resultArray[0][$fieldName];
+            return $resultArray[0][$fieldName] ?? $default;
         }
     }
 
-    function hasPermission($permissionCode, $userID): bool {
+    function hasPermission($permissionCode, $userID): bool
+    {
         $sql = "SELECT permissions.ID, permissions.code FROM `permission_mapping` 
             LEFT JOIN permissions ON permission_mapping.permissionID = permissions.ID
             WHERE permission_mapping.roleID = (SELECT users.type FROM users WHERE users.id = $userID)";
