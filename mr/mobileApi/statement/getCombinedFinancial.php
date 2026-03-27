@@ -18,7 +18,8 @@ const OFFSET_KEY = "offset";
 
 date_default_timezone_set('Asia/Tbilisi');
 $clientID = $_GET["clientID"];
-$offsetDate = $_GET["offset"] ?? date('Y-m-d h:i', time());
+$offsetDate = $_GET["offset"] ?? date('Y-m-d H:i', time());
+//die($offsetDate);
 $daysInResponse = 30;
 
 $sql = "
@@ -47,7 +48,7 @@ WHERE
     clientID = $clientID AND b.`regionID` = {$sessionData->regionID}
 ORDER by b.tarigi DESC 
 ";
-
+//die($sql);
 $totalPagesSql = "SELECT count(*) AS `totalCount` FROM `extraction_sale_money` b WHERE clientID = $clientID AND `regionID` = {$sessionData->regionID}";
 $firstOpDateSql = "SELECT DATE_FORMAT(MIN(b.tarigi), '%Y-%m-%d %H:%i') AS firstOperationDate FROM `extraction_sale_money` b WHERE clientID = $clientID AND `regionID` = {$sessionData->regionID}";
 
