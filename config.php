@@ -1,4 +1,4 @@
 <?php
 
-const WEB_VERSION_NAME = "4.2.1";
+const WEB_VERSION_NAME = "4.3.0";
 const DISTRIBUTION_BACK_VERSION_NAME = "2.0.0";

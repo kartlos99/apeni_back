@@ -3,11 +3,16 @@
 const HOME_SERVER_NAME = "localhost";
 const REAL_SERVER_NAME = "apeni.ge";
 const TEST_SERVER_NAME = "test.apeni.ge";
+const HOSTINGER_SERVER_NAME = "temp.apeni.ge";
 
 $mainDIR = "";
 $appConfigFile = "";
 
 switch ($_SERVER['SERVER_NAME']) {
+    case HOSTINGER_SERVER_NAME:
+        $mainDIR = "/home/u418532015/domains/" . HOSTINGER_SERVER_NAME . "/public_html";
+        $appConfigFile = "/home/u418532015/domains/" . HOSTINGER_SERVER_NAME . "/app_config/mobile_mr.php";
+        break;
     case REAL_SERVER_NAME:
         $mainDIR = "/home/apenige2/public_html";
         $appConfigFile = "/home/apenige2/app_config/mobile_mr.php";
