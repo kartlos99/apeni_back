@@ -77,15 +77,17 @@ function daySumRow(cash, expSum) {
     let tdOperator = $('<td />').text("ქეში: " + cash).addClass("ricxvi");
     let tdComment = $('<td />').text("ხარჯბი: " + expSum).addClass("ricxvi");
     let tdAmount = $('<td />').text("ხელზე: " + atHand).addClass("ricxvi");
-    return $('<tr />').addClass("cash-row").append(tdDate, tdOperator, tdComment, tdAmount);
+    let tdEmpty = $('<td />');
+    return $('<tr />').addClass("cash-row").append(tdDate, tdOperator, tdComment, tdAmount, tdEmpty);
 }
 
 function dataToRow(item) {
     let tdDate = $('<td />').text(item.expenseDate);
     let tdOperator = $('<td />').text(item.operator);
+    let tdCategory = $('<td />').text(item.category);
     let tdComment = $('<td />').text(item.comment);
     let tdAmount = $('<td />').text(item.tanxa).addClass("ricxvi");
-    return $('<tr />').append(tdDate, tdOperator, tdComment, tdAmount);
+    return $('<tr />').append(tdDate, tdOperator, tdCategory, tdComment, tdAmount);
 }
 
 $('#exportExpensesBtn').on('click', function () {

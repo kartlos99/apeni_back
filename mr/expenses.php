@@ -34,6 +34,7 @@ include_once '_header.php';
                     <tr>
                         <th>თარიღი</th>
                         <th>ოპერატორი</th>
+                        <th>კატეგორია</th>
                         <th>კომენტარი</th>
                         <th class="textToEnd">თანხა ₾</th>
                     </tr>

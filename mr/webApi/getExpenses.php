@@ -23,9 +23,10 @@ if ($forExport) {
 }
 
 $expensesSql = "
-SELECT ex.`id`, date(`tarigi`) AS expenseDate, u.username AS operator, ex.`comment`, `tanxa` 
+SELECT ex.`id`, date(`tarigi`) AS expenseDate, u.username AS operator, cat.name AS category, ex.`comment`, `tanxa` 
 FROM `xarjebi` ex
 LEFT JOIN users u ON ex.`distributor_id` = u.id
+left join expense_category cat ON ex.category = cat.id 
 WHERE date(`tarigi`) >= '$date1' AND date(`tarigi`) <= '$date2' AND `regionID` = $regionID
 ORDER BY ex.`tarigi`
 LIMIT 500
@@ -81,7 +82,7 @@ foreach ($groupedExpanses as $key => $item) {
 $response[DATA] = $groupedExpanses;
 
 if ($forExport) {
-    $columns = ["id", "თარიღი", "ოპერატორი", "კომენტარი", "თანხა ₾"];
+    $columns = ["id", "თარიღი", "ოპერატორი", "კატეგორია", "კომენტარი", "თანხა ₾"];
     $exporter = new Exporter();
     $exporter->exportData($columns, $data, "expenses_$date1--$date2");
 } else {
