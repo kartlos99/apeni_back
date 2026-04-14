@@ -3,6 +3,7 @@ let barrelInputMonthToClone;
 let inputRowToClone;
 let bottleInputMonthToClone;
 let bottleInputRowToClone;
+let emptyBarrelsMonthToClone;
 
 let view = {
     fullBarrelTable: $("#tbFullBarrels").find('tbody'),
@@ -11,6 +12,7 @@ let view = {
     yearSelector: $('#selectYear'),
     mainDiv: $('div.mainContainer'),
     mainBottlesDiv: $('div.mainBottlesContainer'),
+    mainEmptyBarrelsDiv: $('div.mainEmptyContainer'),
     cloneContainer: $('#cloneContainerDiv'),
 }
 
@@ -149,15 +151,18 @@ $(document).ready(function () {
     view.yearSelector.val(currentYear);
     getStoreHouseInputs(currentYear);
     getStoreHouseBottleInputs(currentYear);
+    getEmptyBarrels(currentYear);
     barrelInputMonthToClone = view.cloneContainer.find('div.barrel-input-month');
     inputRowToClone = view.cloneContainer.find('tr.barrels-row')
     bottleInputMonthToClone = view.cloneContainer.find('div.bottle-input-month');
+    emptyBarrelsMonthToClone = view.cloneContainer.find('div.empty-barrels-io-month');
     bottleInputRowToClone = view.cloneContainer.find('tr.bottle-row')
 });
 
 view.yearSelector.on('change', function (e) {
     getStoreHouseInputs(view.yearSelector.val());
     getStoreHouseBottleInputs(view.yearSelector.val());
+    getEmptyBarrels(view.yearSelector.val());
 });
 
 function getStoreHouseInputs(year) {
@@ -196,6 +201,51 @@ function getStoreHouseBottleInputs(year) {
             }
         }
     });
+}
+
+function getEmptyBarrels(year) {
+    if (currentRegionID !== '1') return
+    $.ajax({
+        url: 'webApi/getStoreHouseEmptyByMonth.php?year=' + year,
+        dataType: 'json',
+        headers: getHeaders(),
+        success: function (resp) {
+            if (resp.success) {
+                console.log(resp.success)
+                proceedEmptyBarrelsIO(resp.data)
+            } else {
+                console.log(resp);
+                showError(resp.errorCode, resp.errorText);
+            }
+        }
+    });
+}
+
+function proceedEmptyBarrelsIO(data) {
+    view.mainEmptyBarrelsDiv.empty();
+
+    Object.entries(data).forEach(function (sItem) {
+        let monthCloneView = emptyBarrelsMonthToClone.clone();
+        let monthInputsContainer = monthCloneView.find('tbody');
+        Object.values(sItem[1]).forEach(function (sRow) {
+
+            let countIn = parseInt(sRow.count_from_customer);
+            if (isNaN(countIn)) countIn = "-";
+            let countOut = parseInt(sRow.count_from_sh);
+            if (isNaN(countOut)) countOut = "-";
+
+            let barrelInputRow = bottleInputRowToClone.clone();
+            barrelInputRow.find('td.bottle-name').text(sRow.barrel);
+            barrelInputRow.find('td.liter').text(countIn);
+            barrelInputRow.find('td.amount').text(countOut);
+            monthInputsContainer.append(barrelInputRow);
+        });
+
+        let monthTitle = monthObj[sItem[0]];
+        monthCloneView.find('div.panel-heading').text(monthTitle);
+
+        view.mainEmptyBarrelsDiv.append(monthCloneView);
+    })
 }
 
 function proceedBottleInputs(data) {

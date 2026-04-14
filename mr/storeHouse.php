@@ -75,6 +75,9 @@ $barrels = $dataProvider->getBarrels();
                 <li role="presentation">
                     <a href="#bottleList" aria-controls="bottles" data-toggle="tab">ბოთლები</a>
                 </li>
+                <li role="presentation">
+                    <a href="#emptyBarrel" aria-controls="empty" data-toggle="tab">ცარიელი</a>
+                </li>
             </ul>
             <br>
             <!-- Tab panes -->
@@ -84,6 +87,9 @@ $barrels = $dataProvider->getBarrels();
                 </div>
                 <div role="tabpanel" class="tab-pane" id="bottleList">
                     <div class="mainBottlesContainer"></div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="emptyBarrel">
+                    <div class="mainEmptyContainer"></div>
                 </div>
             </div>
         </div>
@@ -133,6 +139,25 @@ $barrels = $dataProvider->getBarrels();
                     <th>რაოდენობა</th>
                     </thead>
                     <tbody class="bottle-input-items">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Empty barrels -->
+        <div class="panel panel-primary empty-barrels-io-month">
+            <div class="panel-heading">
+                Tve
+            </div>
+            <div class="panel-body">
+                <table class="table table-section">
+                    <thead>
+                    <th>კასრი</th>
+                    <th>საწყობში მოვიდა</th>
+                    <th>საწყობიდან გავიდა</th>
+                    </thead>
+                    <tbody class="empty-barrels-io-items">
 
                     </tbody>
                 </table>
