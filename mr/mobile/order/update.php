@@ -52,6 +52,9 @@ if (mysqli_query($con, $orderUpdateSql)) {
     $deleteOldBottleItemsSql = "DELETE FROM `order_items_bottle` WHERE `orderID` = " . $orderID;
     mysqli_query($con, $deleteOldBottleItemsSql);
 
+    $deleteOldEmptyBarrelItemsSql = "DELETE FROM `order_empty_barrel` WHERE `orderID` = " . $orderID;
+    mysqli_query($con, $deleteOldEmptyBarrelItemsSql);
+
     if (count($postData->items) > 0) {
         $multiValue = "";
         for ($i = 0; $i < count($postData->items); $i++) {
@@ -108,6 +111,29 @@ if (mysqli_query($con, $orderUpdateSql)) {
         }
     }
 
+    if (count($postData->emptyBarrels) > 0) {
+
+        $multiValue = "";
+        for ($i = 0; $i < count($postData->emptyBarrels); $i++) {
+            $item = $postData->emptyBarrels[$i];
+
+            if ($i > 0)
+                $multiValue .= ",";
+
+            $multiValue .= "('$orderID', '$item->barrelId', '$item->count', '$sessionData->userID')";
+        }
+
+        $sql_set_empty_barrels = "
+        INSERT INTO `order_empty_barrel`(
+            `orderID`,
+            `barrelId`,
+            `count`,
+            `modifyUserID`
+        )
+        VALUES  " . $multiValue;
+
+        mysqli_query($con, $sql_set_empty_barrels);
+    }
     $orderHelper->checkOrderCompletion($orderID);
 
 } else {

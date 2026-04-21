@@ -71,6 +71,20 @@ class OrderHelper
             $bottleSales[] = $rs;
         }
 
+        $sqlEmptyBarrels = "
+                SELECT
+                    `ID`,
+                    `orderID`,
+                    `barrelId`,
+                    `count`
+                FROM `order_empty_barrel`
+                WHERE `orderID` IN ($orderIDs) ";
+        $allEmptyBarrels = [];
+        $result = mysqli_query($this->con, $sqlEmptyBarrels);
+        while ($rs = mysqli_fetch_assoc($result)) {
+            $allEmptyBarrels[] = $rs;
+        }
+
         foreach ($orders as $index => $order) {
             $oItems = [];
             foreach ($orderItems as $item) {
@@ -96,11 +110,18 @@ class OrderHelper
                     $oBottleSales[] = $item;
                 }
             }
+            $emptyBarrels = [];
+            foreach ($allEmptyBarrels as $item) {
+                if ($order['ID'] == $item['orderID']) {
+                    $emptyBarrels[] = $item;
+                }
+            }
 
             $orders[$index]['items'] = $oItems;
             $orders[$index]['bottleItems'] = $oItemsBottle;
             $orders[$index]['sales'] = $oSales;
             $orders[$index]['bottleSales'] = $oBottleSales;
+            $orders[$index]['emptyBarrels'] = $emptyBarrels;
         }
 
         return $orders;

@@ -95,7 +95,29 @@ if (mysqli_query($con, $sql_insert_order)) {
             dieWithError(mysqli_errno($con), mysqli_error($con));
         }
     }
+    if (count($postData->emptyBarrels) > 0) {
 
+        $multiValue = "";
+        for ($i = 0; $i < count($postData->emptyBarrels); $i++) {
+            $item = $postData->emptyBarrels[$i];
+
+            if ($i > 0)
+                $multiValue .= ",";
+
+            $multiValue .= "('$orderID', '$item->barrelId', '$item->count', '$sessionData->userID')";
+        }
+
+        $sql_set_empty_barrels = "
+        INSERT INTO `order_empty_barrel`(
+            `orderID`,
+            `barrelId`,
+            `count`,
+            `modifyUserID`
+        )
+        VALUES  " . $multiValue;
+
+        mysqli_query($con, $sql_set_empty_barrels);
+    }
 } else {
     dieWithError(mysqli_errno($con), mysqli_error($con));
 }
